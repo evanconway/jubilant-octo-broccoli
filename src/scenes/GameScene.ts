@@ -13,7 +13,6 @@ export default class GameScene extends Phaser.Scene {
       this.square = this.add.rectangle(400, 400, 100, 100, 0xFFFFFF);
 
       this.input.on('keydown', function(event: KeyboardEvent) {
-          console.log("keydown")
         if(event.key == "i") {
             this.scene.switch("inventory")
         }
