@@ -11,12 +11,21 @@ export default class GameScene extends Phaser.Scene {
         })
     }
 
+    public preload() {
+        this.load.image("new_tilemap", "../assets/new_tilemap.png");
+        this.load.tilemapTiledJSON("level_1", "../assets/level_1.json");
+    }
+
     public create() {
         this.square = this.add.rectangle(400, 400, 100, 100, 0xFFFFFF);
         this.exampleText = this.add.text(10, 10, "Hi Everybody", { font: '16px Courier', fill: '#00ff00' });
         this.game.input.mouse.capture = true;
         this.inventoryKey = this.input.keyboard.addKey("I");
         this.cursorKeys = this.input.keyboard.createCursorKeys();
+
+        const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'level_1' });
+        const tileset: Phaser.Tilemaps.Tileset = map.addTilesetImage('new_tileset', 'new_tilemap');
+        map.createStaticLayer("Map", tileset, 0, 0);
     }
 
     public update() {
