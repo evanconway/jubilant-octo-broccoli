@@ -28,39 +28,41 @@ export class Actor<T extends BaseActor> {
     }
 }
 
+function get_token_set(name: string): Set<string> {
+    return  new Set(name.split(" "))    
+}
+
 export function get_item(name: string): Actor<Item> | null {
+    let tokens: Set<string> = get_token_set(name)
 
-    let tokens: string[] = name.split(" ")    
+    var item: Item | null;
+    let mods: Modifier<Item>[] = [];
 
-    var item: Item | null = null
-    tokens.forEach(
-        (token) => {
-            let next_item = AllItems[token];
-            if (next_item) {
-                if (item !== null) {
-                    return null;
-                }
-                item = next_item;
+    for (let token of tokens)
+    {
+        let is_item = AllItems[token];
+        if (is_item) {
+            if (item !== null) {
+                return null;
             }
-        } 
-    )
+            item = is_item;
+            tokens.delete(token);
+        }
+    }
+
     if (item === null) {
         return null;
     }
 
-    let mods: Modifier<Item>[] = []
-    tokens.forEach(
-        (token) => {
-            let next_mod = AllModifiers[token]
-            if (next_mod) {
-                mods.push(next_mod)
-            } else {
-                return null;
-            }
+    for(let token of tokens)
+    {
+        let is_mod = AllModifiers[token];
+        if (is_mod) {
+            mods.push(is_mod)
+        } else {
+            return null;
         }
-    )
+    }
     
     return new Actor<Item>(item, mods);
 } 
-
-
