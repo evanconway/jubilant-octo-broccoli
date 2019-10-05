@@ -32,7 +32,7 @@ export function get_item(name: string): Actor<Item> | null {
 
     let tokens: string[] = name.split(" ")    
 
-    var item = null
+    var item: Item | null = null
     tokens.forEach(
         (token) => {
             let next_item = AllItems[token];

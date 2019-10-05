@@ -9,6 +9,6 @@ class Sword extends Item {
 }
 
 
-export let AllItems = {
-    "sword": Sword,
+export let AllItems: {[s: string]: Item} = {
+    "sword": new Sword(),
 }
