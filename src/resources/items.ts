@@ -1,14 +1,15 @@
-import { BaseActor } from  "./actors"
+import { BaseActor, Properties } from  "./actors"
 
 export abstract class Item extends BaseActor {}
 
 class Sword extends Item {
-    weight: 5
-    reach: 1
-    damage: 1
+
+    constructor() {
+        super(new Properties(5, 0, 0, 0));
+    }
 }
 
 
 export let AllItems: {[s: string]: Item} = {
-    "sword": new Sword(),
+    // "sword": () => new Sword() ,
 }
