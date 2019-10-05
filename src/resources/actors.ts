@@ -1,19 +1,17 @@
 import { Modifier } from "./modifers"
 
 export class BaseActor {
-    weight: number;
-    speed: number;
-    size: number;
-    height: number;
+    weight: number = 0;
+    speed: number = 0;
+    size: number = 0;
+    height: number = 0;
+}
 
-    modifiers: Modifier[]
-}   
+export function clone<T extends BaseActor>(actor: T): T {
+    return {...actor};
+}
 
-
-export function update_actors(actors: BaseActor[]): void {
-    actors.forEach(
-        (actor) => actor.modifiers.forEach(
-            (modifier) => modifier(actor)
-        )
-    )
+export function actor_apply_modifiers<T extends BaseActor>(actor: T, modifiers: Modifier<T>[]): T {
+    modifiers.forEach((modifier) => actor = modifier(actor))
+    return actor;
 }
