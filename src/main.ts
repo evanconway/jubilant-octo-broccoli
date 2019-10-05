@@ -13,16 +13,16 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Sample',
- 
+
   type: Phaser.AUTO,
- 
+
   width: window.innerWidth,
   height: window.innerHeight,
- 
+
   scene:  GameScene,
 
   parent: 'game',
   backgroundColor: '#000000',
 };
- 
+
 export const game = new Phaser.Game(gameConfig);

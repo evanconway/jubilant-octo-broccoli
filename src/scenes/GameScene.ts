@@ -1,5 +1,3 @@
-import { timingSafeEqual } from "crypto";
-
 export default class GameScene extends Phaser.Scene {
     private square: Phaser.GameObjects.Rectangle;
 
@@ -8,7 +6,7 @@ export default class GameScene extends Phaser.Scene {
             key: "game"
         })
     }
-   
+
     public create() {
       this.square = this.add.rectangle(400, 400, 100, 100, 0xFFFFFF);
 
@@ -19,10 +17,10 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     }
-   
+
     public update() {
         const cursorKeys = this.input.keyboard.createCursorKeys();
- 
+
         if (cursorKeys.up.isDown) {
             this.square.y -= 10;
         } else if (cursorKeys.down.isDown) {
