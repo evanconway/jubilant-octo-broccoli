@@ -1,6 +1,13 @@
+import { Player } from "../sprites/player";
+
 const TEXT_DISPLAY_WINDOW_HEIGHT: number = 200;
 
 export default class GameScene extends Phaser.Scene {
+    private player: Player
+    // enemies/ creatures
+    // worldGrid
+
+
     private square: Phaser.GameObjects.Rectangle;
     private exampleText: Phaser.GameObjects.Text;
     private exampleActive: boolean = true;
@@ -60,6 +67,10 @@ export default class GameScene extends Phaser.Scene {
             down: this.cursorKeys.down,
             speed: 0.5
         });
+
+        this.player = new Player(this, 100, 100, '')
+
+        this.add.existing(this.player);
     }
 
     public update(time: number, delta: number) {
