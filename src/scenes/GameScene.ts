@@ -25,7 +25,7 @@ export default class GameScene extends Phaser.Scene {
         this.inventoryKey = this.input.keyboard.addKey("I");
         this.cursorKeys = this.input.keyboard.createCursorKeys();
 
-        const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'level_2' });
+        const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'level_1' });
         const tileset: Phaser.Tilemaps.Tileset = map.addTilesetImage('new_tileset', 'new_tilemap');
         map.createStaticLayer("Map", tileset, 0, 0);
 
