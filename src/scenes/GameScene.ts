@@ -13,7 +13,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     public preload() {
-        this.load.image("new_tilemap", "../assets/new_tilemap.png");
+        this.load.image("tiles", "../assets/tiles.png");
         this.load.tilemapTiledJSON("level_1", "../assets/level_1.json");
         this.load.tilemapTiledJSON("level_2", "../assets/level_2.json");
     }
@@ -26,7 +26,7 @@ export default class GameScene extends Phaser.Scene {
         this.cursorKeys = this.input.keyboard.createCursorKeys();
 
         const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'level_1' });
-        const tileset: Phaser.Tilemaps.Tileset = map.addTilesetImage('new_tileset', 'new_tilemap');
+        const tileset: Phaser.Tilemaps.Tileset = map.addTilesetImage('tileset', 'tiles');
         map.createStaticLayer("Map", tileset, 0, 0);
 
         const camera = this.cameras.main;
