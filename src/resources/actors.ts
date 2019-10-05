@@ -12,8 +12,8 @@ export class BaseActor {
 
 export function update_actors(actors: BaseActor[]): void {
     actors.forEach(
-        ((actor) => actor.modifiers.forEach(
+        (actor) => actor.modifiers.forEach(
             (modifier) => modifier(actor)
-        ) )
+        )
     )
 }
