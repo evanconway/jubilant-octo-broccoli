@@ -6,7 +6,7 @@ const MIN_CIRCLE_RADIUS: number = 10;
 const MAX_DEAD_ENDS: number = 3;
 const CORRIDOR_CREATE_PROBABILITY = 0.5;
 
-class CircleDistance {
+class Edge {
     indexA: number;
     indexB: number;
     distance: number;
@@ -27,30 +27,37 @@ export default class LevelGenerator {
 
     public static generateMinimumCorridors(circles: Phaser.Geom.Circle[]) {
         const corridors: Phaser.Geom.Line[] = [];
-        const distances: CircleDistance[] = [];
+        const edges: Edge[] = []
+
+        const visited: Set<number> = new Set<number>();
+
+        let current: number = 0;
+
+        visited.add(current);
         for (let i: number = 0; i < circles.length; i++) {
-            for (let j: number = i; j < circles.length; j++) {
-                if (i != j) {
-                    const distance = Phaser.Math.Distance.Between(
-                        circles[i].x, circles[i].y,
-                        circles[j].x, circles[j].y
+            if (!visited.has(i)) {
+                edges.push({
+                    indexA: current,
+                    indexB: i,
+                    distance: Phaser.Math.Distance.Between(
+                        circles[current].x, circles[current].y,
+                        circles[i].x, circles[i].y
                     )
-                    distances.push({
-                        indexA: i,
-                        indexB: j,
-                        distance
-                    })
-                }
+                });
             }
         }
 
-        distances.sort((a: CircleDistance, b: CircleDistance): number => {
+        edges.sort((a: Edge, b: Edge): number => {
             return b.distance - a.distance;
         });
 
+        // gave up here lol, going to hand write levels
 
-
-
+        // for (let i: number = 0; i < edges.length; i++) {
+        //     if (!visited.has(edges[i].indexB) {
+                
+        //     }
+        // }
     }
 }
 
