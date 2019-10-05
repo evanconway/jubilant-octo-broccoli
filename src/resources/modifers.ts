@@ -40,7 +40,7 @@ function fat<T extends BaseActor>(actor: T): T {
     return dest;
 }
 
-export let AllModifiers = {
+export let AllModifiers: { [s: string]: Modifier<BaseActor> } = {
     "thin": thin,
     "short": short,
     "tall": tall,
