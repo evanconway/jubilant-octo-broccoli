@@ -1,4 +1,11 @@
+import { Player } from "../sprites/player";
+
 export default class GameScene extends Phaser.Scene {
+    private player: Player
+    // enemies/ creatures
+    // worldGrid
+
+
     private square: Phaser.GameObjects.Rectangle;
     private exampleText: Phaser.GameObjects.Text;
     private exampleActive: boolean = true;
@@ -28,7 +35,7 @@ export default class GameScene extends Phaser.Scene {
 
         const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'level_1' });
         const tileset: Phaser.Tilemaps.Tileset = map.addTilesetImage('tiles', 'tiles');
-        
+
         map.createStaticLayer("Map", tileset, 0, 0);
 
         map.createFromObjects("Objects", 2, { key: "gate" });
@@ -44,6 +51,10 @@ export default class GameScene extends Phaser.Scene {
             down: this.cursorKeys.down,
             speed: 0.5
         });
+
+        this.player = new Player(this, 100, 100, '')
+
+        this.add.existing(this.player);
     }
 
     public update(time: number, delta: number) {
