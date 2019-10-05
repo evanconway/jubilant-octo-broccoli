@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
       "target": "es2015",
-      "sourceMap": true
+      "sourceMap": true,
+      "types": ["phaser"]
     },
     "include": [
       "**/*.ts"
