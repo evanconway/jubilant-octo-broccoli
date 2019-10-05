@@ -1,5 +1,3 @@
-import { timingSafeEqual } from "crypto";
-
 export default class GameScene extends Phaser.Scene {
     private square: Phaser.GameObjects.Rectangle;
     private exampleText: Phaser.GameObjects.Text;
