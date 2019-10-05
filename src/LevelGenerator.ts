@@ -49,8 +49,10 @@ export default class LevelGenerator {
         });
 
 
+
+
     }
 }
 
-let circles: Phaser.Geom.Circle[] = LevelGenerator.generateCircles(1);
-let connections: Phaser.Geom.Line[] = LevelGenerator.generateMinimumCorridors(circles, 1);
+// let circles: Phaser.Geom.Circle[] = LevelGenerator.generateCircles(1);
+// let connections: Phaser.Geom.Line[] = LevelGenerator.generateMinimumCorridors(circles);
