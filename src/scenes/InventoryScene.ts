@@ -58,14 +58,11 @@ export default class InventoryScene extends Phaser.Scene {
         this.pushUnused("n");
         this.pushUnused("g");
 
-        this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
-            console.log("Dragged.");
+        this.input.on('drag', function (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Sprite, dragX: number, dragY: number) {
             gameObject.x = dragX;
             gameObject.y = dragY;
 
         });
-
-
     }
 
     public update() {
