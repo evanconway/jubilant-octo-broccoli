@@ -1,5 +1,6 @@
 import { GAME_WORLD_TILE_HEIGHT, GAME_WORLD_TILE_WIDTH } from "../constants"
 import { Properties, BaseActor } from "../resources/actors";
+import GameScene from "../scenes/GameScene";
 
 
 class EnemyActor extends BaseActor {
@@ -66,16 +67,32 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         this.updateOrientation()
     }
 
-    update(player: Phaser.GameObjects.Sprite) {
+    public update_position(player: Phaser.GameObjects.Sprite, gameScene: GameScene) {
         const choice = Math.random();
         if (choice < 0.25) {
-            this.moveDown();
+            if (gameScene.playerCanMove(this.gridX, this.gridY + 1)) {
+                this.moveDown();
+            }
         } else if (choice < 0.5) {
-            this.moveLeft();
+            if (gameScene.playerCanMove(this.gridX - 1, this.gridY)) {
+                this.moveLeft();
+            }
         } else if (choice < 0.75) {
-            this.moveUp();
+            if (gameScene.playerCanMove(this.gridX, this.gridY - 1)) {
+                this.moveUp();
+            }
         } else {
-            this.moveRight();
+            if (gameScene.playerCanMove(this.gridX + 1, this.gridY)) {
+              this.moveRight();
+            }
         }
+    }
+
+    get gridX(): number {
+      return Math.floor(this.x / GAME_WORLD_TILE_WIDTH);
+    }
+
+    get gridY(): number {
+      return Math.floor(this.y / GAME_WORLD_TILE_HEIGHT);
     }
 }

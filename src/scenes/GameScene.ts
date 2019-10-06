@@ -79,7 +79,7 @@ export default class GameScene extends Phaser.Scene {
         return (this.tileMap.getTileAt(tileX, tileY).properties as any)[property];
     }
 
-    private playerCanMove(playerTileX: number, playerTileY: number) {
+    public playerCanMove(playerTileX: number, playerTileY: number) {
         if (playerTileX < 0 || playerTileX > this.tileMap.width || playerTileY < 0 || playerTileY > this.tileMap.height) {
             return false;
         }
@@ -127,7 +127,7 @@ export default class GameScene extends Phaser.Scene {
         else this.exampleText.setAlpha(0);
 
         if (this.movePlayer()) {
-            this.enemy.update(this.player);
+            this.enemy.update_position(this.player, this);
         }
     }
 }
