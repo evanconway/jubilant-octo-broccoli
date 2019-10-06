@@ -1,5 +1,8 @@
 import { GAME_WORLD_TILE_HEIGHT, GAME_WORLD_TILE_WIDTH } from "../constants"
 import { Properties, BaseActor } from "../resources/actors";
+import InventoryScene from "../scenes/InventoryScene";
+import { Item, AllItems } from "../resources/items";
+
 
 class PlayerActor extends BaseActor {
   constructor() {
@@ -7,14 +10,20 @@ class PlayerActor extends BaseActor {
   }
 }
 
+enum PlayerActionState { NORMAL, ITEM_MODE }
 enum PlayerSpriteState { FACE_DOWN, FACE_UP, FACE_LEFT, FACE_RIGHT };
 
 export class Player extends Phaser.GameObjects.Sprite {
     private actor: PlayerActor;
     private spriteState: PlayerSpriteState;
+    private _actionState: PlayerActionState;
+    private inventoryScene: InventoryScene;
 
     constructor(scene: Phaser.Scene, x: number, y: number, key: string) {
         super(scene, x, y, key);
+
+        this.inventoryScene = this.scene.scene.get("inventory") as InventoryScene;
+
         this.actor = new PlayerActor();
         this.spriteState = PlayerSpriteState.FACE_DOWN;
         this.updateOrientation();
@@ -41,28 +50,65 @@ export class Player extends Phaser.GameObjects.Sprite {
       }
     }
 
+    isUsingItem(): boolean {
+      return this._actionState === PlayerActionState.ITEM_MODE;
+    }
+
+    enterItemMode() {
+      this._actionState = PlayerActionState.ITEM_MODE;
+    }
+
+    exitItemMode() {
+      this._actionState = PlayerActionState.NORMAL;
+    }
+
+    getCurrentItem(): Item {
+      // use the inventory scene here
+      return AllItems.get("sword");
+    }
+
+    faceRight() {
+      this.spriteState = PlayerSpriteState.FACE_RIGHT;
+      this._actionState = PlayerActionState.NORMAL;
+      this.updateOrientation();
+    }
+
+    faceLeft() {
+      this.spriteState = PlayerSpriteState.FACE_LEFT;
+      this._actionState = PlayerActionState.NORMAL;
+      this.updateOrientation();
+    }
+
+    faceDown() {
+      this.spriteState = PlayerSpriteState.FACE_DOWN;
+      this._actionState = PlayerActionState.NORMAL;
+      this.updateOrientation();
+    }
+
+    faceUp() {
+      this.spriteState = PlayerSpriteState.FACE_UP;
+      this._actionState = PlayerActionState.NORMAL;
+      this.updateOrientation();
+    }
+
     moveRight() {
       this.x += GAME_WORLD_TILE_WIDTH
-      this.spriteState = PlayerSpriteState.FACE_RIGHT;
-      this.updateOrientation()
+      this.faceRight();
     }
 
     moveLeft() {
       this.x -= GAME_WORLD_TILE_WIDTH
-      this.spriteState = PlayerSpriteState.FACE_LEFT;
-      this.updateOrientation()
+      this.faceLeft();
     }
 
     moveUp() {
       this.y -= GAME_WORLD_TILE_HEIGHT
-      this.spriteState = PlayerSpriteState.FACE_UP;
-      this.updateOrientation()
+      this.faceUp();
     }
 
     moveDown() {
       this.y += GAME_WORLD_TILE_HEIGHT
-      this.spriteState = PlayerSpriteState.FACE_DOWN;
-      this.updateOrientation()
+      this.faceDown();
     }
 
     get gridX(): number {
