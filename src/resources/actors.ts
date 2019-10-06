@@ -1,4 +1,4 @@
-import { Modifier, AllModifiers } from "./modifers"
+import { Modifier, AllModifiers, isValidModifier } from "./modifers"
 import {AllItems, Item} from "./items"
 
 export class Properties {
@@ -32,6 +32,10 @@ export class BaseActor {
       this.modifiedProperties = defaultProperties;
     }
 
+    setModifiers(modifers: Modifier[] = []) {
+      this.modifiers = modifers;
+    }
+
     resetProperties() {
       this.modifiedProperties.apply(this.defaultProperties);
     }
@@ -43,40 +47,48 @@ export class BaseActor {
 }
 
 function get_token_set(name: string): Set<string> {
-    return  new Set(name.split(" "))
+    return new Set(name.split(" "))
 }
 
-// export function get_item(name: string): <Item> | null {
-//     let tokens: Set<string> = get_token_set(name)
+function match<T extends BaseActor>(token_set: Set<string>, my_map: any ): T | null {
+    var ret: T = null;   
+    for (let token of token_set) {
+        ret = my_map.get(token);
+        if (ret) {
+            token_set.delete(token);
+            return ret;
+        }
+    }
+    return null;
+}
 
-//     var item: Item | null;
-//     let mods: Modifier[] = [];
+function match_mods(token_set: Set<string>): Modifier[] {
+    const mods: Modifier[] = [];
+    for(let token of token_set)
+    {
+        let is_mod = AllModifiers.get(token);
+        if (is_mod) {
+            mods.push(is_mod)
+            token_set.delete(token);
+        }
+    }
+    return mods;
+}
 
-//     for (let token of tokens)
-//     {
-//         let is_item = AllItems[token];
-//         if (is_item) {
-//             if (item !== null) {
-//                 return null;
-//             }
-//             item = is_item;
-//             tokens.delete(token);
-//         }
-//     }
+export function get_item(name: string): Item | null {
+    let token_set: Set<string> = get_token_set(name)
+    var item = match<Item>(token_set, AllItems);
 
-//     if (item === null) {
-//         return null;
-//     }
+    if (!item) {
+      return null;
+    }
 
-//     for(let token of tokens)
-//     {
-//         let is_mod = AllModifiers[token];
-//         if (is_mod) {
-//             mods.push(is_mod)
-//         } else {
-//             return null;
-//         }
-//     }
+    var mods = match_mods(token_set);
 
-//     return new >(item, mods);
-// }
+    if(token_set) {
+      return null;
+    }
+
+    item.setModifiers(mods);
+    return item;
+  }
