@@ -62,12 +62,14 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private getTileProperty(tileX: number, tileY: number, property: string): any {
-        console.log(property, (this.tileMap.getTileAt(tileX, tileY) as any)[property]);
         return (this.tileMap.getTileAt(tileX, tileY).properties as any)[property];
     }
 
     private playerCanMove(playerTileX: number, playerTileY: number) {
-        return !(this.getTileProperty(playerTileX, playerTileY - 1, "collision"));
+        if (playerTileX < 0 || playerTileX > this.tileMap.width || playerTileY < 0 || playerTileY > this.tileMap.height) {
+            return false;
+        }
+        return !(this.getTileProperty(playerTileX, playerTileY, "collision"));
     }
 
     private movePlayer(): boolean {
