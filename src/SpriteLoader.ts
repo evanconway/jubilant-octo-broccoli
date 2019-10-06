@@ -13,14 +13,24 @@ export default class SpriteLoader {
 
         for (let y = 0; y < tileLayer.height; y++) {
             for (let x = 0; x < tileLayer.width; x++) {
-                let currentTileGid: number = tileLayer.data[y * tileLayer.width + x];
+                let currentTileGid = (tileLayer.data as unknown as any)[y][x].index;
+                if (currentTileGid == -1) {
+                    continue;
+                }
                 if (spriteMapping.has(currentTileGid)) {
                     var sprite = scene.make.sprite({
-                        x,
-                        y,
-                        ...spriteMapping.get(currentTileGid),
-                        ...tileSet.getTileProperties(currentTileGid - 1) // If there's a bug this is prolly it.
+                        x: x * tileSet.tileWidth,
+                        y: y * tileSet.tileHeight,
+                        origin: [0, 0],
+                        ...spriteMapping.get(currentTileGid)
                     });
+                    // If there's a bug this "-1" is prolly it.
+                    let properties: any = (tileSet.tileProperties as unknown as any)[currentTileGid - 1];
+                    if (properties) {
+                        for (let key in properties) {
+                            sprite.setData(key, properties[key]);
+                        } 
+                    }
                     if (!sprites.has(currentTileGid)) {
                         sprites.set(currentTileGid, []);
                     }

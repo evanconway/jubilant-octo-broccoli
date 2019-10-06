@@ -50,6 +50,7 @@ export default class GameScene extends Phaser.Scene {
         const level1SpriteMap = new Map<number, any>([
             [16, { key: "tiles_sprites", frame: 15 }]
         ]);
+        
         const sprites: Map<number, Phaser.GameObjects.Sprite[]> = SpriteLoader.createSpritesFromTileset(
             level1SpriteMap,
             this,
