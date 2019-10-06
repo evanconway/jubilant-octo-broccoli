@@ -10,6 +10,10 @@ class Sword extends Item {
 }
 
 
-export let AllItems: {[s: string]: Item} = {
-    // "sword": () => new Sword() ,
-}
+export const AllItems: Map<string, Item> = new Map<string, Item>([
+    ["sword", new Sword()]
+]);
+
+export const isValidItem = (word: string): boolean => {
+    return AllItems.has(word);
+} 
