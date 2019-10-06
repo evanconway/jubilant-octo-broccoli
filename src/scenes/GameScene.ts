@@ -85,18 +85,22 @@ export default class GameScene extends Phaser.Scene {
             console.log(playerTileX, playerTileY);
             if (this.playerCanMove(playerTileX, playerTileY - 1)) {
                 this.player.moveUp();
+                return true;
             }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
             if (this.playerCanMove(playerTileX, playerTileY + 1)) {
                 this.player.moveDown();
+                return true;
             }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
             if (this.playerCanMove(playerTileX - 1, playerTileY)) {
                 this.player.moveLeft();
+                return true;
             }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
             if (this.playerCanMove(playerTileX + 1, playerTileY)) {
                 this.player.moveRight();
+                return true;
             }
         }
         return false;

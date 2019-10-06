@@ -75,7 +75,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         } else if (choice < 0.75) {
             this.moveUp();
         } else {
-          this.moveRight();
+            this.moveRight();
         }
     }
 }
