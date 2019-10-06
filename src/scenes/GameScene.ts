@@ -1,11 +1,8 @@
 import { Player } from "../sprites/player";
 import ReadoutScene from "./ReadoutScene";
 import { TEXT_AREA_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants";
-<<<<<<< HEAD
 import SpriteLoader from '../SpriteLoader';
-=======
 import { Enemy } from "../sprites/enemy";
->>>>>>> 86885ea06a973adac98d97023bd0650746a85b36
 
 export default class GameScene extends Phaser.Scene {
     private player: Player;
