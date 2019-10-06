@@ -18,9 +18,11 @@ export default class GameScene extends Phaser.Scene {
     private readoutScene: ReadoutScene;
     private tileMap: Phaser.Tilemaps.Tilemap;
     private itemTargetChoicesOverlay: ItemTargetOverlay;
+    private levelSprites: Phaser.GameObjects.Sprite[];
 
     constructor() {
-        super({ key: "game" })
+        super({ key: "game" });
+        this.levelSprites = [];
     }
 
     public preload() {
@@ -57,7 +59,11 @@ export default class GameScene extends Phaser.Scene {
             this.tileMap.getLayer("Objects"),
             tileset
         );
-        console.log(sprites);
+        for (let spritesOfType of sprites.values()) {
+            for(let sprite of spritesOfType) {
+                this.levelSprites.push(sprite);
+            }
+        }
 
         this.cameras.main.setBounds(0, 0, this.tileMap.widthInPixels, this.tileMap.heightInPixels);
         this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
@@ -86,11 +92,29 @@ export default class GameScene extends Phaser.Scene {
         return (this.tileMap.getTileAt(tileX, tileY).properties as any)[property];
     }
 
-    public playerCanMove(playerTileX: number, playerTileY: number) {
-        if (playerTileX < 0 || playerTileX > this.tileMap.width || playerTileY < 0 || playerTileY > this.tileMap.height) {
+    private getSpritePropertyAtLocation(tileX: number, tileY: number, property: string): any {
+        // This is terrible
+        for(let sprite of this.levelSprites) {
+            if (Math.round(sprite.x / GAME_WORLD_TILE_WIDTH) == tileX
+            && Math.round(sprite.y / GAME_WORLD_TILE_HEIGHT) == tileY) {
+                return sprite.getData(property);
+            }
+        }
+        return undefined;
+    }
+
+    public isTilePassable(tileX: number, tileY: number) {
+        if (tileX < 0 || tileX > this.tileMap.width || tileY < 0 || tileY > this.tileMap.height) {
             return false;
         }
-        return !(this.getTileProperty(playerTileX, playerTileY, "collision"));
+        if (this.getSpritePropertyAtLocation(tileX, tileY, "collision")) {
+            return false;
+        }
+        return !(this.getTileProperty(tileX, tileY, "collision"));
+    }
+
+    public isTilePassableForPlayer(tileX: number, tileY:number) {
+        return this.isTilePassable(tileX, tileY);
     }
 
     private handleMoveInput(): boolean {
@@ -98,22 +122,22 @@ export default class GameScene extends Phaser.Scene {
         const playerTileY = this.player.gridY;
 
         if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
-            if (this.playerCanMove(playerTileX, playerTileY - 1)) {
+            if (this.isTilePassableForPlayer(playerTileX, playerTileY - 1)) {
                 this.player.moveUp();
                 return true;
             }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
-            if (this.playerCanMove(playerTileX, playerTileY + 1)) {
+            if (this.isTilePassableForPlayer(playerTileX, playerTileY + 1)) {
                 this.player.moveDown();
                 return true;
             }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
-            if (this.playerCanMove(playerTileX - 1, playerTileY)) {
+            if (this.isTilePassableForPlayer(playerTileX - 1, playerTileY)) {
                 this.player.moveLeft();
                 return true;
             }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
-            if (this.playerCanMove(playerTileX + 1, playerTileY)) {
+            if (this.isTilePassableForPlayer(playerTileX + 1, playerTileY)) {
                 this.player.moveRight();
                 return true;
             }

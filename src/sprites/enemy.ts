@@ -70,19 +70,19 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     public update_position(player: Phaser.GameObjects.Sprite, gameScene: GameScene) {
         const choice = Math.random();
         if (choice < 0.25) {
-            if (gameScene.playerCanMove(this.gridX, this.gridY + 1)) {
+            if (gameScene.isTilePassable(this.gridX, this.gridY + 1)) {
                 this.moveDown();
             }
         } else if (choice < 0.5) {
-            if (gameScene.playerCanMove(this.gridX - 1, this.gridY)) {
+            if (gameScene.isTilePassable(this.gridX - 1, this.gridY)) {
                 this.moveLeft();
             }
         } else if (choice < 0.75) {
-            if (gameScene.playerCanMove(this.gridX, this.gridY - 1)) {
+            if (gameScene.isTilePassable(this.gridX, this.gridY - 1)) {
                 this.moveUp();
             }
         } else {
-            if (gameScene.playerCanMove(this.gridX + 1, this.gridY)) {
+            if (gameScene.isTilePassable(this.gridX + 1, this.gridY)) {
               this.moveRight();
             }
         }
