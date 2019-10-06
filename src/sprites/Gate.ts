@@ -1,8 +1,8 @@
 import GameScene from '../scenes/GameScene';
+import { GameSprite } from './GameSprite';
 
-export class Gate extends Phaser.GameObjects.Sprite {
-    constructor(scene: GameScene, x: number, y: number, key: string) {
-        super(scene, x, y, key);
-        this.setFrame(15);
+export class Gate extends GameSprite {
+    constructor(scene: GameScene, x: number, y: number, startFrame: number) {
+        super(scene, x, y, startFrame);
     }
 }

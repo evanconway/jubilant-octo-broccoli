@@ -1,7 +1,8 @@
 import { GAME_WORLD_TILE_HEIGHT, GAME_WORLD_TILE_WIDTH } from "../constants"
 import { Properties, BaseActor } from "../resources/actors";
 import GameScene from "../scenes/GameScene";
-import { Attack } from "./Attack"; 
+import { Attack } from "./Attack";
+import { GameSprite } from './GameSprite';
 
 
 class EnemyActor extends BaseActor {
@@ -12,16 +13,14 @@ class EnemyActor extends BaseActor {
 
 enum EnemySpriteState { FACE_DOWN, FACE_UP, FACE_LEFT, FACE_RIGHT };
 
-export class Enemy extends Phaser.GameObjects.Sprite {
+export class Enemy extends GameSprite {
     private actor: EnemyActor;
     private spriteState: EnemySpriteState;
 
-    private startFrame: number;
-
     private gameScene: GameScene;
 
-    constructor(scene: GameScene, x: number, y: number, key: string, startFrame: number) {
-        super(scene, x, y, key);
+    constructor(scene: GameScene, x: number, y: number, startFrame: number) {
+        super(scene, x, y, startFrame);
         this.actor = new EnemyActor();
         this.spriteState = EnemySpriteState.FACE_DOWN;
         this.startFrame = startFrame;
@@ -48,11 +47,6 @@ export class Enemy extends Phaser.GameObjects.Sprite {
                 this.setFrameRelative(1);
                 break;
         }
-    }
-
-    // Override
-    private setFrameRelative (frame: number): void{
-        super.setFrame(frame + this.startFrame);
     }
 
     moveRight() {

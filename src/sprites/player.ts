@@ -1,7 +1,9 @@
 import { GAME_WORLD_TILE_HEIGHT, GAME_WORLD_TILE_WIDTH } from "../constants"
-import { Properties, BaseActor } from "../resources/actors";
 import InventoryScene from "../scenes/InventoryScene";
+import GameScene from "../scenes/GameScene";
+import { Properties, BaseActor } from "../resources/actors";
 import { Item, AllItems } from "../resources/items";
+import { GameSprite } from "./GameSprite";
 
 
 class PlayerActor extends BaseActor {
@@ -13,27 +15,21 @@ class PlayerActor extends BaseActor {
 enum PlayerActionState { NORMAL, ITEM_MODE }
 enum PlayerSpriteState { FACE_DOWN, FACE_UP, FACE_LEFT, FACE_RIGHT };
 
-export class Player extends Phaser.GameObjects.Sprite {
+export class Player extends GameSprite {
     private actor: PlayerActor;
     private spriteState: PlayerSpriteState;
     private _actionState: PlayerActionState;
     private inventoryScene: InventoryScene;
-    private startFrame: number;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, key: string, startFrame: number) {
-        super(scene, x, y, key);
+    constructor(scene: GameScene, x: number, y: number, startFrame: number) {
+        super(scene, x, y, startFrame);
 
         this.inventoryScene = this.scene.scene.get("inventory") as InventoryScene;
 
         this.actor = new PlayerActor();
         this.spriteState = PlayerSpriteState.FACE_DOWN;
-        this.startFrame = startFrame;
         this.updateOrientation();
         this.setOrigin(0, 0);
-    }
-
-    private setFrameRelative(frame: number) {
-      this.setFrame(frame + this.startFrame);
     }
 
     private updateOrientation() {

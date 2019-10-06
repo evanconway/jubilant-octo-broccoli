@@ -22,19 +22,19 @@ export default class SpriteLoader {
                     let SpriteClass = spriteMapping.get(currentTileGid);
                     let sprite: Phaser.GameObjects.Sprite;
                     if (SpriteClass) {
-                        sprite = new SpriteClass(scene, x * tileSet.tileWidth, y * tileSet.tileHeight, "tiles_sprites", currentTileGid - 1);
+                        sprite = new SpriteClass(scene, x * tileSet.tileWidth, y * tileSet.tileHeight, currentTileGid - 1);
                         sprite.setOrigin(0, 0);
                         scene.add.existing(sprite);
                     } else {
                         throw new Error("Bad class!");
                     }
-                    
+
                     // If there's a bug this "-1" is prolly it.
                     let properties: any = (tileSet.tileProperties as unknown as any)[currentTileGid - 1];
                     if (properties) {
                         for (let key in properties) {
                             sprite.setData(key, properties[key]);
-                        } 
+                        }
                     }
                     if (!sprites.has(currentTileGid)) {
                         sprites.set(currentTileGid, []);
