@@ -74,28 +74,28 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     public update_position(player: Phaser.GameObjects.Sprite) {
         const choice = Math.random();
         if (choice < 0.25) {
-            if (this.gameScene.playerCanMove(this.gridX, this.gridY + 1)) {
+            if (this.gameScene.isTilePassable(this.gridX, this.gridY + 1)) {
                 this.moveDown();
 
                 const attack = new Attack(this.scene, this.gridX, this.gridY + 1, "tiles_sprites", "fire_attack");
                 this.scene.add.existing(attack);
             }
         } else if (choice < 0.5) {
-            if (this.gameScene.playerCanMove(this.gridX - 1, this.gridY)) {
+            if (this.gameScene.isTilePassable(this.gridX - 1, this.gridY)) {
                 this.moveLeft();
 
                 const attack = new Attack(this.scene, this.gridX - 1, this.gridY, "tiles_sprites", "fire_attack");
                 this.scene.add.existing(attack);
             }
         } else if (choice < 0.75) {
-            if (this.gameScene.playerCanMove(this.gridX, this.gridY - 1)) {
+            if (this.gameScene.isTilePassable(this.gridX, this.gridY - 1)) {
                 this.moveUp();
 
                 const attack = new Attack(this.scene, this.gridX, this.gridY - 1, "tiles_sprites", "fire_attack");
                 this.scene.add.existing(attack);
             }
         } else {
-            if (this.gameScene.playerCanMove(this.gridX + 1, this.gridY)) {
+            if (this.gameScene.isTilePassable(this.gridX + 1, this.gridY)) {
               this.moveRight();
 
               const attack = new Attack(this.scene, this.gridX + 1, this.gridY, "tiles_sprites", "fire_attack");
