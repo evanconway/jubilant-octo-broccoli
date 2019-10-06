@@ -118,7 +118,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     public isTilePassable(tileX: number, tileY: number) {
-        if (tileX < 0 || tileX > this.tileMap.width || tileY < 0 || tileY > this.tileMap.height) {
+        if (tileX < 0 || tileX >= this.tileMap.width || tileY < 0 || tileY >= this.tileMap.height) {
             return false;
         }
         if (this.getSpritePropertyAtLocation(tileX, tileY, "collision")) {
