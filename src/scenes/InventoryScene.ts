@@ -135,8 +135,10 @@ export default class InventoryScene extends Phaser.Scene {
                 this.lists[i][k].x = this.arraysX + (LETTER_SIZE * k) + LETTER_SIZE/2; // add half of letter size because sprite origin is center, center
                 this.lists[i][k].y = this.listY[i] + LETTER_SIZE;
             }
-        }
-    }
+
+    // Ellery's first code:
+        }//  >? om mki 
+    } // v  '/ ' 
 
     /*
     This function removes the given letter from lists, but only if it is NOT the element 
