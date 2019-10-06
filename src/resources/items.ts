@@ -9,7 +9,8 @@ class Sword extends Item {
 }
 
 export const AllItems: Map<string, Item> = new Map<string, Item>([
-    ["sword", new Sword()]
+    ["sword", new Sword()],
+    ["nog", new Sword()]
 ]);
 
 export const isValidItem = (word: string): boolean => {
