@@ -1,6 +1,7 @@
 import { GAME_WORLD_TILE_HEIGHT, GAME_WORLD_TILE_WIDTH } from "../constants"
 import { Properties, BaseActor } from "../resources/actors";
 import GameScene from "../scenes/GameScene";
+import { Attack } from "./Attack"; 
 
 
 class EnemyActor extends BaseActor {
@@ -15,30 +16,33 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     private actor: EnemyActor;
     private spriteState: EnemySpriteState;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, key: string) {
+    private gameScene: GameScene;
+
+    constructor(scene: GameScene, x: number, y: number, key: string) {
         super(scene, x, y, key);
         this.actor = new EnemyActor();
         this.spriteState = EnemySpriteState.FACE_DOWN;
         this.updateOrientation();
         this.setOrigin(0, 0);
+        this.gameScene = scene;
     }
 
     private updateOrientation() {
         this.setFlip(false, false);
         switch (this.spriteState) {
             case EnemySpriteState.FACE_UP:
-                this.setFrame(2);
+                this.setFrame(24);
                 break;
             case EnemySpriteState.FACE_DOWN:
-                this.setFrame(0);
+                this.setFrame(22);
                 break;
             case EnemySpriteState.FACE_LEFT: {
                 this.setFlip(true, false);
-                this.setFrame(1);
+                this.setFrame(23);
                 break;
             }
             case EnemySpriteState.FACE_RIGHT:
-                this.setFrame(1);
+                this.setFrame(23);
                 break;
         }
     }
@@ -67,23 +71,35 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         this.updateOrientation()
     }
 
-    public update_position(player: Phaser.GameObjects.Sprite, gameScene: GameScene) {
+    public update_position(player: Phaser.GameObjects.Sprite) {
         const choice = Math.random();
         if (choice < 0.25) {
-            if (gameScene.isTilePassable(this.gridX, this.gridY + 1)) {
+            if (this.gameScene.isTilePassable(this.gridX, this.gridY + 1)) {
                 this.moveDown();
+
+                const attack = new Attack(this.scene, this.gridX, this.gridY + 1, "tiles_sprites", "fire_attack");
+                this.scene.add.existing(attack);
             }
         } else if (choice < 0.5) {
-            if (gameScene.isTilePassable(this.gridX - 1, this.gridY)) {
+            if (this.gameScene.isTilePassable(this.gridX - 1, this.gridY)) {
                 this.moveLeft();
+
+                const attack = new Attack(this.scene, this.gridX - 1, this.gridY, "tiles_sprites", "fire_attack");
+                this.scene.add.existing(attack);
             }
         } else if (choice < 0.75) {
-            if (gameScene.isTilePassable(this.gridX, this.gridY - 1)) {
+            if (this.gameScene.isTilePassable(this.gridX, this.gridY - 1)) {
                 this.moveUp();
+
+                const attack = new Attack(this.scene, this.gridX, this.gridY - 1, "tiles_sprites", "fire_attack");
+                this.scene.add.existing(attack);
             }
         } else {
-            if (gameScene.isTilePassable(this.gridX + 1, this.gridY)) {
+            if (this.gameScene.isTilePassable(this.gridX + 1, this.gridY)) {
               this.moveRight();
+
+              const attack = new Attack(this.scene, this.gridX + 1, this.gridY, "tiles_sprites", "fire_attack");
+              this.scene.add.existing(attack);
             }
         }
     }
