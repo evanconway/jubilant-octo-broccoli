@@ -13,10 +13,12 @@ export default class SpriteLoader {
 
         for (let y = 0; y < tileLayer.height; y++) {
             for (let x = 0; x < tileLayer.width; x++) {
-                let currentTileGid = (tileLayer.data as unknown as any)[y][x].index;
-                if (currentTileGid == -1) {
+                let tile = (tileLayer.data as unknown as any)[y][x];
+                if (!tile) {
                     continue;
                 }
+                let currentTileGid = tile.index;
+                console.log(currentTileGid);
                 if (spriteMapping.has(currentTileGid)) {
                     var sprite = scene.make.sprite({
                         x: x * tileSet.tileWidth,

@@ -3,7 +3,7 @@ import ReadoutScene from "./ReadoutScene";
 import { TEXT_AREA_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants";
 import SpriteLoader from '../SpriteLoader';
 import { Enemy } from "../sprites/enemy";
-import { ItemTargetOverlay } from "./itemTargetOverlay"
+import { ItemTargetOverlay } from "./itemTargetOverlay";
 
 export default class GameScene extends Phaser.Scene {
     private player: Player;
@@ -44,29 +44,26 @@ export default class GameScene extends Phaser.Scene {
         this.cursorKeys = this.input.keyboard.createCursorKeys();
         this.itemModeKey = this.input.keyboard.addKey("Z");
 
-        this.tileMap = this.make.tilemap({ key: 'level_1' });
-        const tileset: Phaser.Tilemaps.Tileset = this.tileMap.addTilesetImage('tiles', 'tiles');
+        this.asyncLoadTilemap().then(() => {
+            const level1SpriteMap = new Map<number, any>([
+                [16, { key: "tiles_sprites", frame: 15 }]
+            ]);
 
-        this.tileMap.createStaticLayer("Map", tileset, 0, 0);
-
-        const level1SpriteMap = new Map<number, any>([
-            [16, { key: "tiles_sprites", frame: 15 }]
-        ]);
-        
-        const sprites: Map<number, Phaser.GameObjects.Sprite[]> = SpriteLoader.createSpritesFromTileset(
-            level1SpriteMap,
-            this,
-            this.tileMap.getLayer("Objects"),
-            tileset
-        );
-        for (let spritesOfType of sprites.values()) {
-            for(let sprite of spritesOfType) {
-                this.levelSprites.push(sprite);
+            const sprites: Map<number, Phaser.GameObjects.Sprite[]> = SpriteLoader.createSpritesFromTileset(
+                level1SpriteMap,
+                this,
+                this.tileMap.getLayer("Objects"),
+                this.tileMap.getTileset("tiles")
+            );
+            for (let spritesOfType of sprites.values()) {
+                for(let sprite of spritesOfType) {
+                    this.levelSprites.push(sprite);
+                }
             }
-        }
 
-        this.cameras.main.setBounds(0, 0, this.tileMap.widthInPixels, this.tileMap.heightInPixels);
-        this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
+            this.cameras.main.setBounds(0, 0, this.tileMap.widthInPixels, this.tileMap.heightInPixels);
+            this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
+        });
 
         this.player = new Player(this, 96, 96, "hero_sprite");
         this.player.setOrigin(0, 0);
@@ -82,6 +79,21 @@ export default class GameScene extends Phaser.Scene {
         this.readoutScene = this.scene.get("readout") as ReadoutScene;
 
         this.itemTargetChoicesOverlay = new ItemTargetOverlay(this);
+    }
+
+    private async asyncLoadTilemap(){
+        let config = await fetch('assets/tiles.json').then(r => r.json());
+        let mapDataJson = await fetch('assets/level_1.json').then(r => r.json());
+        config.firstgid = 0;
+        mapDataJson.tilesets = [config];
+        let mapData: Phaser.Tilemaps.MapData = Phaser.Tilemaps.Parsers.Tiled.ParseJSONTiled(
+            "tiles",
+            mapDataJson,
+            true
+        );
+        this.tileMap = new Phaser.Tilemaps.Tilemap(this, mapData);
+        this.tileMap.addTilesetImage('tiles', 'tiles');
+        this.tileMap.createStaticLayer("Map", this.tileMap.getTileset("tiles"), 0, 0);
     }
 
     public write(text: string) {
