@@ -4,6 +4,7 @@ import { TEXT_AREA_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } fr
 import SpriteLoader from '../SpriteLoader';
 import { Enemy } from "../sprites/enemy";
 import { ItemTargetOverlay } from "./itemTargetOverlay"
+import { Attack } from "../sprites/Attack";
 
 export default class GameScene extends Phaser.Scene {
     private player: Player;
@@ -30,9 +31,6 @@ export default class GameScene extends Phaser.Scene {
         });
         this.load.tilemapTiledJSON("level_1", "../assets/level_1.json");
         this.load.tilemapTiledJSON("level_2", "../assets/level_2.json");
-        this.load.spritesheet("hero_sprite", "../assets/hero_sprite.png", {
-            frameWidth: 32, frameHeight: 32
-        });
     }
 
     public create() {
@@ -62,12 +60,12 @@ export default class GameScene extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, this.tileMap.widthInPixels, this.tileMap.heightInPixels);
         this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
 
-        this.player = new Player(this, 96, 96, "hero_sprite");
+        this.player = new Player(this, 96, 96, "tiles_sprites");
         this.player.setOrigin(0, 0);
 
         this.add.existing(this.player);
 
-        this.enemy = new Enemy(this, 192, 192, "hero_sprite")
+        this.enemy = new Enemy(this, 192, 192, "tiles_sprites")
         this.add.existing(this.enemy);
 
         // Apparently you can't just instanciate it 🤦‍
@@ -153,12 +151,14 @@ export default class GameScene extends Phaser.Scene {
             this.handleItemInput();
         } else {
           if (this.handleMoveInput()) {
-              this.enemy.update_position(this.player, this);
+              this.enemy.update_position(this.player);
           }
         }
     }
 
     public update(time: number, delta: number) {
+        super.update(time, delta);
+
         if (Phaser.Input.Keyboard.JustDown(this.inventoryKey)) {
             this.scene.switch("inventory");
             let superlative = ["good job", "lol", "nice", "great", "super", "stellar"][(Math.random() * 6) | 0]

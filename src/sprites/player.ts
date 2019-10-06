@@ -34,18 +34,18 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.setFlip(false, false);
       switch (this.spriteState) {
         case PlayerSpriteState.FACE_UP:
-          this.setFrame(2);
+          this.setFrame(24);
           break;
         case PlayerSpriteState.FACE_DOWN:
-          this.setFrame(0);
+          this.setFrame(22);
           break;
         case PlayerSpriteState.FACE_LEFT: {
           this.setFlip(true, false);
-          this.setFrame(1);
+          this.setFrame(23);
           break;
         }
         case PlayerSpriteState.FACE_RIGHT:
-          this.setFrame(1);
+          this.setFrame(23);
           break;
       }
     }
