@@ -1,9 +1,12 @@
 import LetterTile from "../LetterTile";
 import { GameObjects } from "phaser";
 import { get_item } from "../resources/index";
+import { Item } from "../resources/items";
 
 const LETTER_SIZE: number = 42; // slightly bigger than sprite width
-const HIGHLIGHT_ALPHA: number = 0.3;
+const HIGHLIGHT_ALPHA: number = 1;
+const HIGHLIGHT_RED: number = 0x880000;
+const HIGHLIGHT_GREEN: number = 0x008800;
 enum LIST {
     INVENTORY,
     ITEM,
@@ -43,7 +46,8 @@ export default class InventoryScene extends Phaser.Scene {
 
         for (let i = 0, count = 0, dist = 3; i < LIST.SIZE; i++, count += dist) {
             this.listY.push(yStart + (LETTER_SIZE * count));
-            this.highlights.push(new Phaser.GameObjects.Rectangle(this, this.arraysX, this.listY[i] + LETTER_SIZE, 0, LETTER_SIZE, 0x00ff00, 0.5));
+            this.highlights.push(new Phaser.GameObjects.Rectangle(this, this.arraysX, this.listY[i] + LETTER_SIZE, 0, LETTER_SIZE));
+            this.highlights[i].depth -= 1;
             this.add.existing(this.highlights[i]);
         }
 
@@ -166,6 +170,7 @@ export default class InventoryScene extends Phaser.Scene {
         }
     }
 
+    // This is very innefficient. Clean up later.
     private isValid(name: string): boolean {
         return get_item(name) != null;
     }
@@ -177,9 +182,9 @@ export default class InventoryScene extends Phaser.Scene {
             let valid: boolean = this.isValid(checkString);
             this.highlights[i].width = checkString.length * LETTER_SIZE;
             if (valid) {
-                this.highlights[i].setFillStyle(0x00ff00, HIGHLIGHT_ALPHA);
+                this.highlights[i].setFillStyle(HIGHLIGHT_GREEN, HIGHLIGHT_ALPHA);
             } else {
-                this.highlights[i].setFillStyle(0xff0000, HIGHLIGHT_ALPHA);
+                this.highlights[i].setFillStyle(HIGHLIGHT_RED, HIGHLIGHT_ALPHA);
             }
         }
     }
@@ -220,6 +225,16 @@ export default class InventoryScene extends Phaser.Scene {
         let result: string = "";
         for (let i = 0; i < this.lists[LIST.SPELL].length; i++) {
             result += this.lists[LIST.SPELL][i].getLetter();
+        }
+        return result;
+    }
+
+    // This returns a brand new item if it is valid.
+    // Make more efficient later...
+    public getItem(): Item {
+        let result: Item = null;
+        if (this.isValid(this.getItemString())) {
+            result = get_item(this.getItemString());
         }
         return result;
     }

@@ -1,10 +1,15 @@
 import { Player } from "../sprites/player";
 import ReadoutScene from "./ReadoutScene";
 import { TEXT_AREA_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants";
+<<<<<<< HEAD
 import SpriteLoader from '../SpriteLoader';
+=======
+import { Enemy } from "../sprites/enemy";
+>>>>>>> 86885ea06a973adac98d97023bd0650746a85b36
 
 export default class GameScene extends Phaser.Scene {
-    private player: Player
+    private player: Player;
+    private enemy: Enemy;
     // enemies/ creatures
     // worldGrid
 
@@ -55,9 +60,13 @@ export default class GameScene extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, this.tileMap.widthInPixels, this.tileMap.heightInPixels);
         this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
 
-        this.player = new Player(this, 108, 108, "hero_sprite");
+        this.player = new Player(this, 96, 96, "hero_sprite");
+        this.player.setOrigin(0, 0);
 
         this.add.existing(this.player);
+
+        this.enemy = new Enemy(this, 192, 192, "hero_sprite")
+        this.add.existing(this.enemy);
 
         // Apparently you can't just instanciate it 🤦‍
         // Also you can't write to the readout scene here, wait until next event loop
@@ -81,9 +90,10 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private movePlayer(): boolean {
-        const playerTileX = Math.round(this.player.x / GAME_WORLD_TILE_WIDTH);
-        const playerTileY = Math.round(this.player.y / GAME_WORLD_TILE_HEIGHT);
+        const playerTileX = this.player.gridX;
+        const playerTileY = this.player.gridY;
         if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
+            console.log(playerTileX, playerTileY);
             if (this.playerCanMove(playerTileX, playerTileY - 1)) {
                 this.player.moveUp();
                 return true;
@@ -119,6 +129,8 @@ export default class GameScene extends Phaser.Scene {
         if (this.exampleActive) this.exampleText.setAlpha(1);
         else this.exampleText.setAlpha(0);
 
-        this.movePlayer();
+        if (this.movePlayer()) {
+            this.enemy.update(this.player);
+        }
     }
 }
