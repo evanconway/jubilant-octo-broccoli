@@ -23,7 +23,6 @@ export default class InventoryScene extends Phaser.Scene {
     private listY: Array<number> = new Array<number>();
     private arraysX: number;
 
-
     constructor() {
         super({
             key: "inventory"
@@ -59,7 +58,6 @@ export default class InventoryScene extends Phaser.Scene {
         });
 
         this.input.on('dragend', (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Sprite) => {
-            //debugger;
             // determine index of list the letter was dragged to.
             let listIndex = LIST.SPELL; // for spell list.
             if (gameObject.y <= this.listY[LIST.SPELL]) listIndex = LIST.SKILL;
@@ -82,7 +80,10 @@ export default class InventoryScene extends Phaser.Scene {
                 }
             }
             if (insertIndex >= 0) this.lists[listIndex].splice(insertIndex, 0, gameObject as LetterTile);
-            else this.lists[listIndex].push(gameObject as LetterTile);
+            else {
+                this.lists[listIndex].push(gameObject as LetterTile);
+                insertIndex = this.lists[listIndex].length - 1;
+            }
             /*
             Now that we have added the dragged letter to the correct list and position, we need to remove it 
             from it's previous place.
