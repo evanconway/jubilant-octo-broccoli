@@ -135,9 +135,9 @@ export class Enemy extends GameSprite {
             }
             this.move(weightedDirection.dx, weightedDirection.dy, weightedDirection.dir);
             moved = true;
-            break;
             const attack = new Attack(this.scene, this.gridX, this.gridY + 1, "tiles_sprites", "fire_attack");
             this.scene.add.existing(attack);
+            break;
         }
     }
 
