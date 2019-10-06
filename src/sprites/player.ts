@@ -18,6 +18,8 @@ export class Player extends Phaser.GameObjects.Sprite {
         this.actor = new PlayerActor();
         this.spriteState = PlayerSpriteState.FACE_DOWN;
         this.updateOrientation();
+
+        this.setOrigin(0, 0);
     }
 
     private updateOrientation() {

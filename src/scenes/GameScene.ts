@@ -1,9 +1,11 @@
 import { Player } from "../sprites/player";
 import ReadoutScene from "./ReadoutScene";
 import { TEXT_AREA_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants";
+import { Enemy } from "../sprites/enemy";
 
 export default class GameScene extends Phaser.Scene {
-    private player: Player
+    private player: Player;
+    private enemy: Enemy;
     // enemies/ creatures
     // worldGrid
 
@@ -48,8 +50,10 @@ export default class GameScene extends Phaser.Scene {
         this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
 
         this.player = new Player(this, 108, 108, "hero_sprite");
-
         this.add.existing(this.player);
+
+        this.enemy = new Enemy(this, 232, 232, "hero_sprite")
+        this.add.existing(this.enemy);
 
         // Apparently you can't just instanciate it 🤦‍
         // Also you can't write to the readout scene here, wait until next event loop
@@ -109,6 +113,8 @@ export default class GameScene extends Phaser.Scene {
         if (this.exampleActive) this.exampleText.setAlpha(1);
         else this.exampleText.setAlpha(0);
 
-        this.movePlayer();
+        if (this.movePlayer()) {
+            this.enemy.update(this.player);
+        }
     }
 }
