@@ -16,12 +16,15 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     private actor: EnemyActor;
     private spriteState: EnemySpriteState;
 
+    private startFrame: number;
+
     private gameScene: GameScene;
 
-    constructor(scene: GameScene, x: number, y: number, key: string) {
+    constructor(scene: GameScene, x: number, y: number, key: string, startFrame: number) {
         super(scene, x, y, key);
         this.actor = new EnemyActor();
         this.spriteState = EnemySpriteState.FACE_DOWN;
+        this.startFrame = startFrame;
         this.updateOrientation();
         this.setOrigin(0, 0);
         this.gameScene = scene;
@@ -31,20 +34,25 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         this.setFlip(false, false);
         switch (this.spriteState) {
             case EnemySpriteState.FACE_UP:
-                this.setFrame(24);
+                this.setFrameRelative(2);
                 break;
             case EnemySpriteState.FACE_DOWN:
-                this.setFrame(22);
+                this.setFrameRelative(0);
                 break;
             case EnemySpriteState.FACE_LEFT: {
                 this.setFlip(true, false);
-                this.setFrame(23);
+                this.setFrameRelative(1);
                 break;
             }
             case EnemySpriteState.FACE_RIGHT:
-                this.setFrame(23);
+                this.setFrameRelative(1);
                 break;
         }
+    }
+
+    // Override
+    private setFrameRelative (frame: number): void{
+        super.setFrame(frame + this.startFrame);
     }
 
     moveRight() {

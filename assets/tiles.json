@@ -78,7 +78,7 @@
                 {
                  "name":"collision",
                  "type":"bool",
-                 "value":false
+                 "value":true
                 }, 
                 {
                  "name":"open_with_key",

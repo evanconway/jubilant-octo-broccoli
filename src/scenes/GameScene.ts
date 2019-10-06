@@ -3,12 +3,13 @@ import ReadoutScene from "./ReadoutScene";
 import { TEXT_AREA_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants";
 import SpriteLoader from '../SpriteLoader';
 import { Enemy } from "../sprites/enemy";
+import { Gate } from "../sprites/Gate";
 import { ItemTargetOverlay } from "./itemTargetOverlay";
 import { Attack } from "../sprites/Attack";
 
 export default class GameScene extends Phaser.Scene {
     private player: Player;
-    private enemy: Enemy;
+    private enemies: Enemy[];
     
     private isFullyLoaded: boolean = false;
 
@@ -43,7 +44,9 @@ export default class GameScene extends Phaser.Scene {
 
         this.asyncLoadTilemap().then(() => {
             const level1SpriteMap = new Map<number, any>([
-                [16, { key: "tiles_sprites", frame: 15 }]
+                [16, Gate],
+                [23, Player],
+                [26, Enemy],
             ]);
 
             const sprites: Map<number, Phaser.GameObjects.Sprite[]> = SpriteLoader.createSpritesFromTileset(
@@ -61,13 +64,13 @@ export default class GameScene extends Phaser.Scene {
             this.cameras.main.setBounds(0, 0, this.tileMap.widthInPixels, this.tileMap.heightInPixels);
             this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
 
-            this.player = new Player(this, 96, 96, "tiles_sprites");
-            this.player.setOrigin(0, 0);
+            const playerSprites = sprites.get(23);
+            if (playerSprites.length != 1) {
+                throw new Error(`Found ${playerSprites.length} player sprites!`);
+            }
+            this.player = playerSprites[0] as Player;
 
-            this.add.existing(this.player);
-
-            this.enemy = new Enemy(this, 192, 192, "tiles_sprites")
-            this.add.existing(this.enemy);
+            this.enemies = sprites.get(26) as Enemy[];
 
             // Apparently you can't just instanciate it 🤦‍
             // Also you can't write to the readout scene here, wait until next event loop
@@ -188,7 +191,9 @@ export default class GameScene extends Phaser.Scene {
             this.handleItemInput();
         } else {
             if (this.handleMoveInput()) {
-                this.enemy.update_position(this.player);
+                for (let enemy of this.enemies) {
+                    enemy.update_position(this.player);
+                }
             }
         }
     }

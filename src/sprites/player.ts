@@ -18,34 +18,40 @@ export class Player extends Phaser.GameObjects.Sprite {
     private spriteState: PlayerSpriteState;
     private _actionState: PlayerActionState;
     private inventoryScene: InventoryScene;
+    private startFrame: number;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, key: string) {
+    constructor(scene: Phaser.Scene, x: number, y: number, key: string, startFrame: number) {
         super(scene, x, y, key);
 
         this.inventoryScene = this.scene.scene.get("inventory") as InventoryScene;
 
         this.actor = new PlayerActor();
         this.spriteState = PlayerSpriteState.FACE_DOWN;
+        this.startFrame = startFrame;
         this.updateOrientation();
         this.setOrigin(0, 0);
+    }
+
+    private setFrameRelative(frame: number) {
+      this.setFrame(frame + this.startFrame);
     }
 
     private updateOrientation() {
       this.setFlip(false, false);
       switch (this.spriteState) {
         case PlayerSpriteState.FACE_UP:
-          this.setFrame(24);
+          this.setFrameRelative(2);
           break;
         case PlayerSpriteState.FACE_DOWN:
-          this.setFrame(22);
+          this.setFrameRelative(0);
           break;
         case PlayerSpriteState.FACE_LEFT: {
           this.setFlip(true, false);
-          this.setFrame(23);
+          this.setFrameRelative(1);
           break;
         }
         case PlayerSpriteState.FACE_RIGHT:
-          this.setFrame(23);
+          this.setFrameRelative(1);
           break;
       }
     }

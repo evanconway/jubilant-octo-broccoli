@@ -38,7 +38,7 @@
  </tile>
  <tile id="15">
   <properties>
-   <property name="collision" type="bool" value="false"/>
+   <property name="collision" type="bool" value="true"/>
    <property name="open_with_key" type="bool" value="true"/>
    <property name="passable_if_thin" type="bool" value="true"/>
   </properties>
