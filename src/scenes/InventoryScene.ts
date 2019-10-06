@@ -158,4 +158,36 @@ export default class InventoryScene extends Phaser.Scene {
             if (removed) i = this.lists.length;
         }
     }
+
+    public getInventoryString(): string {
+        let result: string = "";
+        for (let i = 0; i < this.lists[LIST.INVENTORY].length; i++) {
+            result += this.lists[LIST.INVENTORY][i].getLetter;
+        }
+        return result;
+    }
+
+    public getItemString(): string {
+        let result: string = "";
+        for (let i = 0; i < this.lists[LIST.ITEM].length; i++) {
+            result += this.lists[LIST.ITEM][i].getLetter;
+        }
+        return result;
+    }
+
+    public getSkillString(): string {
+        let result: string = "";
+        for (let i = 0; i < this.lists[LIST.SKILL].length; i++) {
+            result += this.lists[LIST.SKILL][i].getLetter;
+        }
+        return result;
+    }
+
+    public getSpellString(): string {
+        let result: string = "";
+        for (let i = 0; i < this.lists[LIST.SPELL].length; i++) {
+            result += this.lists[LIST.SPELL][i].getLetter;
+        }
+        return result;
+    }
 }
