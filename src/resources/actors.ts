@@ -1,4 +1,4 @@
-import { Modifier, AllModifiers } from "./modifers"
+import { Modifier, AllModifiers, isValidModifier } from "./modifers"
 import {AllItems, Item} from "./items"
 
 export class Properties {
@@ -53,7 +53,7 @@ function get_token_set(name: string): Set<string> {
 function match<T extends BaseActor>(token_set: Set<string>, my_map: any ): T | null {
     var ret: T = null;   
     for (let token of token_set) {
-        ret = my_map[token];
+        ret = my_map.get(token);
         if (ret) {
             token_set.delete(token);
             return ret;
@@ -66,7 +66,7 @@ function match_mods(token_set: Set<string>): Modifier[] {
     const mods: Modifier[] = [];
     for(let token of token_set)
     {
-        let is_mod = AllModifiers[token];
+        let is_mod = AllModifiers.get(token);
         if (is_mod) {
             mods.push(is_mod)
             token_set.delete(token);
