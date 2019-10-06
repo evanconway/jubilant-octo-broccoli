@@ -30,12 +30,13 @@ export class Attack extends Phaser.GameObjects.Sprite {
     private updateFrame(): void {
         const frame = Math.floor((this.frame_step / ANIMATION_LENGTH)  *  ATTACKS[this.attackKey]["frame_count"])
         const start = ATTACKS[this.attackKey]["start_frame"]
-        this.setFrame(start + frame);
+        const abs_frame = start + frame;
+        this.setFrame(abs_frame);
     }
 
     public preUpdate(time: number, delta: number): void {
         super.preUpdate(time, delta);
-        if (this.frame_step > ANIMATION_LENGTH) {
+        if (this.frame_step >= ANIMATION_LENGTH) {
             this.destroy();
             return;
         }
