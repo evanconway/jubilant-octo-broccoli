@@ -1,6 +1,7 @@
 import { Player } from "../sprites/player";
 import ReadoutScene from "./ReadoutScene";
 import { TEXT_AREA_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants";
+import SpriteLoader from '../SpriteLoader';
 
 export default class GameScene extends Phaser.Scene {
     private player: Player
@@ -23,7 +24,7 @@ export default class GameScene extends Phaser.Scene {
 
     public preload() {
         this.load.image("tiles", "../assets/tiles.png");
-        this.load.image("gate", "../assets/gate.png");
+        this.load.spritesheet("tiles_sprites", "../assets/tiles.png");
         this.load.tilemapTiledJSON("level_1", "../assets/level_1.json");
         this.load.tilemapTiledJSON("level_2", "../assets/level_2.json");
         this.load.spritesheet("hero_sprite", "../assets/hero_sprite.png", {
@@ -42,7 +43,14 @@ export default class GameScene extends Phaser.Scene {
 
         this.tileMap.createStaticLayer("Map", tileset, 0, 0);
 
-        this.tileMap.createFromObjects("Objects", 2, { key: "gate" });
+        // const level1SpriteMap = new Map<number, any>([
+        //     [16, {key: "tiles_sprites", frame: 15}]
+        // ]);
+        // SpriteLoader.createSpritesFromTileset(
+        //     level1SpriteMap,
+        //     this,
+        //     this.
+        // );
 
         this.cameras.main.setBounds(0, 0, this.tileMap.widthInPixels, this.tileMap.heightInPixels);
         this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
