@@ -1,6 +1,7 @@
 import LetterTile from "../LetterTile";
 import { GameObjects } from "phaser";
 import { get_item } from "../resources/index";
+import { Item } from "../resources/items";
 
 const LETTER_SIZE: number = 42; // slightly bigger than sprite width
 const HIGHLIGHT_ALPHA: number = 1;
@@ -169,6 +170,7 @@ export default class InventoryScene extends Phaser.Scene {
         }
     }
 
+    // This is very innefficient. Clean up later.
     private isValid(name: string): boolean {
         return get_item(name) != null;
     }
@@ -223,6 +225,16 @@ export default class InventoryScene extends Phaser.Scene {
         let result: string = "";
         for (let i = 0; i < this.lists[LIST.SPELL].length; i++) {
             result += this.lists[LIST.SPELL][i].getLetter();
+        }
+        return result;
+    }
+
+    // This returns a brand new item if it is valid.
+    // Make more efficient later...
+    public getItem(): Item {
+        let result: Item = null;
+        if (this.isValid(this.getItemString())) {
+            result = get_item(this.getItemString());
         }
         return result;
     }
