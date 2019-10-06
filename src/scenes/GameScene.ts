@@ -27,6 +27,9 @@ export default class GameScene extends Phaser.Scene {
         this.load.image("gate", "../assets/gate.png");
         this.load.tilemapTiledJSON("level_1", "../assets/level_1.json");
         this.load.tilemapTiledJSON("level_2", "../assets/level_2.json");
+        this.load.spritesheet("hero_sprite", "../assets/hero_sprite_2.png", {
+          frameWidth: 32, frameHeight: 32
+        });
     }
 
     public create() {
@@ -55,7 +58,7 @@ export default class GameScene extends Phaser.Scene {
             speed: 0.5
         });
 
-        this.player = new Player(this, 100, 100, '')
+        this.player = new Player(this, 108, 108, "hero_sprite");
 
         this.add.existing(this.player);
 
