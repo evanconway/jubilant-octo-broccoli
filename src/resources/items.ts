@@ -14,4 +14,4 @@ export const AllItems: Map<string, Item> = new Map<string, Item>([
 
 export const isValidItem = (word: string): boolean => {
     return AllItems.has(word);
-} 
+}
