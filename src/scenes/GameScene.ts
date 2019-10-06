@@ -9,7 +9,8 @@ import { Attack } from "../sprites/Attack";
 export default class GameScene extends Phaser.Scene {
     private player: Player;
     private enemy: Enemy;
-    // enemies/ creatures
+    
+    private isFullyLoaded: boolean = false;
 
     private exampleText: Phaser.GameObjects.Text;
     private exampleActive: boolean = true;
@@ -31,8 +32,6 @@ export default class GameScene extends Phaser.Scene {
         this.load.spritesheet("tiles_sprites", "../assets/tiles.png", {
             frameWidth: 32, frameHeight: 32
         });
-        this.load.tilemapTiledJSON("level_1", "../assets/level_1.json");
-        this.load.tilemapTiledJSON("level_2", "../assets/level_2.json");
     }
 
     public create() {
@@ -54,35 +53,37 @@ export default class GameScene extends Phaser.Scene {
                 this.tileMap.getTileset("tiles")
             );
             for (let spritesOfType of sprites.values()) {
-                for(let sprite of spritesOfType) {
+                for (let sprite of spritesOfType) {
                     this.levelSprites.push(sprite);
                 }
             }
 
             this.cameras.main.setBounds(0, 0, this.tileMap.widthInPixels, this.tileMap.heightInPixels);
             this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
+
+            this.player = new Player(this, 96, 96, "tiles_sprites");
+            this.player.setOrigin(0, 0);
+
+            this.add.existing(this.player);
+
+            this.enemy = new Enemy(this, 192, 192, "tiles_sprites")
+            this.add.existing(this.enemy);
+
+            // Apparently you can't just instanciate it 🤦‍
+            // Also you can't write to the readout scene here, wait until next event loop
+            this.scene.launch("readout");
+            this.readoutScene = this.scene.get("readout") as ReadoutScene;
+
+            this.itemTargetChoicesOverlay = new ItemTargetOverlay(this);
+
+            this.isFullyLoaded = true;
         });
-
-        this.player = new Player(this, 96, 96, "tiles_sprites");
-        this.player.setOrigin(0, 0);
-
-        this.add.existing(this.player);
-
-        this.enemy = new Enemy(this, 192, 192, "tiles_sprites")
-        this.add.existing(this.enemy);
-
-        // Apparently you can't just instanciate it 🤦‍
-        // Also you can't write to the readout scene here, wait until next event loop
-        this.scene.launch("readout");
-        this.readoutScene = this.scene.get("readout") as ReadoutScene;
-
-        this.itemTargetChoicesOverlay = new ItemTargetOverlay(this);
     }
 
-    private async asyncLoadTilemap(){
+    private async asyncLoadTilemap() {
         let config = await fetch('assets/tiles.json').then(r => r.json());
         let mapDataJson = await fetch('assets/level_1.json').then(r => r.json());
-        config.firstgid = 0;
+        config.firstgid = 1;
         mapDataJson.tilesets = [config];
         let mapData: Phaser.Tilemaps.MapData = Phaser.Tilemaps.Parsers.Tiled.ParseJSONTiled(
             "tiles",
@@ -104,9 +105,9 @@ export default class GameScene extends Phaser.Scene {
 
     private getSpritePropertyAtLocation(tileX: number, tileY: number, property: string): any {
         // This is terrible
-        for(let sprite of this.levelSprites) {
+        for (let sprite of this.levelSprites) {
             if (Math.round(sprite.x / GAME_WORLD_TILE_WIDTH) == tileX
-            && Math.round(sprite.y / GAME_WORLD_TILE_HEIGHT) == tileY) {
+                && Math.round(sprite.y / GAME_WORLD_TILE_HEIGHT) == tileY) {
                 return sprite.getData(property);
             }
         }
@@ -123,7 +124,7 @@ export default class GameScene extends Phaser.Scene {
         return !(this.getTileProperty(tileX, tileY, "collision"));
     }
 
-    public isTilePassableForPlayer(tileX: number, tileY:number) {
+    public isTilePassableForPlayer(tileX: number, tileY: number) {
         return this.isTilePassable(tileX, tileY);
     }
 
@@ -161,21 +162,21 @@ export default class GameScene extends Phaser.Scene {
         const playerTileY = this.player.gridY;
 
         if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
-          this.player.exitItemMode();
-          this.player.faceUp();
+            this.player.exitItemMode();
+            this.player.faceUp();
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
-          this.player.exitItemMode();
-          this.player.faceDown();
+            this.player.exitItemMode();
+            this.player.faceDown();
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
-          this.player.exitItemMode();
-          this.player.faceLeft();
+            this.player.exitItemMode();
+            this.player.faceLeft();
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
-          this.player.exitItemMode();
-          this.player.faceRight();
+            this.player.exitItemMode();
+            this.player.faceRight();
         }
 
-        if(!this.player.isUsingItem()) {
-          this.itemTargetChoicesOverlay.clear();
+        if (!this.player.isUsingItem()) {
+            this.itemTargetChoicesOverlay.clear();
         }
     }
 
@@ -183,16 +184,19 @@ export default class GameScene extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(this.itemModeKey) && !this.player.isUsingItem()) {
             this.player.enterItemMode();
             this.itemTargetChoicesOverlay.render(this.player);
-        } else if(this.player.isUsingItem()) {
+        } else if (this.player.isUsingItem()) {
             this.handleItemInput();
         } else {
-          if (this.handleMoveInput()) {
-              this.enemy.update_position(this.player);
-          }
+            if (this.handleMoveInput()) {
+                this.enemy.update_position(this.player);
+            }
         }
     }
 
     public update(time: number, delta: number) {
+        if (!this.isFullyLoaded) {
+            return;
+        }
         super.update(time, delta);
 
         if (Phaser.Input.Keyboard.JustDown(this.inventoryKey)) {
