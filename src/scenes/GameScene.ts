@@ -25,7 +25,7 @@ export default class GameScene extends Phaser.Scene {
         this.load.image("gate", "../assets/gate.png");
         this.load.tilemapTiledJSON("level_1", "../assets/level_1.json");
         this.load.tilemapTiledJSON("level_2", "../assets/level_2.json");
-        this.load.spritesheet("hero_sprite", "../assets/hero_sprite_2.png", {
+        this.load.spritesheet("hero_sprite", "../assets/hero_sprite.png", {
           frameWidth: 32, frameHeight: 32
         });
     }
