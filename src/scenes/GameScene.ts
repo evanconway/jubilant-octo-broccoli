@@ -3,25 +3,24 @@ import ReadoutScene from "./ReadoutScene";
 import { TEXT_AREA_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants";
 import SpriteLoader from '../SpriteLoader';
 import { Enemy } from "../sprites/enemy";
+import { ItemTargetOverlay } from "./itemTargetOverlay"
 
 export default class GameScene extends Phaser.Scene {
     private player: Player;
     private enemy: Enemy;
     // enemies/ creatures
-    // worldGrid
-
 
     private exampleText: Phaser.GameObjects.Text;
     private exampleActive: boolean = true;
     private inventoryKey: Phaser.Input.Keyboard.Key;
+    private itemModeKey: Phaser.Input.Keyboard.Key;
     private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
     private readoutScene: ReadoutScene;
     private tileMap: Phaser.Tilemaps.Tilemap;
+    private itemTargetChoicesOverlay: ItemTargetOverlay;
 
     constructor() {
-        super({
-            key: "game"
-        })
+        super({ key: "game" })
     }
 
     public preload() {
@@ -41,6 +40,7 @@ export default class GameScene extends Phaser.Scene {
         this.game.input.mouse.capture = true;
         this.inventoryKey = this.input.keyboard.addKey("I");
         this.cursorKeys = this.input.keyboard.createCursorKeys();
+        this.itemModeKey = this.input.keyboard.addKey("Z");
 
         this.tileMap = this.make.tilemap({ key: 'level_1' });
         const tileset: Phaser.Tilemaps.Tileset = this.tileMap.addTilesetImage('tiles', 'tiles');
@@ -74,6 +74,8 @@ export default class GameScene extends Phaser.Scene {
         // Also you can't write to the readout scene here, wait until next event loop
         this.scene.launch("readout");
         this.readoutScene = this.scene.get("readout") as ReadoutScene;
+
+        this.itemTargetChoicesOverlay = new ItemTargetOverlay(this);
     }
 
     public write(text: string) {
@@ -84,18 +86,18 @@ export default class GameScene extends Phaser.Scene {
         return (this.tileMap.getTileAt(tileX, tileY).properties as any)[property];
     }
 
-    private playerCanMove(playerTileX: number, playerTileY: number) {
+    public playerCanMove(playerTileX: number, playerTileY: number) {
         if (playerTileX < 0 || playerTileX > this.tileMap.width || playerTileY < 0 || playerTileY > this.tileMap.height) {
             return false;
         }
         return !(this.getTileProperty(playerTileX, playerTileY, "collision"));
     }
 
-    private movePlayer(): boolean {
+    private handleMoveInput(): boolean {
         const playerTileX = this.player.gridX;
         const playerTileY = this.player.gridY;
+
         if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
-            console.log(playerTileX, playerTileY);
             if (this.playerCanMove(playerTileX, playerTileY - 1)) {
                 this.player.moveUp();
                 return true;
@@ -116,7 +118,44 @@ export default class GameScene extends Phaser.Scene {
                 return true;
             }
         }
+
         return false;
+    }
+
+    private handleItemInput(): void {
+        const playerTileX = this.player.gridX;
+        const playerTileY = this.player.gridY;
+
+        if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
+          this.player.exitItemMode();
+          this.player.faceUp();
+        } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
+          this.player.exitItemMode();
+          this.player.faceDown();
+        } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
+          this.player.exitItemMode();
+          this.player.faceLeft();
+        } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
+          this.player.exitItemMode();
+          this.player.faceRight();
+        }
+
+        if(!this.player.isUsingItem()) {
+          this.itemTargetChoicesOverlay.clear();
+        }
+    }
+
+    private handleKeyboardInputs() {
+        if (Phaser.Input.Keyboard.JustDown(this.itemModeKey) && !this.player.isUsingItem()) {
+            this.player.enterItemMode();
+            this.itemTargetChoicesOverlay.render(this.player);
+        } else if(this.player.isUsingItem()) {
+            this.handleItemInput();
+        } else {
+          if (this.handleMoveInput()) {
+              this.enemy.update_position(this.player, this);
+          }
+        }
     }
 
     public update(time: number, delta: number) {
@@ -131,8 +170,6 @@ export default class GameScene extends Phaser.Scene {
         if (this.exampleActive) this.exampleText.setAlpha(1);
         else this.exampleText.setAlpha(0);
 
-        if (this.movePlayer()) {
-            this.enemy.update(this.player);
-        }
+        this.handleKeyboardInputs();
     }
 }
