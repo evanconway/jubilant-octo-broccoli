@@ -8,12 +8,10 @@ export default class GameScene extends Phaser.Scene {
     // worldGrid
 
 
-    private square: Phaser.GameObjects.Rectangle;
     private exampleText: Phaser.GameObjects.Text;
     private exampleActive: boolean = true;
     private inventoryKey: Phaser.Input.Keyboard.Key;
     private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
-    private cameraControls: Phaser.Cameras.Controls.FixedKeyControl;
     private readoutScene: ReadoutScene;
 
     constructor() {
@@ -33,7 +31,6 @@ export default class GameScene extends Phaser.Scene {
     }
 
     public create() {
-        this.square = this.add.rectangle(400, 400, 100, 100, 0xFFFFFF);
         this.exampleText = this.add.text(10, 10, "Hi Everybody", { font: '16px Courier', fill: '#00ff00' });
         this.game.input.mouse.capture = true;
         this.inventoryKey = this.input.keyboard.addKey("I");
@@ -41,22 +38,13 @@ export default class GameScene extends Phaser.Scene {
 
         const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'level_1' });
         const tileset: Phaser.Tilemaps.Tileset = map.addTilesetImage('tiles', 'tiles');
-        
+
         map.createStaticLayer("Map", tileset, 0, 0);
 
         map.createFromObjects("Objects", 2, { key: "gate" });
 
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
-
-        this.cameraControls = new Phaser.Cameras.Controls.FixedKeyControl({
-            camera: this.cameras.main,
-            left: this.cursorKeys.left,
-            right: this.cursorKeys.right,
-            up: this.cursorKeys.up,
-            down: this.cursorKeys.down,
-            speed: 0.5
-        });
 
         this.player = new Player(this, 108, 108, "hero_sprite");
 
@@ -79,16 +67,20 @@ export default class GameScene extends Phaser.Scene {
             this.write(`Opened Inventory (${superlative})`);
         }
 
-        this.cameraControls.update(delta);
-
         //if (this.input.mouse.onMouseDown()) this.exampleActive = !this.exampleActive;
 
         if (this.exampleActive) this.exampleText.setAlpha(1);
         else this.exampleText.setAlpha(0);
 
-        if (this.cursorKeys.up.isDown && !this.cursorKeys.down.isDown) this.square.y -= 10;
-        if (this.cursorKeys.down.isDown && !this.cursorKeys.up.isDown) this.square.y += 10;
-        if (this.cursorKeys.left.isDown && !this.cursorKeys.right.isDown) this.square.x -= 10;
-        if (this.cursorKeys.right.isDown && !this.cursorKeys.left.isDown) this.square.x += 10;
+
+        if(Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
+          this.player.moveUp();
+        } else if(Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
+          this.player.moveDown();
+        } else if(Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
+          this.player.moveLeft();
+        } else if(Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
+          this.player.moveRight();
+        }
     }
 }
