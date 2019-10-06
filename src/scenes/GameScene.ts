@@ -47,7 +47,8 @@ export default class GameScene extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, this.tileMap.widthInPixels, this.tileMap.heightInPixels);
         this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
 
-        this.player = new Player(this, 108, 108, "hero_sprite");
+        this.player = new Player(this, 96, 96, "hero_sprite");
+        this.player.setOrigin(0, 0);
 
         this.add.existing(this.player);
 
@@ -62,36 +63,35 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private getTileProperty(tileX: number, tileY: number, property: string): any {
-        console.log(property, (this.tileMap.getTileAt(tileX, tileY) as any)[property]);
-        return (this.tileMap.getTileAt(tileX, tileY) as any)[property];
+        return (this.tileMap.getTileAt(tileX, tileY).properties as any)[property];
     }
 
     private playerCanMove(playerTileX: number, playerTileY: number) {
-        return !(this.getTileProperty(playerTileX, playerTileY - 1, "collision"));
+        if (playerTileX < 0 || playerTileX > this.tileMap.width || playerTileY < 0 || playerTileY > this.tileMap.height) {
+            return false;
+        }
+        return !(this.getTileProperty(playerTileX, playerTileY, "collision"));
     }
 
     private movePlayer(): boolean {
-        const playerTileX = Math.round(this.player.x / GAME_WORLD_TILE_WIDTH);
-        const playerTileY = Math.round(this.player.y / GAME_WORLD_TILE_HEIGHT);
+        const playerTileX = this.player.gridX;
+        const playerTileY = this.player.gridY;
         if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
+            console.log(playerTileX, playerTileY);
             if (this.playerCanMove(playerTileX, playerTileY - 1)) {
                 this.player.moveUp();
-                return true;
             }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
             if (this.playerCanMove(playerTileX, playerTileY + 1)) {
                 this.player.moveDown();
-                return true;
             }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
             if (this.playerCanMove(playerTileX - 1, playerTileY)) {
                 this.player.moveLeft();
-                return true;
             }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
             if (this.playerCanMove(playerTileX + 1, playerTileY)) {
                 this.player.moveRight();
-                return true;
             }
         }
         return false;
