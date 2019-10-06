@@ -63,4 +63,12 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.spriteState = PlayerSpriteState.FACE_DOWN;
       this.updateOrientation()
     }
+
+    get gridX(): number {
+      return Math.floor(this.x / GAME_WORLD_TILE_WIDTH);
+    }
+
+    get gridY(): number {
+      return Math.floor(this.y / GAME_WORLD_TILE_HEIGHT);
+    }
 }
