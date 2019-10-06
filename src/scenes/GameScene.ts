@@ -26,7 +26,9 @@ export default class GameScene extends Phaser.Scene {
 
     public preload() {
         this.load.image("tiles", "../assets/tiles.png");
-        this.load.spritesheet("tiles_sprites", "../assets/tiles.png");
+        this.load.spritesheet("tiles_sprites", "../assets/tiles.png", {
+            frameWidth: 32, frameHeight: 32
+        });
         this.load.tilemapTiledJSON("level_1", "../assets/level_1.json");
         this.load.tilemapTiledJSON("level_2", "../assets/level_2.json");
         this.load.spritesheet("hero_sprite", "../assets/hero_sprite.png", {
@@ -45,14 +47,16 @@ export default class GameScene extends Phaser.Scene {
 
         this.tileMap.createStaticLayer("Map", tileset, 0, 0);
 
-        // const level1SpriteMap = new Map<number, any>([
-        //     [16, {key: "tiles_sprites", frame: 15}]
-        // ]);
-        // SpriteLoader.createSpritesFromTileset(
-        //     level1SpriteMap,
-        //     this,
-        //     this.
-        // );
+        const level1SpriteMap = new Map<number, any>([
+            [16, { key: "tiles_sprites", frame: 15 }]
+        ]);
+        const sprites: Map<number, Phaser.GameObjects.Sprite[]> = SpriteLoader.createSpritesFromTileset(
+            level1SpriteMap,
+            this,
+            this.tileMap.getLayer("Objects"),
+            tileset
+        );
+        console.log(sprites);
 
         this.cameras.main.setBounds(0, 0, this.tileMap.widthInPixels, this.tileMap.heightInPixels);
         this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
