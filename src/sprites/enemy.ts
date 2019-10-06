@@ -1,7 +1,8 @@
 import { GAME_WORLD_TILE_HEIGHT, GAME_WORLD_TILE_WIDTH } from "../constants"
 import { Properties, BaseActor } from "../resources/actors";
 import GameScene from "../scenes/GameScene";
-import { Attack } from "./Attack"; 
+import { Attack } from "./Attack";
+import { GameSprite } from './GameSprite';
 
 
 class EnemyActor extends BaseActor {
@@ -22,16 +23,17 @@ interface WeightedDirections extends Directions {
   weight: number;
 }
 
-export class Enemy extends Phaser.GameObjects.Sprite {
+export class Enemy extends GameSprite {
     private actor: EnemyActor;
     private spriteState: EnemySpriteState;
 
     private gameScene: GameScene;
 
-    constructor(scene: GameScene, x: number, y: number, key: string) {
-        super(scene, x, y, key);
+    constructor(scene: GameScene, x: number, y: number, startFrame: number) {
+        super(scene, x, y, startFrame);
         this.actor = new EnemyActor();
         this.spriteState = EnemySpriteState.FACE_DOWN;
+        this.startFrame = startFrame;
         this.updateOrientation();
         this.setOrigin(0, 0);
         this.gameScene = scene;
@@ -41,18 +43,18 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         this.setFlip(false, false);
         switch (this.spriteState) {
             case EnemySpriteState.FACE_UP:
-                this.setFrame(24);
+                this.setFrameRelative(2);
                 break;
             case EnemySpriteState.FACE_DOWN:
-                this.setFrame(22);
+                this.setFrameRelative(0);
                 break;
             case EnemySpriteState.FACE_LEFT: {
                 this.setFlip(true, false);
-                this.setFrame(23);
+                this.setFrameRelative(1);
                 break;
             }
             case EnemySpriteState.FACE_RIGHT:
-                this.setFrame(23);
+                this.setFrameRelative(1);
                 break;
         }
     }

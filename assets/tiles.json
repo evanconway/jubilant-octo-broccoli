@@ -1,9 +1,9 @@
 { "columns":16,
- "image":"new_tilemap.png",
+ "image":"tiles.png",
  "imageheight":512,
  "imagewidth":512,
  "margin":0,
- "name":"new_tileset",
+ "name":"tiles",
  "spacing":0,
  "tilecount":256,
  "tiledversion":"1.2.4",
@@ -82,6 +82,11 @@
                 }, 
                 {
                  "name":"open_with_key",
+                 "type":"bool",
+                 "value":true
+                }, 
+                {
+                 "name":"passable_if_thin",
                  "type":"bool",
                  "value":true
                 }]
