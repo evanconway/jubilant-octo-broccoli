@@ -1,19 +1,28 @@
 import LetterTile from "../LetterTile";
+import { GameObjects } from "phaser";
 
 const LETTER_SIZE: number = 42; // slightly bigger than sprite width
+enum LIST {
+    INVENTORY,
+    ITEM,
+    SKILL,
+    SPELL,
+    SIZE // just used for size of enumerator
+}
 
 export default class InventoryScene extends Phaser.Scene {
 
     private inventoryKey: Phaser.Input.Keyboard.Key;
-    private unused: Array<LetterTile> = new Array<LetterTile>();
-    private item: Array<LetterTile> = new Array<LetterTile>();
-    private skill: Array<LetterTile> = new Array<LetterTile>();
-    private spell: Array<LetterTile> = new Array<LetterTile>();
+    /*
+    Instead of having a different array variable for each list,
+    we're just going to have one 2D array, where the first index
+    is the list (unused, item, skill...) and the second index
+    is the letter. Use the above enumerator to refer to the list.
+    */
+    private lists: Array<Array<LetterTile>> = new Array<Array<LetterTile>>();
+    private listY: Array<number> = new Array<number>();
     private arraysX: number;
-    private inventoryY: number;
-    private itemY: number;
-    private skillY: number;
-    private spellY: number;
+
 
     constructor() {
         super({
@@ -26,140 +35,126 @@ export default class InventoryScene extends Phaser.Scene {
     }
 
     public create() {
-        let i = 0;
-        let dist = 3;
+        for (let i = 0; i < LIST.SIZE; i++) this.lists.push(new Array<LetterTile>());
         this.arraysX = 300;
         let yStart = 50;
-        this.inventoryY = yStart + (LETTER_SIZE * (i += dist));
-        this.itemY = yStart + (LETTER_SIZE * (i += dist));
-        this.skillY = yStart + (LETTER_SIZE * (i += dist));
-        this.spellY = yStart + (LETTER_SIZE * (i += dist));
-        this.add.text(this.arraysX, this.inventoryY, "Inventory", { font: '16px Courier', fill: '#00ff00' });
-        this.add.text(this.arraysX, this.itemY, "Item", { font: '16px Courier', fill: '#00ff00' });
-        this.add.text(this.arraysX, this.skillY, "Skill", { font: '16px Courier', fill: '#00ff00' });
-        this.add.text(this.arraysX, this.spellY, "Spell", { font: '16px Courier', fill: '#00ff00' });
+
+        for (let i = 0, count = 0, dist = 3; i < LIST.SIZE; i++, count += dist) {
+            this.listY.push(yStart + (LETTER_SIZE * count));
+        }
+
+        this.add.text(this.arraysX, this.listY[LIST.INVENTORY], "Inventory", { font: '16px Courier', fill: '#00ff00' });
+        this.add.text(this.arraysX, this.listY[LIST.ITEM], "Item", { font: '16px Courier', fill: '#00ff00' });
+        this.add.text(this.arraysX, this.listY[LIST.SKILL], "Skill", { font: '16px Courier', fill: '#00ff00' });
+        this.add.text(this.arraysX, this.listY[LIST.SPELL], "Spell", { font: '16px Courier', fill: '#00ff00' });
         
         this.inventoryKey = this.input.keyboard.addKey("I");
 
-        this.pushUnused("y");
-        this.pushUnused("o");
-        this.pushUnused("u");
-        this.pushUnused(" ");
-        this.pushUnused("h");
-        this.pushUnused("a");
-        this.pushUnused("v");
-        this.pushUnused("e");
-        this.pushUnused(" ");
-        this.pushUnused("n");
-        this.pushUnused("o");
-        this.pushUnused("t");
-        this.pushUnused("h");
-        this.pushUnused("i");
-        this.pushUnused("n");
-        this.pushUnused("g");
+        this.addLetters("you have nothing");
 
-        this.input.on('drag', function (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Sprite, dragX: number, dragY: number) {
+        this.input.on('drag', (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Sprite, dragX: number, dragY: number) => {
             gameObject.x = dragX;
             gameObject.y = dragY;
 
         });
+
+        this.input.on('dragend', (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Sprite) => {
+            //debugger;
+            // determine index of list the letter was dragged to.
+            let listIndex = LIST.SPELL; // for spell list.
+            if (gameObject.y <= this.listY[LIST.SPELL]) listIndex = LIST.SKILL;
+            if (gameObject.y <= this.listY[LIST.SKILL]) listIndex = LIST.ITEM;
+            if (gameObject.y <= this.listY[LIST.ITEM]) listIndex = LIST.INVENTORY;
+            /*
+            Now we have to find the index where we will add the dragged letter.
+            The splice function of arrays adds new elements at the specified index and pushes everything else back. It is like the
+            addBefore of a list. This means if we want to add to the start of the array, we splice at index 0. But to add to the end 
+            of the array, we'll need to use push(). We'll set the insertIndex to -1, and if it is unchanged by our check loop, we 
+            know that means we need to use push().
+            */
+            let insertIndex = -1;
+
+            for (let i = 0; i < this.lists[listIndex].length; i++) {
+                let checkX = this.lists[listIndex][i].x;
+                if (checkX > gameObject.x) {
+                    insertIndex = i;
+                    i = this.lists[listIndex].length;
+                }
+            }
+            if (insertIndex >= 0) this.lists[listIndex].splice(insertIndex, 0, gameObject as LetterTile);
+            else this.lists[listIndex].push(gameObject as LetterTile);
+            /*
+            Now that we have added the dragged letter to the correct list and position, we need to remove it 
+            from it's previous place.
+            */
+           this.removeOther(gameObject as LetterTile, listIndex, insertIndex);
+            this.updateLetterPositions();
+        });
     }
 
     public update() {
-        
         if (Phaser.Input.Keyboard.JustDown(this.inventoryKey)) {
             this.scene.switch("game");
             console.log("Switch to game.");
         }
     }
 
-    public addLetter(char: string) {
-        this.pushUnused(char);
+    public addLetters(newLetters: string) {
+        for (let i = 0; i < newLetters.length; i++) {
+            this.pushUnused(newLetters.charAt(i));
+        }
     }
 
     private pushUnused(char: string) {
         let temp = new LetterTile(this, 0, 0, char);
         this.add.existing(temp);
         this.input.setDraggable(temp);
-        this.unused.push(temp);
+        this.lists[LIST.INVENTORY].push(temp);
         this.updateLetterPositions();
     }
 
-    private addAtUnused(index: number, char: string) {
-        if (index >= 0 && index < this.unused.length) {
+    // This may not be needed
+    private addAt(listIndex: number, letterIndex: number, char: string) {
+        if (listIndex >= 0 && listIndex < this.lists.length && letterIndex >= 0 && letterIndex < this.lists[listIndex].length) {
             let temp = new LetterTile(this, 0, 0, char);
-            this.add.existing(temp);
-            this.unused.splice(index, 0, temp);
-        } else console.log("addAtUnused error, index out of bounds");
+            this .add.existing(temp);
+            this.lists[listIndex].splice(letterIndex, 0, temp);
+        }else console.log("addAt error, index out of bounds");
     }
 
-    private removeAtUnused(index: number) {
-        if (index >= 0 && index < this.unused.length) {
-            this.unused.splice(index, 1);
-        } else console.log("removeAtUnused error, index out of bounds");
-    }
-
-    private addAtItem(index: number, char: string) {
-        if (index >= 0 && index < this.unused.length) {
-            let temp = new LetterTile(this, 0, 0, char);
-            this.add.existing(temp);
-            this.item.splice(index, 0, temp);
-        } else console.log("addAtUnused error, index out of bounds");
-    }
-
-    private removeAtItem(index: number) {
-        if (index >= 0 && index < this.unused.length) {
-            this.item.splice(index, 1);
-        } else console.log("removeAtUnused error, index out of bounds");
-    }
-
-    private addAtSkill(index: number, char: string) {
-        if (index >= 0 && index < this.unused.length) {
-            let temp = new LetterTile(this, 0, 0, char);
-            this.add.existing(temp);
-            this.skill.splice(index, 0, temp);
-        } else console.log("addAtUnused error, index out of bounds");
-    }
-
-    private removeAtSkill(index: number) {
-        if (index >= 0 && index < this.unused.length) {
-            this.skill.splice(index, 1);
-        } else console.log("removeAtUnused error, index out of bounds");
-    }
-
-    private addAtSpell(index: number, char: string) {
-        if (index >= 0 && index < this.unused.length) {
-            let temp = new LetterTile(this, 0, 0, char);
-            this.add.existing(temp);
-            this.spell.splice(index, 0, temp);
-        } else console.log("addAtUnused error, index out of bounds");
-    }
-
-    private removeAtSpell(index: number) {
-        if (index >= 0 && index < this.unused.length) {
-            this.spell.splice(index, 1);
-        } else console.log("removeAtUnused error, index out of bounds");
+    private removeAt(listIndex: number, letterIndex: number) {
+        if (listIndex >= 0 && listIndex < this.lists.length && letterIndex >= 0 && letterIndex < this.lists[listIndex].length) {
+            this.lists[listIndex].splice(letterIndex, 1);
+        } else console.log("removeAt error, index out of bounds");
     }
 
     private updateLetterPositions() {
-        for (let i = 0; i < this.unused.length; i++) {
-            this.unused[i].x = this.arraysX + (LETTER_SIZE * i) + LETTER_SIZE/2; // add half of letter size because sprite origin is center, center
-            this.unused[i].y = this.inventoryY + LETTER_SIZE;
+        for (let i = 0; i < this.lists.length; i++) {
+            for (let k = 0; k < this.lists[i].length; k++) {
+                this.lists[i][k].x = this.arraysX + (LETTER_SIZE * k) + LETTER_SIZE/2; // add half of letter size because sprite origin is center, center
+                this.lists[i][k].y = this.listY[i] + LETTER_SIZE;
+            }
         }
+    }
 
-        for (let i = 0; i < this.item.length; i++) {
-            this.item[i].x = this.arraysX + (LETTER_SIZE * i) + LETTER_SIZE/2; // add half of letter size because sprite origin is center, center
-            this.item[i].y = this.itemY + LETTER_SIZE;
-        }
-
-        for (let i = 0; i < this.skill.length; i++) {
-            this.skill[i].x = this.arraysX + (LETTER_SIZE * i) + LETTER_SIZE/2; // add half of letter size because sprite origin is center, center
-            this.skill[i].y = this.skillY + LETTER_SIZE;
-        }
-
-        for (let i = 0; i < this.spell.length; i++) {
-            this.spell[i].x = this.arraysX + (LETTER_SIZE * i) + LETTER_SIZE/2; // add half of letter size because sprite origin is center, center
-            this.spell[i].y = this.spellY + LETTER_SIZE;
+    /*
+    This function removes the given letter from lists, but only if it is NOT the element 
+    at the given listIndex and letterIndex. We pass in the indexes of the new letter
+    instead of the old because when we add the letter to its new position, the position
+    of the old letter could change. This is simpler.
+    */
+    private removeOther(letter: LetterTile, listIndex: number, letterIndex: number) {
+        let removed = false;
+        for (let i = 0; i < this.lists.length; i++) {
+            for (let k = 0; k < this.lists[i].length; k++) {
+                let equal = this.lists[i][k] === letter;
+                if (equal && !(i == listIndex && k == letterIndex)) {
+                    this.removeAt(i, k);
+                    k = this.lists[i].length;
+                    removed = true;
+                }
+            }
+            if (removed) i = this.lists.length;
         }
     }
 }
