@@ -42,7 +42,7 @@ export function get_item(name: string): Item | null {
 
     var mods = match_mods(token_set);
 
-    if(token_set) {
+    if(token_set.size) {
       return null;
     }
 

@@ -1,7 +1,9 @@
 import LetterTile from "../LetterTile";
 import { GameObjects } from "phaser";
+import { get_item } from "../resources/index";
 
 const LETTER_SIZE: number = 42; // slightly bigger than sprite width
+const HIGHLIGHT_ALPHA: number = 0.3;
 enum LIST {
     INVENTORY,
     ITEM,
@@ -22,6 +24,7 @@ export default class InventoryScene extends Phaser.Scene {
     private lists: Array<Array<LetterTile>> = new Array<Array<LetterTile>>();
     private listY: Array<number> = new Array<number>();
     private arraysX: number;
+    private highlights: Array<Phaser.GameObjects.Rectangle> = new Array<Phaser.GameObjects.Rectangle>();
 
     constructor() {
         super({
@@ -40,6 +43,8 @@ export default class InventoryScene extends Phaser.Scene {
 
         for (let i = 0, count = 0, dist = 3; i < LIST.SIZE; i++, count += dist) {
             this.listY.push(yStart + (LETTER_SIZE * count));
+            this.highlights.push(new Phaser.GameObjects.Rectangle(this, this.arraysX, this.listY[i] + LETTER_SIZE, 0, LETTER_SIZE, 0x00ff00, 0.5));
+            this.add.existing(this.highlights[i]);
         }
 
         this.add.text(this.arraysX, this.listY[LIST.INVENTORY], "Inventory", { font: '16px Courier', fill: '#00ff00' });
@@ -88,8 +93,9 @@ export default class InventoryScene extends Phaser.Scene {
             Now that we have added the dragged letter to the correct list and position, we need to remove it 
             from it's previous place.
             */
-           this.removeOther(gameObject as LetterTile, listIndex, insertIndex);
+            this.removeOther(gameObject as LetterTile, listIndex, insertIndex);
             this.updateLetterPositions();
+            this.setHighlights();
         });
     }
 
@@ -135,7 +141,6 @@ export default class InventoryScene extends Phaser.Scene {
                 this.lists[i][k].x = this.arraysX + (LETTER_SIZE * k) + LETTER_SIZE/2; // add half of letter size because sprite origin is center, center
                 this.lists[i][k].y = this.listY[i] + LETTER_SIZE;
             }
-
     // Ellery's first code:
         }//  >? om mki 
     } // v  '/ ' 
@@ -159,5 +164,63 @@ export default class InventoryScene extends Phaser.Scene {
             }
             if (removed) i = this.lists.length;
         }
+    }
+
+    private isValid(name: string): boolean {
+        return get_item(name) != null;
+    }
+
+    private setHighlights() {
+        let checkString: string = this.getItemString();
+        for (let i = 1; i < this.lists.length; i++) { // start at 1 to ignore inventory
+            checkString = this.getListString(i);
+            let valid: boolean = this.isValid(checkString);
+            this.highlights[i].width = checkString.length * LETTER_SIZE;
+            if (valid) {
+                this.highlights[i].setFillStyle(0x00ff00, HIGHLIGHT_ALPHA);
+            } else {
+                this.highlights[i].setFillStyle(0xff0000, HIGHLIGHT_ALPHA);
+            }
+        }
+    }
+
+    public getListString(listIndex: number): string {
+        let result: string = "";
+        for (let i = 0; i < this.lists[listIndex].length; i++) {
+            result += this.lists[listIndex][i].getLetter();
+        }
+        return result;
+    }
+
+    public getInventoryString(): string {
+        let result: string = "";
+        for (let i = 0; i < this.lists[LIST.INVENTORY].length; i++) {
+            result += this.lists[LIST.INVENTORY][i].getLetter;
+        }
+        return result;
+    }
+
+    public getItemString(): string {
+        let result: string = "";
+        for (let i = 0; i < this.lists[LIST.ITEM].length; i++) {
+            result += this.lists[LIST.ITEM][i].getLetter();
+        }
+        return result;
+    }
+
+    public getSkillString(): string {
+        let result: string = "";
+        for (let i = 0; i < this.lists[LIST.SKILL].length; i++) {
+            result += this.lists[LIST.SKILL][i].getLetter();
+        }
+        return result;
+    }
+
+    public getSpellString(): string {
+        let result: string = "";
+        for (let i = 0; i < this.lists[LIST.SPELL].length; i++) {
+            result += this.lists[LIST.SPELL][i].getLetter();
+        }
+        return result;
     }
 }
