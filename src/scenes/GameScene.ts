@@ -1,6 +1,6 @@
 import { Player } from "../sprites/player";
 import ReadoutScene from "./ReadoutScene";
-import { TEXT_AREA_HEIGHT_PX } from "../constants";
+import { TEXT_AREA_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants";
 
 export default class GameScene extends Phaser.Scene {
     private player: Player
@@ -13,6 +13,7 @@ export default class GameScene extends Phaser.Scene {
     private inventoryKey: Phaser.Input.Keyboard.Key;
     private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
     private readoutScene: ReadoutScene;
+    private tileMap: Phaser.Tilemaps.Tilemap;
 
     constructor() {
         super({
@@ -26,7 +27,7 @@ export default class GameScene extends Phaser.Scene {
         this.load.tilemapTiledJSON("level_1", "../assets/level_1.json");
         this.load.tilemapTiledJSON("level_2", "../assets/level_2.json");
         this.load.spritesheet("hero_sprite", "../assets/hero_sprite.png", {
-          frameWidth: 32, frameHeight: 32
+            frameWidth: 32, frameHeight: 32
         });
     }
 
@@ -36,14 +37,14 @@ export default class GameScene extends Phaser.Scene {
         this.inventoryKey = this.input.keyboard.addKey("I");
         this.cursorKeys = this.input.keyboard.createCursorKeys();
 
-        const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'level_1' });
-        const tileset: Phaser.Tilemaps.Tileset = map.addTilesetImage('tiles', 'tiles');
+        this.tileMap = this.make.tilemap({ key: 'level_1' });
+        const tileset: Phaser.Tilemaps.Tileset = this.tileMap.addTilesetImage('tiles', 'tiles');
 
-        map.createStaticLayer("Map", tileset, 0, 0);
+        this.tileMap.createStaticLayer("Map", tileset, 0, 0);
 
-        map.createFromObjects("Objects", 2, { key: "gate" });
+        this.tileMap.createFromObjects("Objects", 2, { key: "gate" });
 
-        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        this.cameras.main.setBounds(0, 0, this.tileMap.widthInPixels, this.tileMap.heightInPixels);
         this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
 
         this.player = new Player(this, 108, 108, "hero_sprite");
@@ -60,6 +61,42 @@ export default class GameScene extends Phaser.Scene {
         this.readoutScene.write(text);
     }
 
+    private getTileProperty(tileX: number, tileY: number, property: string): any {
+        console.log(property, (this.tileMap.getTileAt(tileX, tileY) as any)[property]);
+        return (this.tileMap.getTileAt(tileX, tileY) as any)[property];
+    }
+
+    private playerCanMove(playerTileX: number, playerTileY: number) {
+        return !(this.getTileProperty(playerTileX, playerTileY - 1, "collision"));
+    }
+
+    private movePlayer(): boolean {
+        const playerTileX = Math.round(this.player.x / GAME_WORLD_TILE_WIDTH);
+        const playerTileY = Math.round(this.player.y / GAME_WORLD_TILE_HEIGHT);
+        if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
+            if (this.playerCanMove(playerTileX, playerTileY - 1)) {
+                this.player.moveUp();
+                return true;
+            }
+        } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
+            if (this.playerCanMove(playerTileX, playerTileY + 1)) {
+                this.player.moveDown();
+                return true;
+            }
+        } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
+            if (this.playerCanMove(playerTileX - 1, playerTileY)) {
+                this.player.moveLeft();
+                return true;
+            }
+        } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
+            if (this.playerCanMove(playerTileX + 1, playerTileY)) {
+                this.player.moveRight();
+                return true;
+            }
+        }
+        return false;
+    }
+
     public update(time: number, delta: number) {
         if (Phaser.Input.Keyboard.JustDown(this.inventoryKey)) {
             this.scene.switch("inventory");
@@ -72,15 +109,6 @@ export default class GameScene extends Phaser.Scene {
         if (this.exampleActive) this.exampleText.setAlpha(1);
         else this.exampleText.setAlpha(0);
 
-
-        if(Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
-          this.player.moveUp();
-        } else if(Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
-          this.player.moveDown();
-        } else if(Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
-          this.player.moveLeft();
-        } else if(Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
-          this.player.moveRight();
-        }
+        this.movePlayer();
     }
 }
