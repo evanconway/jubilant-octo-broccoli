@@ -12,6 +12,16 @@ class EnemyActor extends BaseActor {
 
 enum EnemySpriteState { FACE_DOWN, FACE_UP, FACE_LEFT, FACE_RIGHT };
 
+interface Directions {
+  dx: number;
+  dy: number;
+  dir: EnemySpriteState;
+}
+
+interface WeightedDirections extends Directions {
+  weight: number;
+}
+
 export class Enemy extends Phaser.GameObjects.Sprite {
     private actor: EnemyActor;
     private spriteState: EnemySpriteState;
@@ -47,60 +57,85 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         }
     }
 
-    moveRight() {
-        this.x += GAME_WORLD_TILE_WIDTH
-        this.spriteState = EnemySpriteState.FACE_RIGHT;
-        this.updateOrientation()
+    move(dx: number, dy: number, state: EnemySpriteState) {
+        this.x += GAME_WORLD_TILE_WIDTH * dx;
+        this.y += GAME_WORLD_TILE_HEIGHT * dy;
+        this.spriteState = state;
+        this.updateOrientation;
     }
-
-    moveLeft() {
-        this.x -= GAME_WORLD_TILE_WIDTH
-        this.spriteState = EnemySpriteState.FACE_LEFT;
-        this.updateOrientation()
-    }
-
-    moveUp() {
-        this.y -= GAME_WORLD_TILE_HEIGHT
-        this.spriteState = EnemySpriteState.FACE_UP;
-        this.updateOrientation()
-    }
-
-    moveDown() {
-        this.y += GAME_WORLD_TILE_HEIGHT
-        this.spriteState = EnemySpriteState.FACE_DOWN;
-        this.updateOrientation()
-    }
-
     public update_position(player: Phaser.GameObjects.Sprite) {
-        const choice = Math.random();
-        if (choice < 0.25) {
-            if (this.gameScene.isTilePassable(this.gridX, this.gridY + 1)) {
-                this.moveDown();
 
-                const attack = new Attack(this.scene, this.gridX, this.gridY + 1, "tiles_sprites", "fire_attack");
-                this.scene.add.existing(attack);
-            }
-        } else if (choice < 0.5) {
-            if (this.gameScene.isTilePassable(this.gridX - 1, this.gridY)) {
-                this.moveLeft();
+        const deltaX = player.x - this.x;
+        const deltaY = player.y - this.y;
+        
+        const deltaXSqrd = deltaX * deltaX;
+        const deltaYSqrd = deltaY * deltaY;
 
-                const attack = new Attack(this.scene, this.gridX - 1, this.gridY, "tiles_sprites", "fire_attack");
-                this.scene.add.existing(attack);
-            }
-        } else if (choice < 0.75) {
-            if (this.gameScene.isTilePassable(this.gridX, this.gridY - 1)) {
-                this.moveUp();
 
-                const attack = new Attack(this.scene, this.gridX, this.gridY - 1, "tiles_sprites", "fire_attack");
-                this.scene.add.existing(attack);
-            }
-        } else {
-            if (this.gameScene.isTilePassable(this.gridX + 1, this.gridY)) {
-              this.moveRight();
+        const dist = Math.sqrt(deltaXSqrd + deltaYSqrd)
+        
+        if (dist > 12 * GAME_WORLD_TILE_WIDTH) {
+            return;
+        }
+    
+        const weights: Map<string, WeightedDirections> = new Map([
+          ["up", {"dx": 0, "dy": -1, "dir": EnemySpriteState.FACE_UP, weight: 0}],
+          ["down", {"dx": 0, "dy": 1, "dir": EnemySpriteState.FACE_DOWN, weight: 0}],
+          ["left", {"dx": -1, "dy": 0, "dir": EnemySpriteState.FACE_LEFT, weight: 0}],
+          ["right", {"dx": 1,  "dy": 0, "dir": EnemySpriteState.FACE_RIGHT, weight: 0}],
+        ]);
 
-              const attack = new Attack(this.scene, this.gridX + 1, this.gridY, "tiles_sprites", "fire_attack");
-              this.scene.add.existing(attack);
+        if (deltaXSqrd == deltaYSqrd) {
+          if (deltaX > 0) {
+            weights.get("right").weight += 1
+          } else if (deltaX < 0) {
+            weights.get("left").weight += 1
+          }
+          if (deltaY > 0) {
+            weights.get("down").weight += 1
+          } else if (deltaY < 0) {
+            weights.get("up").weight += 1
+          } 
+        } else if (deltaXSqrd > deltaYSqrd) {
+          if (deltaX > 0) {
+            weights.get("right").weight += 2
+          } else if (deltaX < 0) {
+            weights.get("left").weight += 2
+          }
+          if (deltaY > 0) {
+            weights.get("down").weight += 1
+          } else if (deltaY < 0) {
+            weights.get("up").weight += 1
+          } 
+        } else if (deltaXSqrd < deltaYSqrd) {
+          if (deltaX > 0) {
+            weights.get("right").weight += 1
+          } else if (deltaX < 0) {
+            weights.get("left").weight += 1
+          }
+          if (deltaY > 0) {
+            weights.get("down").weight += 2
+          } else if (deltaY < 0) {
+            weights.get("up").weight += 2
+          } 
+        }
+
+        const sortedWeights: WeightedDirections[] = new Array<WeightedDirections>();
+        for (let weight of weights.values()) {
+            sortedWeights.push(weight);
+        }
+        sortedWeights.sort((a: WeightedDirections, b: WeightedDirections) => b.weight - a.weight)
+
+        let moved = false;
+        for (let weightedDirection of sortedWeights) {
+            if (! this.gameScene.isTilePassable(this.gridX + weightedDirection.dx, this.gridY + weightedDirection.dy)) {
+              continue;
             }
+            this.move(weightedDirection.dx, weightedDirection.dy, weightedDirection.dir);
+            moved = true;
+            break;
+            const attack = new Attack(this.scene, this.gridX, this.gridY + 1, "tiles_sprites", "fire_attack");
+            this.scene.add.existing(attack);
         }
     }
 
