@@ -90,9 +90,12 @@ export default class GameScene extends Phaser.Scene {
 
     private executeMoveAction(player: Player, nextPlayerX: number, nextPlayerY: number, direction: MoveDirection, forceMove: boolean = false): boolean {
         if (forceMove) {
+            const sprite = this.getSpriteAtLocation(nextPlayerX, nextPlayerY);
+            if(sprite) {
+                this.write(sprite.getText());
+            }
             player.moveInDirection(direction);
             this.lastTimeKeyPressed = Date.now();
-            const sprite = this.getSpriteAtLocation(nextPlayerX, nextPlayerY);
             const itemResponse = this.applyItem(sprite);
             if (itemResponse === ItemResolutionResponse.PASS_THROUGH) {
                 this.syntheticMoveDirectionQueue.push(direction);
@@ -152,20 +155,16 @@ export default class GameScene extends Phaser.Scene {
     private handleMoveInput(): boolean {
         const player: Player = this.currentLevel.getPlayer();
 
-        if (this.lastTimeKeyPressed + MOVE_DELAY > Date.now()) {
-            return false;
-        }
-
-        if (this.cursorKeys.up.isDown && !this.cursorKeys.down.isDown) {
+        if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
             const nextPos = this.getNextPlayerPosition(player, MoveDirection.UP);
             return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.UP);
-        } else if (this.cursorKeys.down.isDown && !this.cursorKeys.up.isDown) {
+        } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
             const nextPos = this.getNextPlayerPosition(player, MoveDirection.DOWN);
             return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.DOWN);
-        } else if (this.cursorKeys.left.isDown && !this.cursorKeys.right.isDown) {
+        } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
             const nextPos = this.getNextPlayerPosition(player, MoveDirection.LEFT);
             return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.LEFT);
-        } else if (this.cursorKeys.right.isDown && !this.cursorKeys.left.isDown) {
+        } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
             const nextPos = this.getNextPlayerPosition(player, MoveDirection.RIGHT);
             return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.RIGHT);
         }
@@ -225,15 +224,15 @@ export default class GameScene extends Phaser.Scene {
         }
         super.update(time, delta);
 
-        if (this.lastTimeKeyPressed + MOVE_DELAY < Date.now()) {
-            if (this.syntheticMoveDirectionQueue.length) {
+        if (this.syntheticMoveDirectionQueue.length) {
+            if (this.lastTimeKeyPressed + MOVE_DELAY < Date.now()) {
                 const nextSyntheticMoveDirection = this.syntheticMoveDirectionQueue.pop();
                 const player: Player = this.currentLevel.getPlayer();
                 const nextPos = this.getNextPlayerPosition(player, nextSyntheticMoveDirection);
                 this.executeMoveAction(player, nextPos.x, nextPos.y, nextSyntheticMoveDirection, true);
-            } else {
-                this.handleKeyboardInputs();
             }
+        } else {
+            this.handleKeyboardInputs();
         }
 
         if (Phaser.Input.Keyboard.JustDown(this.menuKey)) {
