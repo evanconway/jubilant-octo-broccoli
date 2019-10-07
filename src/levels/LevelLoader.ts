@@ -6,6 +6,8 @@ import { Player } from '../sprites/player';
 import { GameSprite } from '../sprites/GameSprite';
 import SpriteLoader from '../SpriteLoader';
 import GameScene from '../scenes/GameScene';
+import {LevelData, LEVEL_DATA} from './LevelData';
+import { TextArea } from '../sprites/TextArea';
 
 export default class LevelLoader {
     public static async loadLevel(scene: GameScene, levelNum: number): Promise<Level> {
@@ -16,7 +18,7 @@ export default class LevelLoader {
             [26, Gate],
             // TODO THESE ARE WRONG NONONONONO
             [30, Gate],
-            [29, Gate],
+            [29, TextArea],
             [48, Guard],
             [47, Gate],
             [1, Gate],
@@ -31,7 +33,9 @@ export default class LevelLoader {
             tileMap.getTileset("tiles")
         );
 
-        return new Level(sprites, tileMap);
+        let levelData: LevelData = LEVEL_DATA[levelNum - 1];
+
+        return new Level(sprites, tileMap, levelData.validWords, levelData.textAreas);
     }
 
     public static async asyncLoadTilemap(scene: Phaser.Scene, levelNum: number): Promise<Phaser.Tilemaps.Tilemap> {

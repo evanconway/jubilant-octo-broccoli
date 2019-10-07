@@ -7,13 +7,13 @@ export class Gate extends GameSprite {
     }
 
     public isCollidable(): boolean {
-      return this.active;
+        return this.active;
     }
 
     public recItem(item: string): void {
-      console.log("Gate got item " + item);
-      if (item == "g") {
-        this.destroy();
-      }
+        console.log("Gate got item " + item);
+        if (item == "g") {
+            this.destroy();
+        }
     }
 }

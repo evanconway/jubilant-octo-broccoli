@@ -7,13 +7,13 @@ export class IceWall extends GameSprite {
     }
 
     public isCollidable(): boolean {
-      return this.active;
+        return this.active;
     }
 
     public recItem(item: string): void {
-      console.log("Ice got item " + item);
-      if (item == "hot") {
-        this.destroy();
-      }
+        console.log("Ice got item " + item);
+        if (item == "hot") {
+            this.destroy();
+        }
     }
 }

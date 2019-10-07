@@ -7,13 +7,13 @@ export class Guard extends GameSprite {
     }
 
     public isCollidable(): boolean {
-      return this.active;
+        return this.active;
     }
 
     public recItem(item: string): void {
-      console.log("Guard got item " + item);
-      if (item == "hit") {
-        this.destroy();
-      }
-    }
+        console.log("Guard got item " + item);
+        if (item == "hit") {
+            this.destroy();
+        }
+    } 
 }
