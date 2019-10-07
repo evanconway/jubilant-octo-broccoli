@@ -22,8 +22,4 @@ export class TextArea extends GameSprite {
         }
         return this.text;
     }
-
-    public recPlayerCollision(scene: GameScene): void {
-        scene.write(this.getText());
-    }
 }

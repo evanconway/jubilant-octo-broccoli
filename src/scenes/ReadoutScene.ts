@@ -1,7 +1,6 @@
 import { INVENTORY_HEIGHT_PX, READOUT_WIDTH_PX } from '../constants';
 
 export default class ReadoutScene extends Phaser.Scene {
-    private textBuffer: string[] = [];
     private textArea: Phaser.GameObjects.Text;
 
     constructor() {
@@ -11,8 +10,11 @@ export default class ReadoutScene extends Phaser.Scene {
     }
 
     public write(text: string): void {
-        this.textBuffer.push(text);
-        this.textArea.setText(this.textBuffer.join("\n"));
+        this.textArea.setText(text);
+    }
+
+    public clear(): void {
+        this.textArea.setText("");
     }
 
     public create() {
