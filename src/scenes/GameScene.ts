@@ -1,7 +1,6 @@
 import { Player } from "../sprites/player";
 import ReadoutScene from "./ReadoutScene";
 import { INVENTORY_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT, READOUT_WIDTH_PX } from "../constants";
-import { Enemy } from "../sprites/enemy";
 import { ItemTargetOverlay } from "./itemTargetOverlay";
 import { GameSprite } from "../sprites/GameSprite";
 import InventoryScene from "./InventoryScene";
@@ -9,9 +8,6 @@ import LevelLoader from '../levels/LevelLoader';
 import Level from '../levels/Level';
 
 export default class GameScene extends Phaser.Scene {
-    private player: Player;
-    private enemies: Enemy[];
-
     private isFullyLoaded: boolean = false;
 
     private exampleText: Phaser.GameObjects.Text;
@@ -19,7 +15,6 @@ export default class GameScene extends Phaser.Scene {
     private itemModeKey: Phaser.Input.Keyboard.Key;
     private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
     private readoutScene: ReadoutScene;
-    private tileMap: Phaser.Tilemaps.Tilemap;
     private itemTargetChoicesOverlay: ItemTargetOverlay;
     private levelSprites: GameSprite[];
 
@@ -56,11 +51,9 @@ export default class GameScene extends Phaser.Scene {
         LevelLoader.loadLevel(this, 1).then((level) => {
             this.currentLevel = level;
             this.isFullyLoaded = true;
-        })
-
-        this.cameras.main.setBounds(0, 0, this.currentLevel.tileMap.widthInPixels, this.currentLevel.tileMap.heightInPixels);
-        this.cameras.main.setViewport(0, 0, this.game.canvas.width - READOUT_WIDTH_PX, this.game.canvas.height - INVENTORY_HEIGHT_PX);
-        
+            this.cameras.main.setBounds(0, 0, this.currentLevel.tileMap.widthInPixels, this.currentLevel.tileMap.heightInPixels);
+            this.cameras.main.setViewport(0, 0, this.game.canvas.width - READOUT_WIDTH_PX, this.game.canvas.height - INVENTORY_HEIGHT_PX);
+        });
     }
 
     public isValidWord(text: string) {
@@ -76,7 +69,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private getTileProperty(tileX: number, tileY: number, property: string): any {
-        return (this.tileMap.getTileAt(tileX, tileY).properties as any)[property];
+        return (this.currentLevel.tileMap.getTileAt(tileX, tileY).properties as any)[property];
     }
 
     private getSpriteAtLocation(tileX: number, tileY: number): GameSprite | null {
@@ -91,7 +84,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     public isTilePassable(tileX: number, tileY: number) {
-        if (tileX < 0 || tileX >= this.tileMap.width || tileY < 0 || tileY >= this.tileMap.height) {
+        if (tileX < 0 || tileX >= this.currentLevel.tileMap.width || tileY < 0 || tileY >= this.currentLevel.tileMap.height) {
             return false;
         }
         const sprite = this.getSpriteAtLocation(tileX, tileY);
@@ -106,27 +99,28 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private handleMoveInput(): boolean {
-        const playerTileX = this.player.gridX;
-        const playerTileY = this.player.gridY;
+        const player: Player = this.currentLevel.getPlayer();
+        const playerTileX = player.gridX;
+        const playerTileY = player.gridY;
 
         if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
             if (this.isTilePassableForPlayer(playerTileX, playerTileY - 1)) {
-                this.player.moveUp();
+                player.moveUp();
                 return true;
             }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
             if (this.isTilePassableForPlayer(playerTileX, playerTileY + 1)) {
-                this.player.moveDown();
+                player.moveDown();
                 return true;
             }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
             if (this.isTilePassableForPlayer(playerTileX - 1, playerTileY)) {
-                this.player.moveLeft();
+                player.moveLeft();
                 return true;
             }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
             if (this.isTilePassableForPlayer(playerTileX + 1, playerTileY)) {
-                this.player.moveRight();
+                player.moveRight();
                 return true;
             }
         }
@@ -143,43 +137,43 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private handleItemInput(): void {
-        const playerTileX = this.player.gridX;
-        const playerTileY = this.player.gridY;
+        const player: Player = this.currentLevel.getPlayer();
+        const playerTileX = player.gridX;
+        const playerTileY = player.gridY;
 
         if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
-            this.player.exitItemMode();
-            this.player.faceUp();
+            player.exitItemMode();
+            player.faceUp();
             this.applyItem(playerTileX, playerTileY - 1);
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
-            this.player.exitItemMode();
-            this.player.faceDown();
+            player.exitItemMode();
+            player.faceDown();
             this.applyItem(playerTileX, playerTileY + 1);
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
-            this.player.exitItemMode();
-            this.player.faceLeft();
+            player.exitItemMode();
+            player.faceLeft();
             this.applyItem(playerTileX - 1 , playerTileY);
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
-            this.player.exitItemMode();
-            this.player.faceRight();
+            player.exitItemMode();
+            player.faceRight();
             this.applyItem(playerTileX + 1 , playerTileY);
         }
 
-        if (!this.player.isUsingItem()) {
+        if (!player.isUsingItem()) {
             this.itemTargetChoicesOverlay.clear();
         }
     }
 
     private handleKeyboardInputs() {
-        if (Phaser.Input.Keyboard.JustDown(this.itemModeKey) && !this.player.isUsingItem()) {
-            this.player.enterItemMode();
-            this.itemTargetChoicesOverlay.render(this.player);
-        } else if (this.player.isUsingItem()) {
+        const player: Player = this.currentLevel.getPlayer();
+        if (Phaser.Input.Keyboard.JustDown(this.itemModeKey) && !player.isUsingItem()) {
+            player.enterItemMode();
+            this.itemTargetChoicesOverlay.render(player);
+        } else if (player.isUsingItem()) {
             this.handleItemInput();
         } else {
             if (this.handleMoveInput()) {
-                for (let enemy of this.enemies) {
-                    enemy.update_position(this.player);
-                }
+                this.currentLevel.update();
             }
         }
     }

@@ -12,7 +12,15 @@ export default class LevelLoader {
         const level1SpriteMap = new Map<number, any>([
             [16, Gate],
             [23, Player],
-            [26, Enemy],
+            [26, Gate],
+            // TODO THESE ARE WRONG NONONONONO
+            [31, Gate],
+            [29, Gate],
+            [48, Gate],
+            [47, Gate],
+            [1, Gate],
+            [46, Gate],
+            [30, Gate]
         ]);
 
         const sprites: Map<number, GameSprite[]> = SpriteLoader.createSpritesFromTileset(
