@@ -70,6 +70,7 @@ export default class MenuScene extends Phaser.Scene {
             this.add.text(10, this.game.canvas.height - 40, "Music: Stopping by the Inn by twinmusicom.org", {fontSize: 10});
             this.add.text(10, this.game.canvas.height - 60, "Sound Effects: synthesized bright pluck 7: zapsplat.com", {fontSize: 10});
             this.add.text(10, this.game.canvas.height - 80, "Sound Effects: magical negative 2: zapsplat.com", {fontSize: 10});
+            this.add.text(10, this.game.canvas.height - 100, "zapsplat retro digital fifths tone 1: zapsplat.com", {fontSize: 10});
             
         });
 
