@@ -1,4 +1,5 @@
-import { INVENTORY_HEIGHT_PX, READOUT_WIDTH_PX } from '../constants';
+import { INVENTORY_HEIGHT_PX, READOUT_WIDTH_PX, READOUT_LEFT_MARGIN, READOUT_TOP_PADDING, READOUT_LEFT_RIGHT_PADDING } from '../constants';
+import LevelLoader from '../levels/LevelLoader';
 
 export default class ReadoutScene extends Phaser.Scene {
     private textArea: Phaser.GameObjects.Text;
@@ -11,21 +12,42 @@ export default class ReadoutScene extends Phaser.Scene {
 
     public write(text: string): void {
         this.textArea.setText(text);
+        this.updateHeight(text.split("\n").length);
     }
 
     public clear(): void {
         this.textArea.setText("");
+        this.updateHeight(0);
+    }
+
+    public updateHeight(lines: number) {
+        if (lines === 0) {
+            this.cameras.main.setVisible(false);
+            return;
+        }
+        if (lines < 3) {
+            lines = 3; // hax
+        }
+        this.cameras.main.setVisible(true);
+        this.cameras.main.setViewport(
+            READOUT_LEFT_MARGIN,
+            this.game.canvas.height - INVENTORY_HEIGHT_PX - (lines * 32),
+            READOUT_WIDTH_PX,
+            lines * 32
+        );
+        this.textArea.setFixedSize(READOUT_WIDTH_PX - (READOUT_LEFT_RIGHT_PADDING * 2), lines * 32);
     }
 
     public create() {
         this.cameras.main.setViewport(
-            this.game.canvas.width - READOUT_WIDTH_PX,
-            0,
+            READOUT_LEFT_MARGIN,
+            this.game.canvas.height - INVENTORY_HEIGHT_PX - 100,
             READOUT_WIDTH_PX,
-            this.game.canvas.height - INVENTORY_HEIGHT_PX
+            0
         );
-        this.textArea = this.add.text(0, 0, "", {color: "#fff"});
-        this.textArea.setFixedSize(READOUT_WIDTH_PX, this.game.canvas.height - INVENTORY_HEIGHT_PX);
-        this.textArea.setWordWrapWidth(READOUT_WIDTH_PX, true);
+        LevelLoader.asyncLoadTilemap(this, "assets/readout.json").then((tileMap) => {
+            this.textArea = this.add.text(READOUT_TOP_PADDING, READOUT_LEFT_RIGHT_PADDING, "", {color: "#fff"});
+            this.updateHeight(0);
+        });
     }
 }
