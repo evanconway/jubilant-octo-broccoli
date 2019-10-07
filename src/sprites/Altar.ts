@@ -1,5 +1,6 @@
 import GameScene from '../scenes/GameScene';
 import { GameSprite } from './GameSprite';
+import { ItemResolutionResponse } from "../constants";
 
 export class Altar extends GameSprite {
     constructor(scene: GameScene, x: number, y: number, startFrame: number) {
@@ -12,12 +13,12 @@ export class Altar extends GameSprite {
 
     // You should win if you run into this and go to the next level
 
-    public recItem(item: string): boolean {
+    public recItem(item: string): ItemResolutionResponse {
         if (this.active) {
             (this.scene as GameScene).nextLevel();
             this.destroy();
-            return true;
+            return ItemResolutionResponse.DESTROY;
         }
-        return false;
+        return ItemResolutionResponse.NONE;
     }
 }

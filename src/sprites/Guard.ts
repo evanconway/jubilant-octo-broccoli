@@ -1,5 +1,6 @@
 import GameScene from '../scenes/GameScene';
 import { GameSprite } from './GameSprite';
+import { ItemResolutionResponse } from "../constants";
 
 export class Guard extends GameSprite {
     constructor(scene: GameScene, x: number, y: number, startFrame: number) {
@@ -10,14 +11,14 @@ export class Guard extends GameSprite {
         return this.active;
     }
 
-    public recItem(item: string): boolean {
+    public recItem(item: string): ItemResolutionResponse {
         if (this.active) {
             console.log("Guard got item " + item);
             if (item == "hit") {
                 this.destroy();
-                return true;
+                return ItemResolutionResponse.DESTROY;
             }
         }
-        return false;
+        return ItemResolutionResponse.NONE;
     }
 }

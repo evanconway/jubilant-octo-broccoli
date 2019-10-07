@@ -1,5 +1,6 @@
 import GameScene from '../scenes/GameScene';
 import { GameSprite } from './GameSprite';
+import { ItemResolutionResponse } from "../constants";
 
 export class Gate extends GameSprite {
     constructor(scene: GameScene, x: number, y: number, startFrame: number) {
@@ -10,14 +11,13 @@ export class Gate extends GameSprite {
         return this.active;
     }
 
-    public recItem(item: string): boolean {
+    public recItem(item: string): ItemResolutionResponse {
         if (this.active) {
             console.log("Gate got item " + item);
             if (item == "thin") {
-                this.destroy();
-                return true;
+                return ItemResolutionResponse.PASS_THROUGH;
             }
         }
-        return false;
+        return ItemResolutionResponse.NONE;
     }
 }

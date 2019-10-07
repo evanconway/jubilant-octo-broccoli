@@ -1,5 +1,5 @@
 import GameScene from "../scenes/GameScene";
-import { GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants";
+import { ItemResolutionResponse, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants";
 
 export abstract class GameSprite extends Phaser.GameObjects.Sprite {
     protected startFrame: number;
@@ -13,7 +13,7 @@ export abstract class GameSprite extends Phaser.GameObjects.Sprite {
         this.setFrame(frame + this.startFrame);
     }
 
-    public abstract recItem(item: string): boolean;
+    public abstract recItem(item: string): ItemResolutionResponse;
     public abstract isCollidable(): boolean;
 
     get gridX(): number {
