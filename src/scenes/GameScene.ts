@@ -45,9 +45,17 @@ export default class GameScene extends Phaser.Scene {
         LevelLoader.loadLevel(this, 1).then((level) => {
             this.currentLevel = level;
             this.isFullyLoaded = true;
-            this.cameras.main.setBounds(0, 0, this.currentLevel.tileMap.widthInPixels, this.currentLevel.tileMap.heightInPixels);
-            this.cameras.main.setViewport(0, 0, this.game.canvas.width - READOUT_WIDTH_PX, this.game.canvas.height - INVENTORY_HEIGHT_PX);
 
+            const gameViewportWidth = this.game.canvas.width - READOUT_WIDTH_PX;
+            const gameViewportHeight = this.game.canvas.height - INVENTORY_HEIGHT_PX;
+            const deadZoneSize = 160; // pixels
+
+            this.cameras.main.setBounds(0, 0, this.currentLevel.tileMap.widthInPixels, this.currentLevel.tileMap.heightInPixels);
+            this.cameras.main.setViewport(0, 0, gameViewportWidth, gameViewportHeight);
+            this.cameras.main.deadzone = new Phaser.Geom.Rectangle(
+                deadZoneSize, deadZoneSize, gameViewportWidth - (deadZoneSize * 2), gameViewportHeight - (deadZoneSize * 2)
+            );
+            this.cameras.main.startFollow(this.currentLevel.getPlayer());
             this.itemTargetChoicesOverlay = new ItemTargetOverlay(this);
         });
     }
