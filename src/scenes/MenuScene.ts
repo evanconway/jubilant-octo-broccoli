@@ -77,6 +77,8 @@ export default class MenuScene extends Phaser.Scene {
         this.input.on('pointerup', () => {
             if (this.isLoaded) {
                 this.scene.switch('game');
+                let gameScene = this.scene.get('game') as GameScene;
+                gameScene.nextLevel(1);
             }
         });
 
@@ -87,28 +89,26 @@ export default class MenuScene extends Phaser.Scene {
             this.scene.switch('game');
             let gameScene = this.scene.get('game') as GameScene;
             switch(event.keyCode) {
-                case Phaser.Input.Keyboard.KeyCodes.SEVEN:
-                    gameScene.nextLevel();
-                    /* falls through */
                 case Phaser.Input.Keyboard.KeyCodes.SIX:
-                    gameScene.nextLevel();
-                    /* falls through */
+                    gameScene.nextLevel(6);
+                    break;
                 case Phaser.Input.Keyboard.KeyCodes.FIVE:
-                    gameScene.nextLevel();
-                    /* falls through */
+                    gameScene.nextLevel(5);
+                    break;
                 case Phaser.Input.Keyboard.KeyCodes.FOUR:
-                    gameScene.nextLevel();
-                    /* falls through */
+                    gameScene.nextLevel(4);
+                    break;
                 case Phaser.Input.Keyboard.KeyCodes.THREE:
-                    gameScene.nextLevel();
-                    /* falls through */
+                    gameScene.nextLevel(3);
+                    break;
                 case Phaser.Input.Keyboard.KeyCodes.TWO:
-                    gameScene.nextLevel();
-                    /* falls through */
+                    gameScene.nextLevel(2);
+                    break;
                 case Phaser.Input.Keyboard.KeyCodes.ONE:
-                    /* falls through */
+                    gameScene.nextLevel(1);
+                    break;
                 default:
-                    /* pass */
+                    gameScene.nextLevel(1);
             }
         })
         
