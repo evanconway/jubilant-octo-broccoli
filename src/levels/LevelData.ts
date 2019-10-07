@@ -11,7 +11,7 @@ export const LEVEL_DATA: LevelData[] = [
         textAreas: new Map<string, string>([
             ["7,2", "Step on text to read\nclues and hints to heed"],
             ["4,3", "Welcome weary traveler to this magical quest of spelling and spell.\nMany monsters you'll meet\nand puzzles to defeat.\nHow many will you fell?"],      
-            ["6,5", "Congrats, you went down, up, left and right.\nNow walk into the monster with all your of might"], 
+            ["6,5", "Congrats, you went down, up, left and right.\nNow walk into the monster with all of your might"], 
             ["4,5", "You can only use the letters in your inventory\nTo figure out the puzzles contained in this story!"],
             ["9,5", "Go right once more,\nyou can slip on the icy floor!"],
             ["15,5", "Walk into the Pharaoh fast\nanswer his clue to get past."],

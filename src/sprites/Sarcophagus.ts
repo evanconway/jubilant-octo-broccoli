@@ -51,8 +51,8 @@ export class Sarcophagus extends GameSprite {
                     return ItemResolutionResponse.PRINT_TEXT;
                 }
             } else if (this.startFrame == BOTTOM_CHEST) {
-                if (item == "sonata") { // TODO
-                    this.currentText = "The coffin sings:\nClassical!";
+                if (item == "sonata") {
+                    this.currentText = "The coffin sings:\nClassical! Here is the letter M for merry!";
                     return ItemResolutionResponse.CREATE_LETTER_M;
                 } else {
                     this.currentText = "Inscribed on the coffin:\n Dead, but I love the cello\n I'm a classical kind of fellow.\nPlease do not cease.\nWith a piano play this piece";
