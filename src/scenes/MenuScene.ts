@@ -5,8 +5,8 @@ const STARTY: number = 100;
 const LINE_HEIGHT: number = 50;
 
 export default class MenuScene extends Phaser.Scene {
-
-    private menuKey: Phaser.Input.Keyboard.Key;
+    private isLoaded: boolean = false;
+    private loadText: Phaser.GameObjects.Text;
 
     constructor() {
         super({
@@ -21,23 +21,41 @@ export default class MenuScene extends Phaser.Scene {
         });
         this.load.spritesheet('letters', 'assets/letters.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('letter_holder', 'assets/letter_holder.png', { frameWidth: 45, frameHeight: 45 });
-    }
 
-    public create() {
         let i = 0;
         this.add.text(LEFTX, STARTY, "N O T H I N G");
         i++;
         this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Use the arrow keys to move.");
         this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Type to use letters from your inventory.");
         this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "`'Backspace' puts a letter back.`");
-        this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Click to begin.");
-        this.add.text(LEFTX, STARTY + ++i * LINE_HEIGHT, "Good luck!");
+        this.loadText = this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Loading 0");
 
+
+        this.load.on('progress', (value: any) => {
+            if (this.loadText) {
+                this.loadText.setText(`Loading: ${value * 100}`);
+            }
+        });
+        
+        this.load.on('complete', () => {
+            this.isLoaded = true;
+            if (this.loadText) {
+                this.loadText.setText(`Loaded! Click to begin.`);
+            }
+        });
+    }
+
+    public create() {
         this.input.on('pointerup', () => {
-            this.scene.switch('game');
+            if (this.isLoaded) {
+                this.scene.switch('game');
+            }
         });
 
         this.input.keyboard.on('keydown', (event: any) => {
+            if (!this.isLoaded) {
+                return;
+            }
             this.scene.switch('game');
             let gameScene = this.scene.get('game') as GameScene;
             switch(event.keyCode) {

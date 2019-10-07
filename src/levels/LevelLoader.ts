@@ -1,16 +1,17 @@
-import Level from './Level';
-import { Gate } from '../sprites/Gate';
-import { IceWall } from '../sprites/IceWall';
-import { Guard } from "../sprites/Guard";
-import { Player } from '../sprites/Player';
-import { GameSprite } from '../sprites/GameSprite';
-import SpriteLoader from '../SpriteLoader';
 import GameScene from '../scenes/GameScene';
-import {LevelData, LEVEL_DATA} from './LevelData';
-import { TextArea } from '../sprites/TextArea';
+import SpriteLoader from '../SpriteLoader';
 import { Altar } from '../sprites/Altar';
-import { Sarcophagus } from '../sprites/Sarcophagus';
+import { Book } from '../sprites/Book';
+import { GameSprite } from '../sprites/GameSprite';
+import { Gate } from '../sprites/Gate';
+import { Guard } from "../sprites/Guard";
 import { IceFloor } from '../sprites/IceFloor';
+import { IceWall } from '../sprites/IceWall';
+import { Player } from '../sprites/Player';
+import { Sarcophagus } from '../sprites/Sarcophagus';
+import { TextArea } from '../sprites/TextArea';
+import Level from './Level';
+import { LevelData, LEVEL_DATA } from './LevelData';
 
 export default class LevelLoader {
     public static async loadLevel(scene: GameScene, levelNum: number): Promise<Level> {
@@ -18,17 +19,23 @@ export default class LevelLoader {
         const spriteMap = new Map<number, any>([
             [15, Gate],
             [22, Player],
+            [25, Sarcophagus],
+            [26, Guard],
+            [27, Sarcophagus],
             [28, Sarcophagus],
             [30, IceWall],
+            [31, Guard],
             [34, IceFloor],
             [35, IceFloor],
             [36, IceFloor],
-            [45, Guard],
-            [46, Guard],
-            [47, Guard],
             [42, Altar],
             [43, Altar],
             [44, Altar],
+            [45, Guard],
+            [46, Guard],
+            [47, Guard],
+            [48, Guard],
+            [49, Guard],
             [50, Guard],
             [51, Guard],
             [52, TextArea],
@@ -46,6 +53,16 @@ export default class LevelLoader {
             [73, Guard],
             [74, Guard],
             [75, Sarcophagus],
+            [102, Book],
+            [103, Book],
+            [104, Book],
+            [105, Book],
+            [106, Book],
+            [107, Book],
+            [108, Book],
+            [109, Book],
+            [110, Book],
+            [111, Book],
         ]);
 
         const sprites: Map<number, GameSprite[]> = SpriteLoader.createSpritesFromTileset(

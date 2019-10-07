@@ -2,15 +2,17 @@ import GameScene from '../scenes/GameScene';
 import { GameSprite } from './GameSprite';
 import { ItemResolutionResponse } from "../constants";
 
+const TUT = 75;
+const TOP_CHEST = 25;
+const BOTTOM_CHEST = 27;
+
 export class Sarcophagus extends GameSprite {
     private currentText: string;
-    private isTut: boolean = false;
+   
 
     constructor(scene: GameScene, x: number, y: number, startFrame: number) {
         super(scene, x, y, startFrame);
-        if (startFrame == 75) {
-            this.isTut = true;
-        }
+
     }
 
     public isCollidable(): boolean {
@@ -23,12 +25,28 @@ export class Sarcophagus extends GameSprite {
 
     public recItem(item: string): ItemResolutionResponse {
         if( this.active) {
-            if (this.isTut) {
+            if (this.startFrame == TUT) {
                 if (item == "tut") {
                     this.currentText = "The sarcophagus speaks:\nThat's me! King Tut. You can pass.";
                     return ItemResolutionResponse.DESTROY;
                 } else {
                     this.currentText = "Inscribed on the coffin is:\nI am the most phamous pharoah. What is my three-letter nickname?";
+                    return ItemResolutionResponse.PRINT_TEXT;
+                }
+            } else if (this.startFrame == TOP_CHEST) {
+                if (item == "none") { // TODO
+                    this.currentText = "TODO";
+                    return ItemResolutionResponse.CREATE_LETTER_X;
+                } else {
+                    this.currentText = "TODO";
+                    return ItemResolutionResponse.PRINT_TEXT;
+                }
+            } else if (this.startFrame == BOTTOM_CHEST) {
+                if (item == "none") { // TODO
+                    this.currentText = "TODO";
+                    return ItemResolutionResponse.CREATE_LETTER_Y;
+                } else {
+                    this.currentText = "TODO";
                     return ItemResolutionResponse.PRINT_TEXT;
                 }
             } else {

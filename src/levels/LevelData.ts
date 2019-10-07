@@ -37,6 +37,13 @@ export const LEVEL_DATA: LevelData[] = [
         startingInventory: "emptyvoid",
         validWords: new Set<string>(['vomit','tome','timed','tidy','pot','pie','move','mopey','imp','deity','die']),
         textAreas: new Map<string, string>([
+          ["8,24", "Each of these paths go to the same room,\nthree books on one path you must exhume\nif you dont get them right\nby morning's first light\nyou'll never escape this terrible tomb!"]
+        ])
+    },
+    {
+        startingInventory: "none",
+        validWords: new Set<string>(['none','nonexy']), //TODO
+        textAreas: new Map<string, string>([ 
           
         ])
     },

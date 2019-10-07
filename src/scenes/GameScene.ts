@@ -91,7 +91,7 @@ export default class GameScene extends Phaser.Scene {
     private executeMoveAction(player: Player, nextPlayerX: number, nextPlayerY: number, direction: MoveDirection, forceMove: boolean = false): boolean {
         if (forceMove) {
             const sprite = this.getSpriteAtLocation(nextPlayerX, nextPlayerY);
-            if(sprite) {
+            if (sprite) {
                 this.write(sprite.getText());
             }
             player.moveInDirection(direction);
@@ -110,13 +110,23 @@ export default class GameScene extends Phaser.Scene {
             switch (itemResponse) {
                 case ItemResolutionResponse.PASS_THROUGH:
                     this.inventoryScene.putBackAllLetters();
-                    /* fall through */
+                /* fall through */
                 case ItemResolutionResponse.SLIP:
                     this.syntheticMoveDirectionQueue.push(direction);
                     break;
                 case ItemResolutionResponse.CREATE_LETTER_L:
                     sprite.destroy();
                     this.inventoryScene.addLetters("l");
+                    this.inventoryScene.putBackAllLetters();
+                    break;
+                case ItemResolutionResponse.CREATE_LETTER_X:
+                    sprite.destroy();
+                    this.inventoryScene.addLetters("x");
+                    this.inventoryScene.putBackAllLetters();
+                    break;
+                case ItemResolutionResponse.CREATE_LETTER_Y:
+                    sprite.destroy();
+                    this.inventoryScene.addLetters("y");
                     this.inventoryScene.putBackAllLetters();
                     break;
                 case ItemResolutionResponse.DESTROY:
@@ -215,6 +225,10 @@ export default class GameScene extends Phaser.Scene {
             );
             this.cameras.main.startFollow(this.currentLevel.getPlayer());
 
+            if (!this.inventoryScene) {
+                // fix hax
+                this.inventoryScene = this.scene.get("inventory") as InventoryScene;
+            }
             this.inventoryScene.setLetters(level.getStartingInventory(), level.getMaxValidWordLength());
 
             this.children.bringToTop(this.currentLevel.getPlayer());

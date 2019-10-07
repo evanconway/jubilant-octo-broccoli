@@ -3,6 +3,16 @@ import { GameSprite } from './GameSprite';
 import { ItemResolutionResponse } from "../constants";
 
 const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
+    [26, [
+        "todo",
+        "todo",
+        "todo"
+    ]],
+    [31, [
+        "nonexy", // TODO
+        "todo",
+        "todo"
+    ]],
     [45, [
         "light",
         "It's really dark in this next room.\nI'm not going in there unless it's brighter.",
@@ -13,9 +23,19 @@ const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
         "I'm not moving until I get some roast pork. I love to pig out. Do you have some?",
         "Mmm, yeah, that's some good meat."]],
     [47, [
-         "hit",
+        "hit",
         "I'm going to punch you! You better not punch me back!",
         "Augh!"
+    ]],
+    [48, [
+        "none", //TODO
+        "todo",
+        "todo"
+    ]],
+    [49, [
+        "none",
+        "todo",
+        "todo"
     ]],
     [50, [
         "one",
@@ -36,7 +56,7 @@ const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
         "trail",
         "What are you on? A road, a path, a ...?",
         "with that said, lets begin our tale!",
-    ]],
+    ]]
 ]);
 
 export class Guard extends GameSprite {

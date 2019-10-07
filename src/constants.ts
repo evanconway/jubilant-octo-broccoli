@@ -20,6 +20,8 @@ export enum ItemResolutionResponse {
     DESTROY,
     PASS_THROUGH,
     CREATE_LETTER_L,
+    CREATE_LETTER_X,
+    CREATE_LETTER_Y,
     PRINT_TEXT,
     SLIP
 }
