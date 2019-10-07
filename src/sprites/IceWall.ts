@@ -11,6 +11,10 @@ export class IceWall extends GameSprite {
         return this.active;
     }
 
+    public getText(): string {
+        return "This icy wall needs some heat to melt away!";
+    }
+
     public recItem(item: string): ItemResolutionResponse {
       if (this.active) {
           console.log("Ice got item " + item);

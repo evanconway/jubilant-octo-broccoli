@@ -11,7 +11,9 @@ export class Altar extends GameSprite {
         return this.active;
     }
 
-    // You should win if you run into this and go to the next level
+    public getText(): string {
+        return "TODO";
+    }
 
     public recItem(item: string): ItemResolutionResponse {
         if (this.active) {

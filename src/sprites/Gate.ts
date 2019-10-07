@@ -3,6 +3,7 @@ import { GameSprite } from './GameSprite';
 import { ItemResolutionResponse } from "../constants";
 
 export class Gate extends GameSprite {
+    private currentString: string;
     constructor(scene: GameScene, x: number, y: number, startFrame: number) {
         super(scene, x, y, startFrame);
     }
@@ -11,11 +12,19 @@ export class Gate extends GameSprite {
         return this.active;
     }
 
+    public getText() {
+        return this.currentString;
+    }
+
     public recItem(item: string): ItemResolutionResponse {
         if (this.active) {
-            console.log("Gate got item " + item);
             if (item == "thin") {
+                this.currentString = "You slip between the bars of the gate.";
+                console.log("AAA");
                 return ItemResolutionResponse.PASS_THROUGH;
+            } else {
+                this.currentString = "If you could lose some weight, you might be able to slip between the bars...";
+                return ItemResolutionResponse.PRINT_TEXT;
             }
         }
         return ItemResolutionResponse.NONE;

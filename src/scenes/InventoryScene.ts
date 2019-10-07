@@ -30,6 +30,7 @@ export default class InventoryScene extends Phaser.Scene {
     private deleteKey: Phaser.Input.Keyboard.Key;
     private clearAllKey: Phaser.Input.Keyboard.Key;
     private spaceKey : Phaser.Input.Keyboard.Key;
+    private nextLevelKeyCheat: Phaser.Input.Keyboard.Key;
 
     private gameScene: GameScene;
 
@@ -66,6 +67,8 @@ export default class InventoryScene extends Phaser.Scene {
         this.deleteKey = this.input.keyboard.addKey("backspace");
         this.clearAllKey = this.input.keyboard.addKey("delete");
         this.spaceKey = this.input.keyboard.addKey("space");
+
+        this.nextLevelKeyCheat = this.input.keyboard.addKey("ONE");
 
         this.cameras.main.setViewport(
             0,
@@ -148,6 +151,11 @@ export default class InventoryScene extends Phaser.Scene {
         } else if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
           this.scrambleInventoryLetters();
         }
+
+        if (Phaser.Input.Keyboard.JustDown(this.nextLevelKeyCheat)) {
+            console.log("AAA");
+            this.gameScene.nextLevel();
+        }
     }
 
     /* Put back last letter from current "item" and puts it back in inventory */
@@ -208,17 +216,17 @@ export default class InventoryScene extends Phaser.Scene {
             x.destroy();
         }
         this.addLetters(newLetters);
-        this.clearLetterHolders();
-        this.createLetterHolders(0, newLetters.length);
-        this.createLetterHolders(1, maxPossibleCreatedWordLength);
-        this.updateLetterPositions();
-        
     }
 
     public addLetters(newLetters: string) {
         for (let i = 0; i < newLetters.length; i++) {
             this.pushUnused(newLetters.charAt(i));
         }
+        this.clearLetterHolders();
+        // hax
+        this.createLetterHolders(0, this.lists[LIST.INVENTORY].length + this.lists[LIST.ITEM].length);
+        this.createLetterHolders(1, this.maxPossibleCreatedWordLength);
+        this.updateLetterPositions();
     }
 
     private pushUnused(char: string) {
@@ -252,9 +260,28 @@ export default class InventoryScene extends Phaser.Scene {
                 this.lists[i][k].y = this.listY[i] + LETTER_HOLDER_SIZE;
                 this.children.bringToTop(this.lists[i][k]);
             }
+    
+        }
+        this.updateLetterHolderGold(this.gameScene.isValidWord(this.getItemString()));
+    }
     // Ellery's first code:
-        }//  >? om mki
-    } // v  '/ '
+    //  >? om mki
+     // v  '/ '
+
+    updateLetterHolderGold(isValidWord: boolean): void {
+        if (!this.letterHolders[LIST.ITEM]) {
+            return;
+        }
+        for (var k = 0; k < this.letterHolders[LIST.ITEM].length; k++) {
+            if (k === 0) {
+                this.letterHolders[LIST.ITEM][k].setFrame(isValidWord ? 3 : 0)
+            } else if (k === this.letterHolders[LIST.ITEM].length - 1) {
+                this.letterHolders[LIST.ITEM][k].setFrame(isValidWord ? 5 : 2)
+            } else {
+                this.letterHolders[LIST.ITEM][k].setFrame(isValidWord ? 4 : 1)
+            }
+        }
+    }
 
     clearLetterHolders(): void {
         for (let i = 0; i < this.letterHolders.length; i++) {

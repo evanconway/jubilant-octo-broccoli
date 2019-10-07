@@ -10,6 +10,7 @@ import {LevelData, LEVEL_DATA} from './LevelData';
 import { TextArea } from '../sprites/TextArea';
 import { Altar } from '../sprites/Altar';
 import { Sarcophagus } from '../sprites/Sarcophagus';
+import { IceFloor } from '../sprites/IceFloor';
 
 export default class LevelLoader {
     public static async loadLevel(scene: GameScene, levelNum: number): Promise<Level> {
@@ -19,6 +20,9 @@ export default class LevelLoader {
             [22, Player],
             [28, Sarcophagus],
             [30, IceWall],
+            [34, IceFloor],
+            [35, IceFloor],
+            [36, IceFloor],
             [45, Guard],
             [46, Guard],
             [47, Guard],

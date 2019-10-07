@@ -32,8 +32,8 @@ export default class GameScene extends Phaser.Scene {
         this.load.spritesheet("tiles_sprites", "../assets/tiles.png", {
             frameWidth: 32, frameHeight: 32
         });
-        this.load.spritesheet('letters', 'assets/letters.png', { frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('letter_holder', 'assets/letter_holder.png', { frameWidth: 45, frameHeight: 45});
+        this.load.spritesheet('letters', 'assets/letters.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('letter_holder', 'assets/letter_holder.png', { frameWidth: 45, frameHeight: 45 });
     }
 
     public create() {
@@ -95,6 +95,11 @@ export default class GameScene extends Phaser.Scene {
         if (forceMove) {
             player.moveInDirection(direction);
             this.lastTimeKeyPressed = Date.now();
+            const sprite = this.getSpriteAtLocation(nextPlayerX, nextPlayerY);
+            const itemResponse = this.applyItem(sprite);
+            if (itemResponse === ItemResolutionResponse.PASS_THROUGH) {
+                this.syntheticMoveDirectionQueue.push(direction);
+            }
             return true;
         }
 
@@ -102,13 +107,27 @@ export default class GameScene extends Phaser.Scene {
         const itemResponse = this.applyItem(sprite);
 
         if (itemResponse !== ItemResolutionResponse.NONE) {
-            if (itemResponse === ItemResolutionResponse.PASS_THROUGH) {
-              this.syntheticMoveDirectionQueue.push(direction);
-              this.syntheticMoveDirectionQueue.push(direction);
+            switch (itemResponse) {
+                case ItemResolutionResponse.PASS_THROUGH:
+                    this.syntheticMoveDirectionQueue.push(direction);
+                    break;
+                case ItemResolutionResponse.CREATE_LETTER_L:
+                    sprite.destroy();
+                    this.inventoryScene.addLetters("l");
+                    break;
+                case ItemResolutionResponse.DESTROY:
+                    sprite.destroy();
+                    break;
+                case ItemResolutionResponse.PRINT_TEXT:
+                    break;
+                default:
+                    console.warn(`Warning: No handler for itemResolutionResponse ${itemResponse}`);
             }
+            this.write(sprite.getText());
             this.lastTimeKeyPressed = Date.now();
             return true;
-        } else if(this.isTilePassableForPlayer(nextPlayerX, nextPlayerY)) {
+        } else if (this.isTilePassableForPlayer(nextPlayerX, nextPlayerY)) {
+            this.readoutScene.clear();
             player.moveInDirection(direction);
             this.lastTimeKeyPressed = Date.now();
             return true;
@@ -121,13 +140,13 @@ export default class GameScene extends Phaser.Scene {
         const playerTileY = player.gridY;
 
         if (direction === MoveDirection.UP) {
-          return { x: playerTileX, y: playerTileY - 1}
+            return { x: playerTileX, y: playerTileY - 1 }
         } else if (direction === MoveDirection.DOWN) {
-          return { x: playerTileX, y: playerTileY + 1}
+            return { x: playerTileX, y: playerTileY + 1 }
         } else if (direction === MoveDirection.LEFT) {
-          return { x: playerTileX - 1, y: playerTileY }
+            return { x: playerTileX - 1, y: playerTileY }
         } else if (direction === MoveDirection.RIGHT) {
-          return { x: playerTileX + 1, y: playerTileY }
+            return { x: playerTileX + 1, y: playerTileY }
         }
     }
 
@@ -135,32 +154,32 @@ export default class GameScene extends Phaser.Scene {
         const player: Player = this.currentLevel.getPlayer();
 
         if (this.lastTimeKeyPressed + MOVE_DELAY > Date.now()) {
-          return false;
+            return false;
         }
 
         if (this.cursorKeys.up.isDown && !this.cursorKeys.down.isDown) {
-           const nextPos = this.getNextPlayerPosition(player, MoveDirection.UP);
-           return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.UP);
+            const nextPos = this.getNextPlayerPosition(player, MoveDirection.UP);
+            return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.UP);
         } else if (this.cursorKeys.down.isDown && !this.cursorKeys.up.isDown) {
-           const nextPos = this.getNextPlayerPosition(player, MoveDirection.DOWN);
-           return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.DOWN);
+            const nextPos = this.getNextPlayerPosition(player, MoveDirection.DOWN);
+            return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.DOWN);
         } else if (this.cursorKeys.left.isDown && !this.cursorKeys.right.isDown) {
-           const nextPos = this.getNextPlayerPosition(player, MoveDirection.LEFT);
-           return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.LEFT);
+            const nextPos = this.getNextPlayerPosition(player, MoveDirection.LEFT);
+            return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.LEFT);
         } else if (this.cursorKeys.right.isDown && !this.cursorKeys.left.isDown) {
-           const nextPos = this.getNextPlayerPosition(player, MoveDirection.RIGHT);
-           return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.RIGHT);
+            const nextPos = this.getNextPlayerPosition(player, MoveDirection.RIGHT);
+            return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.RIGHT);
         }
 
         return false;
     }
 
     private applyItem(targetSprite: GameSprite): ItemResolutionResponse {
-      const item = this.inventoryScene.getItemString();
-      if (targetSprite) {
-        return targetSprite.recItem(item);
-      }
-      return ItemResolutionResponse.NONE;
+        const item = this.inventoryScene.getItemString();
+        if (targetSprite) {
+            return targetSprite.recItem(item);
+        }
+        return ItemResolutionResponse.NONE;
     }
 
     private handleKeyboardInputs() {
@@ -169,16 +188,14 @@ export default class GameScene extends Phaser.Scene {
             let textArea: TextArea | null = this.currentLevel.getTextAreasIterable().find(s => s.gridX === player.gridX && s.gridY === player.gridY);
             if (textArea) {
                 this.readoutScene.write(textArea.getText());
-            } else {
-                this.readoutScene.clear();
             }
             this.currentLevel.update();
         }
     }
 
     public nextLevel(): void {
-        this.currentLevelIndex ++;
-        if(this.currentLevel) {
+        this.currentLevelIndex++;
+        if (this.currentLevel) {
             this.currentLevel.tileMap.destroy();
             this.currentLevel.getSpritesIterable().forEach(s => s.destroy());
         }
@@ -198,6 +215,8 @@ export default class GameScene extends Phaser.Scene {
             this.cameras.main.startFollow(this.currentLevel.getPlayer());
 
             this.inventoryScene.setLetters(level.getStartingInventory(), level.getMaxValidWordLength());
+
+            this.children.bringToTop(this.currentLevel.getPlayer());
         });
     }
 
@@ -208,15 +227,14 @@ export default class GameScene extends Phaser.Scene {
         super.update(time, delta);
 
         if (this.lastTimeKeyPressed + MOVE_DELAY < Date.now()) {
-          if (this.syntheticMoveDirectionQueue.length) {
-            const nextSyntheticMoveDirection = this.syntheticMoveDirectionQueue.pop();
-            const player: Player = this.currentLevel.getPlayer();
-            const nextPos = this.getNextPlayerPosition(player, nextSyntheticMoveDirection);
-            console.log(nextPos);
-            this.executeMoveAction(player, nextPos.x, nextPos.y, nextSyntheticMoveDirection, true);
-          } else {
-            this.handleKeyboardInputs();
-          }
+            if (this.syntheticMoveDirectionQueue.length) {
+                const nextSyntheticMoveDirection = this.syntheticMoveDirectionQueue.pop();
+                const player: Player = this.currentLevel.getPlayer();
+                const nextPos = this.getNextPlayerPosition(player, nextSyntheticMoveDirection);
+                this.executeMoveAction(player, nextPos.x, nextPos.y, nextSyntheticMoveDirection, true);
+            } else {
+                this.handleKeyboardInputs();
+            }
         }
     }
 }

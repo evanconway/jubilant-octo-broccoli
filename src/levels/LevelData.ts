@@ -7,11 +7,9 @@ export class LevelData {
 export const LEVEL_DATA: LevelData[] = [
     {
         startingInventory: "nothing",
-        validWords: new Set<string>(["nog", "hog", "hot", "hit", "thin", "ingot"]),
+        validWords: new Set<string>(["hog", "hot", "hit", "thin", "ingot", "light", "night"]),
         textAreas: new Map<string, string>([
-            ["4,6", "This icy wall needs some heat to melt away!"],
-            ["10,6", "If you could lose some weight, you might be able to slip between the bars..."],
-            ["3,24", "The mummy's coffin is missing a golden bar. Perhaps you can replace it..."]
+            
         ])
     },
     {

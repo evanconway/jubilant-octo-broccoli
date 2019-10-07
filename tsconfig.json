@@ -3,7 +3,8 @@
       "target": "es2015",
       "sourceMap": true,
       "types": ["phaser"],
-      "noImplicitAny": true
+      "noImplicitAny": true,
+      "noFallthroughCasesInSwitch": true
     },
     "include": [
       "**/*.ts"

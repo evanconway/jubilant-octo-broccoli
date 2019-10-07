@@ -15,6 +15,7 @@ export abstract class GameSprite extends Phaser.GameObjects.Sprite {
 
     public abstract recItem(item: string): ItemResolutionResponse;
     public abstract isCollidable(): boolean;
+    public abstract getText(): string;
 
     get gridX(): number {
         return Math.floor(this.x / GAME_WORLD_TILE_WIDTH);

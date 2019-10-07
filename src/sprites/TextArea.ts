@@ -18,9 +18,6 @@ export class TextArea extends GameSprite {
     }
 
     public getText(): string {
-        if (!this.text) {
-            return `NO TEXT SET (${this.gridX}, ${this.gridY})`;
-        }
-        return this.text;
+        return "TODO";
     }
 }

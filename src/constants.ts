@@ -13,7 +13,8 @@ export enum ItemResolutionResponse {
     NONE,
     DESTROY,
     PASS_THROUGH,
-    CREATE_LETTER
+    CREATE_LETTER_L,
+    PRINT_TEXT
 }
 
 export enum MoveDirection {

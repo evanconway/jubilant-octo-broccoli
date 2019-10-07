@@ -25,6 +25,10 @@ export class Player extends GameSprite {
         return ItemResolutionResponse.NONE;
     }
 
+    public getText(): string {
+        throw new Error("this should never be called");
+    }
+
     public isCollidable(): boolean {
         return true;
     }
