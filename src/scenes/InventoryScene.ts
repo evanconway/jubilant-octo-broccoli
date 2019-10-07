@@ -1,6 +1,5 @@
 import LetterTile from "../LetterTile";
-import { GameObjects } from "phaser";
-import { INVENTORY_HEIGHT_PX, READOUT_WIDTH_PX } from '../constants';
+import { INVENTORY_HEIGHT_PX } from '../constants';
 import GameScene from "./GameScene";
 
 const LETTER_SIZE: number = 42; // slightly bigger than sprite width
@@ -38,6 +37,7 @@ export default class InventoryScene extends Phaser.Scene {
 
     private gameScene: GameScene;
 
+    private maxPossibleCreatedWordLength: number;
     private letterHolders: Phaser.GameObjects.Sprite[][] = [];
 
     constructor() {
@@ -90,6 +90,7 @@ export default class InventoryScene extends Phaser.Scene {
             //if (gameObject.y <= this.listY[LIST.SPELL]) listIndex = LIST.SKILL;
             //if (gameObject.y <= this.listY[LIST.SKILL]) listIndex = LIST.ITEM;
             if (gameObject.y <= this.listY[LIST.ITEM]) listIndex = LIST.INVENTORY;
+
             /*
             Now we have to find the index where we will add the dragged letter.
             The splice function of arrays adds new elements at the specified index and pushes everything else back. It is like the
@@ -116,8 +117,10 @@ export default class InventoryScene extends Phaser.Scene {
             from it's previous place.
             */
             this.removeOther(gameObject as LetterTile, listIndex, insertIndex);
+            if (listIndex == LIST.ITEM && this.lists[LIST.ITEM].length >= this.maxPossibleCreatedWordLength) {
+                this.lists[LIST.INVENTORY].push(this.lists[LIST.ITEM].pop());
+            }
             this.updateLetterPositions();
-            this.updateLetterHolders();
         });
     }
 
@@ -128,10 +131,14 @@ export default class InventoryScene extends Phaser.Scene {
             let charString = String.fromCharCode(charCode);
             let letter = null;
             // if key is pressed and the letter of that key is in the inventory (is not null)
-            if (Phaser.Input.Keyboard.JustDown(this.keyboard[i]) && (letter = this.listTakeLetter(LIST.INVENTORY, charString)) != null) {
-                this.lists[LIST.ITEM].push(letter);
-                this.updateLetterPositions();
-                this.updateLetterHolders();
+            if (Phaser.Input.Keyboard.JustDown(this.keyboard[i])) {
+                if (this.lists[LIST.ITEM].length < this.maxPossibleCreatedWordLength) {
+                    let letter = this.listTakeLetter(LIST.INVENTORY, charString);
+                    if (letter != null) {
+                        this.lists[LIST.ITEM].push(letter);
+                    }
+                    this.updateLetterPositions();
+                }
             }
         }
         if (Phaser.Input.Keyboard.JustDown(this.deleteKey)) {
@@ -154,7 +161,6 @@ export default class InventoryScene extends Phaser.Scene {
         this.lists[LIST.INVENTORY].push(this.lists[LIST.ITEM][last]);
         this.lists[LIST.ITEM].splice(last, 1);
         this.updateLetterPositions();
-        this.updateLetterHolders();
       }
     }
 
@@ -165,7 +171,6 @@ export default class InventoryScene extends Phaser.Scene {
             this.lists[LIST.ITEM].splice(i, 1);
         }
         this.updateLetterPositions();
-        this.updateLetterHolders();
     }
 
     private scrambleInventoryLetters() {
@@ -177,7 +182,6 @@ export default class InventoryScene extends Phaser.Scene {
             inventoryList[randIndex] = currentLetter;
         }
         this.updateLetterPositions();
-        this.updateLetterHolders();
     }
 
     /*
@@ -197,7 +201,8 @@ export default class InventoryScene extends Phaser.Scene {
         return result;
     }
 
-    public setLetters(newLetters: string) {
+    public setLetters(newLetters: string, maxPossibleCreatedWordLength: number) {
+        this.maxPossibleCreatedWordLength = maxPossibleCreatedWordLength; 
         while (this.lists[LIST.INVENTORY].length) {
             let x = this.lists[LIST.INVENTORY].pop()
             x.destroy();
@@ -206,9 +211,12 @@ export default class InventoryScene extends Phaser.Scene {
             let x = this.lists[LIST.ITEM].pop()
             x.destroy();
         }
-        this.updateLetterPositions();
-        this.updateLetterHolders();
         this.addLetters(newLetters);
+        this.clearLetterHolders();
+        this.createLetterHolders(0, newLetters.length);
+        this.createLetterHolders(1, maxPossibleCreatedWordLength);
+        this.updateLetterPositions();
+        
     }
 
     public addLetters(newLetters: string) {
@@ -224,7 +232,6 @@ export default class InventoryScene extends Phaser.Scene {
         this.input.setDraggable(temp);
         this.lists[LIST.INVENTORY].push(temp);
         this.updateLetterPositions();
-        this.updateLetterHolders();
     }
 
     // This may not be needed
@@ -247,10 +254,50 @@ export default class InventoryScene extends Phaser.Scene {
             for (let k = 0; k < this.lists[i].length; k++) {
                 this.lists[i][k].x = MARGIN_LEFT + (LETTER_SIZE * k);
                 this.lists[i][k].y = this.listY[i] + LETTER_SIZE;
+                this.children.bringToTop(this.lists[i][k]);
             }
     // Ellery's first code:
         }//  >? om mki
     } // v  '/ '
+
+    clearLetterHolders(): void {
+        for (let i = 0; i < this.letterHolders.length; i++) {
+            for (let j = 0; j < this.letterHolders[i].length; j ++) {
+                this.letterHolders[i][j].destroy
+            }
+        }
+    }
+
+    createLetterHolders(listIndex: number, maxLength: number): void {
+        this.letterHolders[listIndex] = [];
+        for (let k = 0; k < Math.max(maxLength, 3); k ++) {
+            if (k === 0) {
+                this.letterHolders[listIndex][k] = this.add.sprite(
+                    MARGIN_LEFT + (LETTER_SIZE * k) - 7,
+                    this.listY[listIndex] + LETTER_SIZE - 5,
+                    "letter_holder",
+                    0
+                );
+                this.letterHolders[listIndex][k].setOrigin(0,0);
+            } else if (k === this.lists[listIndex].length - 1) {
+                this.letterHolders[listIndex][k] = this.add.sprite(
+                    MARGIN_LEFT + (LETTER_SIZE * k) - 7,
+                    this.listY[listIndex] + LETTER_SIZE - 5,
+                    "letter_holder",
+                    2
+                );
+                this.letterHolders[listIndex][k].setOrigin(0,0);
+            }  else {
+                this.letterHolders[listIndex][k] = this.add.sprite(
+                    MARGIN_LEFT + (LETTER_SIZE * k) - 7,
+                    this.listY[listIndex] + LETTER_SIZE - 5,
+                    "letter_holder",
+                    1
+                );
+                this.letterHolders[listIndex][k].setOrigin(0,0);
+            }
+        }
+    }
 
     /*
     This function removes the given letter from lists, but only if it is NOT the element
@@ -270,55 +317,6 @@ export default class InventoryScene extends Phaser.Scene {
                 }
             }
             if (removed) i = this.lists.length;
-        }
-    }
-
-    private updateLetterHolders() {
-        for (let i = 0; i < this.lists.length; i++){
-            if (!this.letterHolders[i]) {
-                this.letterHolders[i] = [];
-            }
-            for (let k = 0; k < Math.max(this.lists[i].length, 3); k ++) {
-                if (k === 0) {
-                    if (!this.letterHolders[i][k]) {
-                        this.letterHolders[i][k] = this.add.sprite(
-                            MARGIN_LEFT + (LETTER_SIZE * k) - 7,
-                            this.listY[i] + LETTER_SIZE - 5,
-                            "letter_holder",
-                            0
-                        );
-                        this.letterHolders[i][k].setOrigin(0,0);
-                    }
-                } else if (k === this.lists[i].length - 1) {
-                    if (this.letterHolders[i][k]) {
-                        this.letterHolders[i][k].setFrame(2);
-                    } else {
-                        this.letterHolders[i][k] = this.add.sprite(
-                            MARGIN_LEFT + (LETTER_SIZE * k) - 7,
-                            this.listY[i] + LETTER_SIZE - 5,
-                            "letter_holder",
-                            2
-                        );
-                        this.letterHolders[i][k].setOrigin(0,0);
-                    }
-                } else if (k >= Math.max(this.lists[i].length, 3)) {
-                    if (this.letterHolders[i][k]) {
-                        this.letterHolders[i][k].destroy();
-                    }
-                } else {
-                    if (this.letterHolders[i][k]) {
-                        this.letterHolders[i][k].setFrame(1);
-                    } else {
-                        this.letterHolders[i][k] = this.add.sprite(
-                            MARGIN_LEFT + (LETTER_SIZE * k) - 7,
-                            this.listY[i] + LETTER_SIZE - 5,
-                            "letter_holder",
-                            1
-                        );
-                        this.letterHolders[i][k].setOrigin(0,0);
-                    }
-                }
-            }
         }
     }
 

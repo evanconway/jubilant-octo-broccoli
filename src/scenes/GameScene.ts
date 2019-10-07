@@ -197,7 +197,7 @@ export default class GameScene extends Phaser.Scene {
             );
             this.cameras.main.startFollow(this.currentLevel.getPlayer());
 
-            this.inventoryScene.setLetters(level.getStartingInventory());
+            this.inventoryScene.setLetters(level.getStartingInventory(), level.getMaxValidWordLength());
         });
     }
 

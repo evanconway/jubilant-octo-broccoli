@@ -31,6 +31,13 @@ export default class Level {
         }
     }
 
+    public getMaxValidWordLength(): number {
+        return Array
+            .from(this.validWords.values())
+            .map(w => w.length)
+            .reduce((prev, curr) => prev > curr ? prev : curr, 0); 
+    }
+
     public isValidWord(word: string) {
         return this.validWords.has(word);
     }
