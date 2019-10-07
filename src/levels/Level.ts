@@ -6,7 +6,7 @@ export default class Level {
     private spritesIterableCache: GameSprite[];
 
     constructor(public levelSprites: Map<number, GameSprite[]>, public tileMap: Phaser.Tilemaps.Tilemap) {
-        this.validWords = new Set<string>(["nog", "hog", "g"]);
+        this.validWords = new Set<string>(["nog", "hog", "g", "hot", "hit"]);
 
         this.spritesIterableCache = [];
         for (let spriteId of this.levelSprites.keys()) {

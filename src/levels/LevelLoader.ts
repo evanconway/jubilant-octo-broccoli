@@ -1,5 +1,7 @@
 import Level from './Level';
 import { Gate } from '../sprites/Gate';
+import { IceWall } from '../sprites/IceWall';
+import { Guard } from "../sprites/Guard";
 import { Player } from '../sprites/player';
 import { GameSprite } from '../sprites/GameSprite';
 import SpriteLoader from '../SpriteLoader';
@@ -13,13 +15,13 @@ export default class LevelLoader {
             [23, Player],
             [26, Gate],
             // TODO THESE ARE WRONG NONONONONO
-            [31, Gate],
+            [30, Gate],
             [29, Gate],
-            [48, Gate],
+            [48, Guard],
             [47, Gate],
             [1, Gate],
             [46, Gate],
-            [30, Gate]
+            [31, IceWall]
         ]);
 
         const sprites: Map<number, GameSprite[]> = SpriteLoader.createSpritesFromTileset(
