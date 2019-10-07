@@ -13,8 +13,6 @@ export class ItemTargetOverlay {
 
     render(player: Player) {
       const item = this.gameScene.getCurrentItem();
-      // Get the items "reach"
-      const reach = 1;
 
       const playerGlobalX = player.x;
       const playerGlobalY = player.y;

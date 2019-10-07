@@ -46,13 +46,14 @@ export default class GameScene extends Phaser.Scene {
         this.scene.launch("inventory");
         this.inventoryScene = this.scene.get("inventory") as InventoryScene;
 
-        this.itemTargetChoicesOverlay = new ItemTargetOverlay(this);
 
         LevelLoader.loadLevel(this, 1).then((level) => {
             this.currentLevel = level;
             this.isFullyLoaded = true;
             this.cameras.main.setBounds(0, 0, this.currentLevel.tileMap.widthInPixels, this.currentLevel.tileMap.heightInPixels);
             this.cameras.main.setViewport(0, 0, this.game.canvas.width - READOUT_WIDTH_PX, this.game.canvas.height - INVENTORY_HEIGHT_PX);
+
+            this.itemTargetChoicesOverlay = new ItemTargetOverlay(this);
         });
     }
 
