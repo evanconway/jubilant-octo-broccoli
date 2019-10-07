@@ -28,7 +28,8 @@ export default class MenuScene extends Phaser.Scene {
         this.load.audio("backgroundMusic", "../assets/stopping_by_the_inn.mp3");
         this.load.audio("goodSound", "../assets/zapsplat_synth_bright_pluck_digital_award_achievement_007.mp3");
         this.load.audio("badSound", "../assets/zapsplat_magical_negative_002.mp3");
-        this.load.audio("okSound", "../assets/zapsplat_retro_digital_fifths_tone_001.mp3")
+        this.load.audio("okSound", "../assets/zapsplat_retro_digital_fifths_tone_001.mp3");
+        this.load.audio("stepSound", "../assets/step.mp3");
 
         let i = 0;
         this.add.text(LEFTX, STARTY, "N O T H I N G");

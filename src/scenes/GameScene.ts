@@ -27,6 +27,7 @@ export default class GameScene extends Phaser.Scene {
     public goodSound: Phaser.Sound.BaseSound;
     public badSound: Phaser.Sound.BaseSound;
     public okSound: Phaser.Sound.BaseSound;
+    public stepSound: Phaser.Sound.BaseSound;
 
     constructor() {
         super({ key: "game" });
@@ -50,6 +51,7 @@ export default class GameScene extends Phaser.Scene {
         this.goodSound = this.sound.add("goodSound");
         this.badSound = this.sound.add("badSound");
         this.okSound = this.sound.add("okSound");
+        this.stepSound = this.sound.add("stepSound");
 
         this.nextLevel();
     }
@@ -160,6 +162,7 @@ export default class GameScene extends Phaser.Scene {
             this.readoutScene.clear();
             player.moveInDirection(direction);
             this.lastTimeKeyPressed = Date.now();
+            this.stepSound.play();
             return true;
         }
         return false;
