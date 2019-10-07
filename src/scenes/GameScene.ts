@@ -111,9 +111,11 @@ export default class GameScene extends Phaser.Scene {
                 case ItemResolutionResponse.CREATE_LETTER_L:
                     sprite.destroy();
                     this.inventoryScene.addLetters("l");
+                    this.inventoryScene.putBackAllLetters();
                     break;
                 case ItemResolutionResponse.DESTROY:
                     sprite.destroy();
+                    this.inventoryScene.putBackAllLetters();
                     break;
                 case ItemResolutionResponse.PRINT_TEXT:
                     break;

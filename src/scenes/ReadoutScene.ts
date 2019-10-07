@@ -26,7 +26,6 @@ export default class ReadoutScene extends Phaser.Scene {
                 textSplit.push(line);
             }
         }
-        console.log(text, textSplit);
         this.textArea.setText(textSplit.join("\n"));
         this.updateHeight(textSplit.length);
     }
@@ -43,6 +42,8 @@ export default class ReadoutScene extends Phaser.Scene {
         }
         if (lines < 3) {
             lines = 3; // hax
+        } else if (lines >= 5) {
+            lines --; // more hax
         }
         this.cameras.main.setVisible(true);
         this.cameras.main.setViewport(
