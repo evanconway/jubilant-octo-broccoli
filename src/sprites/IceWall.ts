@@ -3,6 +3,7 @@ import { GameSprite } from './GameSprite';
 import { ItemResolutionResponse } from "../constants";
 
 export class IceWall extends GameSprite {
+    private currentText: string;
     constructor(scene: GameScene, x: number, y: number, startFrame: number) {
         super(scene, x, y, startFrame);
     }
@@ -12,15 +13,17 @@ export class IceWall extends GameSprite {
     }
 
     public getText(): string {
-        return "This icy wall needs some heat to melt away!";
+        return this.currentText;
     }
 
     public recItem(item: string): ItemResolutionResponse {
       if (this.active) {
-          console.log("Ice got item " + item);
           if (item == "hot") {
-              this.destroy();
+              this.currentText = "You melt the ice with your hot body ;)";
               return ItemResolutionResponse.DESTROY;
+          } else {
+              this.currentText = "This icy wall needs some heat to melt away!";
+              return ItemResolutionResponse.PRINT_TEXT;
           }
       }
       return ItemResolutionResponse.NONE;
