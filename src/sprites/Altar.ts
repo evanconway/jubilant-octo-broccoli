@@ -12,7 +12,7 @@ export class Altar extends GameSprite {
     }
 
     public getText(): string {
-        return "TODO";
+        return "The altar glows, and you are transported to another place in the tomb!";
     }
 
     public recItem(item: string): ItemResolutionResponse {
