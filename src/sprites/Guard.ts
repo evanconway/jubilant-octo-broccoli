@@ -28,7 +28,7 @@ const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
         "Augh!"
     ]],
     [48, [
-        "vat", //TODO
+        "vat",
         "I want to put your brain in one of these!",
         "I put the horse before Descartes"
     ]],

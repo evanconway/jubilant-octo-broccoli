@@ -23,11 +23,11 @@ const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
         "typed",
         "This paper I have here is unstriped\nAnd once inked, it cannot be wiped\nI put it in the feed\nI hit letters on keys\nIt’s not written, you’ll find that it’s _____",
     ]],
-    [107, [
+    [108, [
         "movie",
         "An actor I know went to prove he\nCan be sad, or happy, or groovy,\nHe appeared on the screen\nIn a violent scene\nBut it’s O.K., it’s just a _____",
     ]],
-    [108, [
+    [107, [
         "deity",
         "If the big bang was not spontaneity,\nAnd gods have no homogeneity,\nMany voices would say\n\"I want you to pray\"\nSo now I must choose my _____",
     ]],
