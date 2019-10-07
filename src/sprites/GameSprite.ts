@@ -1,5 +1,4 @@
 import GameScene from "../scenes/GameScene";
-import { Item } from "../resources/items";
 
 export abstract class GameSprite extends Phaser.GameObjects.Sprite {
     protected startFrame: number;
@@ -14,6 +13,6 @@ export abstract class GameSprite extends Phaser.GameObjects.Sprite {
       this.setFrame(frame + this.startFrame);
     }
 
-    public abstract recItem(item: Item): void;
+    public abstract recItem(item: string): void;
     public abstract isCollidable(): boolean;
 }

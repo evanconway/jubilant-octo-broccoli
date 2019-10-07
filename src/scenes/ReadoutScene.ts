@@ -1,4 +1,4 @@
-import {TEXT_AREA_HEIGHT_PX} from '../constants';
+import { INVENTORY_HEIGHT_PX, READOUT_WIDTH_PX } from '../constants';
 
 export default class ReadoutScene extends Phaser.Scene {
     private textBuffer: string[] = [];
@@ -17,13 +17,13 @@ export default class ReadoutScene extends Phaser.Scene {
 
     public create() {
         this.cameras.main.setViewport(
+            this.game.canvas.width - READOUT_WIDTH_PX,
             0,
-            this.game.canvas.height - TEXT_AREA_HEIGHT_PX,
-            this.game.canvas.width,
-            TEXT_AREA_HEIGHT_PX
+            READOUT_WIDTH_PX,
+            this.game.canvas.height - INVENTORY_HEIGHT_PX
         );
         this.textArea = this.add.text(0, 0, "", {color: "#fff"});
-        this.textArea.setFixedSize(this.game.canvas.width, TEXT_AREA_HEIGHT_PX);
-        this.textArea.setWordWrapWidth(this.game.canvas.width, true);
+        this.textArea.setFixedSize(READOUT_WIDTH_PX, this.game.canvas.height - INVENTORY_HEIGHT_PX);
+        this.textArea.setWordWrapWidth(READOUT_WIDTH_PX, true);
     }
 }

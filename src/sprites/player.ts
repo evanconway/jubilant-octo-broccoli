@@ -1,22 +1,12 @@
 import { GAME_WORLD_TILE_HEIGHT, GAME_WORLD_TILE_WIDTH } from "../constants"
 import InventoryScene from "../scenes/InventoryScene";
 import GameScene from "../scenes/GameScene";
-import { Properties, BaseActor } from "../resources/actors";
-import { Item, AllItems } from "../resources/items";
 import { GameSprite } from "./GameSprite";
-
-
-class PlayerActor extends BaseActor {
-  constructor() {
-    super(new Properties(10, 10, 10, 10));
-  }
-}
 
 enum PlayerActionState { NORMAL, ITEM_MODE }
 enum PlayerSpriteState { FACE_DOWN, FACE_UP, FACE_LEFT, FACE_RIGHT };
 
 export class Player extends GameSprite {
-    private actor: PlayerActor;
     private spriteState: PlayerSpriteState;
     private _actionState: PlayerActionState;
     private inventoryScene: InventoryScene;
@@ -26,13 +16,12 @@ export class Player extends GameSprite {
 
         this.inventoryScene = this.scene.scene.get("inventory") as InventoryScene;
 
-        this.actor = new PlayerActor();
         this.spriteState = PlayerSpriteState.FACE_DOWN;
         this.updateOrientation();
         this.setOrigin(0, 0);
     }
 
-    public recItem(item: Item): void {
+    public recItem(item: string): void {
       console.log(`Player got item ${item}`);
     }
 
@@ -70,11 +59,6 @@ export class Player extends GameSprite {
 
     exitItemMode() {
       this._actionState = PlayerActionState.NORMAL;
-    }
-
-    getCurrentItem(): Item {
-      // use the inventory scene here
-      return this.inventoryScene.getItem();
     }
 
     faceRight() {
