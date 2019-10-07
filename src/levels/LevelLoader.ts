@@ -8,6 +8,7 @@ import SpriteLoader from '../SpriteLoader';
 import GameScene from '../scenes/GameScene';
 import {LevelData, LEVEL_DATA} from './LevelData';
 import { TextArea } from '../sprites/TextArea';
+import { Altar } from '../sprites/Altar';
 
 export default class LevelLoader {
     public static async loadLevel(scene: GameScene, levelNum: number): Promise<Level> {
@@ -15,15 +16,23 @@ export default class LevelLoader {
         const level1SpriteMap = new Map<number, any>([
             [16, Gate],
             [23, Player],
-            [26, Gate],
-            // TODO THESE ARE WRONG NONONONONO
-            [30, Gate],
-            [29, TextArea],
+            [26, Gate], // WRONG
+            [30, Gate], // WRONG
             [48, Guard],
-            [47, Gate],
-            [1, Gate],
-            [46, Gate],
-            [31, IceWall]
+            [47, Gate], // WRONG
+            [1, Gate], // WRONG
+            [46, Gate], // WRONG
+            [42, Altar],
+            [43, Altar],
+            [44, Altar],
+            [31, IceWall],
+            [58, TextArea],
+            [59, TextArea],
+            [60, TextArea],
+            [61, TextArea],
+            [62, TextArea],
+            [63, TextArea],
+            [64, TextArea],
         ]);
 
         const sprites: Map<number, GameSprite[]> = SpriteLoader.createSpritesFromTileset(

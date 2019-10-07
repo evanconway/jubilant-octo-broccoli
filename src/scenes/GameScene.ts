@@ -193,7 +193,6 @@ export default class GameScene extends Phaser.Scene {
             this.handleItemInput();
         } else {
             if (this.handleMoveInput()) {
-                console.log(this.currentLevel.getTextAreasIterable());
                 let textArea: TextArea | null = this.currentLevel.getTextAreasIterable().find(s => s.gridX === player.gridX && s.gridY === player.gridY);
                 if (textArea) {
                     this.readoutScene.write(textArea.getText());
