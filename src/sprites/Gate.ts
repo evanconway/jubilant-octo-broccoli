@@ -11,7 +11,8 @@ export class Gate extends GameSprite {
     }
 
     public recItem(item: string): void {
-      if (item == "gey") {
+      console.log("Gate got item " + item);
+      if (item == "g") {
         this.destroy();
       }
     }

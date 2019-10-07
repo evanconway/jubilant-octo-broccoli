@@ -10,21 +10,17 @@ import Level from '../levels/Level';
 export default class GameScene extends Phaser.Scene {
     private isFullyLoaded: boolean = false;
 
-    private exampleText: Phaser.GameObjects.Text;
-    private exampleActive: boolean = true;
     private itemModeKey: Phaser.Input.Keyboard.Key;
     private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
-    private readoutScene: ReadoutScene;
     private itemTargetChoicesOverlay: ItemTargetOverlay;
-    private levelSprites: GameSprite[];
 
     private currentLevel: Level;
 
+    private readoutScene: ReadoutScene;
     private inventoryScene: InventoryScene;
 
     constructor() {
         super({ key: "game" });
-        this.levelSprites = [];
     }
 
     public preload() {
@@ -35,7 +31,6 @@ export default class GameScene extends Phaser.Scene {
     }
 
     public create() {
-        this.exampleText = this.add.text(10, 10, "Hi Everybody", { font: '16px Courier', fill: '#00ff00' });
         this.game.input.mouse.capture = true;
         this.cursorKeys = this.input.keyboard.createCursorKeys();
         this.itemModeKey = this.input.keyboard.addKey("Z");
@@ -75,7 +70,7 @@ export default class GameScene extends Phaser.Scene {
 
     private getSpriteAtLocation(tileX: number, tileY: number): GameSprite | null {
         // This is terrible
-        for (let sprite of this.levelSprites) {
+        for (let sprite of this.currentLevel.getSpritesIterable()) {
             if (Math.round(sprite.x / GAME_WORLD_TILE_WIDTH) == tileX
                 && Math.round(sprite.y / GAME_WORLD_TILE_HEIGHT) == tileY) {
                 return sprite;
@@ -184,9 +179,6 @@ export default class GameScene extends Phaser.Scene {
             return;
         }
         super.update(time, delta);
-
-        if (this.exampleActive) this.exampleText.setAlpha(1);
-        else this.exampleText.setAlpha(0);
 
         this.handleKeyboardInputs();
     }
