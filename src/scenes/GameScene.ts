@@ -10,6 +10,7 @@ import { TextArea } from '../sprites/TextArea';
 export default class GameScene extends Phaser.Scene {
     private isFullyLoaded: boolean = false;
     private lastTimeKeyPressed: number = Date.now();
+    private menuKey: Phaser.Input.Keyboard.Key;
 
     // If a item tells the game to let the player pass through it, we queue
     // up an event here to process it during the next time we process input events
@@ -39,6 +40,7 @@ export default class GameScene extends Phaser.Scene {
     public create() {
         this.game.input.mouse.capture = true;
         this.cursorKeys = this.input.keyboard.createCursorKeys();
+        this.menuKey = this.input.keyboard.addKey("esc");
 
         this.scene.launch("readout");
         this.readoutScene = this.scene.get("readout") as ReadoutScene;
@@ -235,6 +237,10 @@ export default class GameScene extends Phaser.Scene {
             } else {
                 this.handleKeyboardInputs();
             }
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(this.menuKey)) {
+            this.scene.switch("menu");
         }
     }
 }

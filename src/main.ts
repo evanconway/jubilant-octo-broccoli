@@ -20,7 +20,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   width: window.innerWidth,
   height: window.innerHeight,
  
-  scene:  [GameScene, InventoryScene, LoadingScene, MenuScene, ReadoutScene],
+  scene:  [MenuScene, GameScene, InventoryScene, LoadingScene, ReadoutScene],
 
   parent: 'game',
   backgroundColor: '#000000',
