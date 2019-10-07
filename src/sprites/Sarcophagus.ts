@@ -1,5 +1,6 @@
 import GameScene from '../scenes/GameScene';
 import { GameSprite } from './GameSprite';
+import { ItemResolutionResponse } from "../constants";
 
 export class Sarcophagus extends GameSprite {
     constructor(scene: GameScene, x: number, y: number, startFrame: number) {
@@ -12,8 +13,8 @@ export class Sarcophagus extends GameSprite {
 
     // This is like, bonus points or something
 
-    public recItem(item: string): boolean {
+    public recItem(item: string): ItemResolutionResponse {
         console.log("Sarcophagus got item " + item);
-        return false;
+        return ItemResolutionResponse.NONE;
     }
 }

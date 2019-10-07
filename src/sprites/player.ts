@@ -1,4 +1,4 @@
-import { GAME_WORLD_TILE_HEIGHT, GAME_WORLD_TILE_WIDTH } from "../constants";
+import { MoveDirection, ItemResolutionResponse, GAME_WORLD_TILE_HEIGHT, GAME_WORLD_TILE_WIDTH } from "../constants";
 import GameScene from "../scenes/GameScene";
 import InventoryScene from "../scenes/InventoryScene";
 import { GameSprite } from "./GameSprite";
@@ -21,9 +21,8 @@ export class Player extends GameSprite {
         this.setOrigin(0, 0);
     }
 
-    public recItem(item: string): boolean {
-        console.log(`Player got item ${item}`);
-        return false;
+    public recItem(item: string): ItemResolutionResponse {
+        return ItemResolutionResponse.NONE;
     }
 
     public isCollidable(): boolean {
@@ -86,14 +85,14 @@ export class Player extends GameSprite {
         this.updateOrientation();
     }
 
-    moveInDirection(direction: string) {
-      if (direction === "up") {
+    moveInDirection(direction: MoveDirection) {
+      if (direction === MoveDirection.UP) {
         this.moveUp();
-      } else if (direction === "down") {
+      } else if (direction === MoveDirection.DOWN) {
         this.moveDown();
-      } else if (direction === "left") {
+      } else if (direction === MoveDirection.LEFT) {
         this.moveLeft();
-      } else if (direction === "right") {
+      } else if (direction === MoveDirection.RIGHT) {
         this.moveRight();
       }
     }

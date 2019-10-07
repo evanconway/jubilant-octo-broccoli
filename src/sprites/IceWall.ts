@@ -1,5 +1,6 @@
 import GameScene from '../scenes/GameScene';
 import { GameSprite } from './GameSprite';
+import { ItemResolutionResponse } from "../constants";
 
 export class IceWall extends GameSprite {
     constructor(scene: GameScene, x: number, y: number, startFrame: number) {
@@ -10,14 +11,14 @@ export class IceWall extends GameSprite {
         return this.active;
     }
 
-    public recItem(item: string): boolean {
+    public recItem(item: string): ItemResolutionResponse {
       if (this.active) {
           console.log("Ice got item " + item);
           if (item == "hot") {
               this.destroy();
-              return true;
+              return ItemResolutionResponse.DESTROY;
           }
       }
-      return false;
+      return ItemResolutionResponse.NONE;
     }
 }

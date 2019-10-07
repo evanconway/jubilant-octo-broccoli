@@ -1,6 +1,6 @@
 import { Player } from "../sprites/Player";
 import ReadoutScene from "./ReadoutScene";
-import { MOVE_DELAY, INVENTORY_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT, READOUT_WIDTH_PX } from "../constants";
+import { ItemResolutionResponse, MoveDirection, MOVE_DELAY, INVENTORY_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT, READOUT_WIDTH_PX } from "../constants";
 import { GameSprite } from "../sprites/GameSprite";
 import InventoryScene from "./InventoryScene";
 import LevelLoader from '../levels/LevelLoader';
@@ -10,6 +10,10 @@ import { TextArea } from '../sprites/TextArea';
 export default class GameScene extends Phaser.Scene {
     private isFullyLoaded: boolean = false;
     private lastTimeKeyPressed: number = Date.now();
+
+    // If a item tells the game to let the player pass through it, we queue
+    // up an event here to process it during the next time we process input events
+    private syntheticMoveDirectionQueue: MoveDirection[] = [];
 
     private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
 
@@ -87,45 +91,76 @@ export default class GameScene extends Phaser.Scene {
         return this.isTilePassable(tileX, tileY);
     }
 
-    private executeMoveAction(player: Player, nextPlayerX: number, nextPlayerY: number, direction: string): boolean {
+    private executeMoveAction(player: Player, nextPlayerX: number, nextPlayerY: number, direction: MoveDirection, forceMove: boolean = false): boolean {
+        if (forceMove) {
+            player.moveInDirection(direction);
+            this.lastTimeKeyPressed = Date.now();
+            return true;
+        }
+
         const sprite = this.getSpriteAtLocation(nextPlayerX, nextPlayerY);
-        if (this.applyItem(sprite)) {
-          this.lastTimeKeyPressed = Date.now();
-          return true;
+        const itemResponse = this.applyItem(sprite);
+
+        if (itemResponse !== ItemResolutionResponse.NONE) {
+            if (itemResponse === ItemResolutionResponse.PASS_THROUGH) {
+              this.syntheticMoveDirectionQueue.push(direction);
+              this.syntheticMoveDirectionQueue.push(direction);
+            }
+            this.lastTimeKeyPressed = Date.now();
+            return true;
         } else if(this.isTilePassableForPlayer(nextPlayerX, nextPlayerY)) {
             player.moveInDirection(direction);
             this.lastTimeKeyPressed = Date.now();
             return true;
         }
+        return false;
+    }
+
+    private getNextPlayerPosition(player: Player, direction: MoveDirection) {
+        const playerTileX = player.gridX;
+        const playerTileY = player.gridY;
+
+        if (direction === MoveDirection.UP) {
+          return { x: playerTileX, y: playerTileY - 1}
+        } else if (direction === MoveDirection.DOWN) {
+          return { x: playerTileX, y: playerTileY + 1}
+        } else if (direction === MoveDirection.LEFT) {
+          return { x: playerTileX - 1, y: playerTileY }
+        } else if (direction === MoveDirection.RIGHT) {
+          return { x: playerTileX + 1, y: playerTileY }
+        }
     }
 
     private handleMoveInput(): boolean {
         const player: Player = this.currentLevel.getPlayer();
-        const playerTileX = player.gridX;
-        const playerTileY = player.gridY;
 
         if (this.lastTimeKeyPressed + MOVE_DELAY > Date.now()) {
           return false;
         }
 
         if (this.cursorKeys.up.isDown && !this.cursorKeys.down.isDown) {
-           return this.executeMoveAction(player, playerTileX, playerTileY - 1, "up");
+           const nextPos = this.getNextPlayerPosition(player, MoveDirection.UP);
+           return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.UP);
         } else if (this.cursorKeys.down.isDown && !this.cursorKeys.up.isDown) {
-           return this.executeMoveAction(player, playerTileX, playerTileY + 1, "down");
+           const nextPos = this.getNextPlayerPosition(player, MoveDirection.DOWN);
+           return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.DOWN);
         } else if (this.cursorKeys.left.isDown && !this.cursorKeys.right.isDown) {
-           return this.executeMoveAction(player, playerTileX - 1, playerTileY, "left");
+           const nextPos = this.getNextPlayerPosition(player, MoveDirection.LEFT);
+           return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.LEFT);
         } else if (this.cursorKeys.right.isDown && !this.cursorKeys.left.isDown) {
-           return this.executeMoveAction(player, playerTileX + 1, playerTileY, "right");
+           const nextPos = this.getNextPlayerPosition(player, MoveDirection.RIGHT);
+           return this.executeMoveAction(player, nextPos.x, nextPos.y, MoveDirection.RIGHT);
         }
 
         return false;
     }
 
-    private applyItem(targetSprite: GameSprite): boolean {
+    private applyItem(targetSprite: GameSprite): ItemResolutionResponse {
       const item = this.inventoryScene.getItemString();
       if (targetSprite) {
         return targetSprite.recItem(item);
       }
+      return ItemResolutionResponse.NONE;
     }
 
     private handleKeyboardInputs() {
@@ -172,6 +207,16 @@ export default class GameScene extends Phaser.Scene {
         }
         super.update(time, delta);
 
-        this.handleKeyboardInputs();
+        if (this.lastTimeKeyPressed + MOVE_DELAY < Date.now()) {
+          if (this.syntheticMoveDirectionQueue.length) {
+            const nextSyntheticMoveDirection = this.syntheticMoveDirectionQueue.pop();
+            const player: Player = this.currentLevel.getPlayer();
+            const nextPos = this.getNextPlayerPosition(player, nextSyntheticMoveDirection);
+            console.log(nextPos);
+            this.executeMoveAction(player, nextPos.x, nextPos.y, nextSyntheticMoveDirection, true);
+          } else {
+            this.handleKeyboardInputs();
+          }
+        }
     }
 }
