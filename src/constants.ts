@@ -10,6 +10,7 @@ export const LETTER_LEFT_MARGIN = 64;
 export const READOUT_LEFT_MARGIN = 32;
 export const READOUT_TOP_PADDING = 32;
 export const READOUT_LEFT_RIGHT_PADDING = 32;
+export const READOUT_LINE_HEIGHT = 30;
 
 export const INVENTORY_TOP = 32;
 export const ITEM_TOP = 128;

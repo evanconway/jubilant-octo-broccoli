@@ -1,4 +1,4 @@
-import { INVENTORY_HEIGHT_PX, READOUT_WIDTH_PX, READOUT_LEFT_MARGIN, READOUT_TOP_PADDING, READOUT_LEFT_RIGHT_PADDING } from '../constants';
+import { INVENTORY_HEIGHT_PX, READOUT_WIDTH_PX, READOUT_LINE_HEIGHT, READOUT_LEFT_MARGIN, READOUT_TOP_PADDING, READOUT_LEFT_RIGHT_PADDING } from '../constants';
 import LevelLoader from '../levels/LevelLoader';
 
 export default class ReadoutScene extends Phaser.Scene {
@@ -31,11 +31,11 @@ export default class ReadoutScene extends Phaser.Scene {
         this.cameras.main.setVisible(true);
         this.cameras.main.setViewport(
             READOUT_LEFT_MARGIN,
-            this.game.canvas.height - INVENTORY_HEIGHT_PX - (lines * 32),
+            this.game.canvas.height - INVENTORY_HEIGHT_PX - (lines * READOUT_LINE_HEIGHT),
             READOUT_WIDTH_PX,
-            lines * 32
+            lines * READOUT_LINE_HEIGHT
         );
-        this.textArea.setFixedSize(READOUT_WIDTH_PX - (READOUT_LEFT_RIGHT_PADDING * 2), lines * 32);
+        this.textArea.setFixedSize(READOUT_WIDTH_PX - (READOUT_LEFT_RIGHT_PADDING * 2), lines * READOUT_LINE_HEIGHT);
     }
 
     public create() {
