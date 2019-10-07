@@ -1,4 +1,5 @@
 import GameScene from "./GameScene";
+import LevelLoader from "../levels/LevelLoader";
 
 const LEFTX: number = 100;
 const STARTY: number = 100;
@@ -36,10 +37,11 @@ export default class MenuScene extends Phaser.Scene {
         this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Type to use letters from your inventory.");
         this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "`'Backspace' puts a letter back.`");
         this.loadText = this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Loading 0");
+        this.loadText = this.add.text(LEFTX, STARTY + LINE_HEIGHT, "Loading:  0%");
 
         this.load.on('progress', (value: any) => {
             if (this.loadText) {
-                this.loadText.setText(`Loading: ${value * 100}`);
+                this.loadText.setText(`Loading: ${value * 100}%`);
             }
         });
         
@@ -53,10 +55,17 @@ export default class MenuScene extends Phaser.Scene {
     }
 
     public create() {
-
         this.backgroundMusic = this.sound.add("backgroundMusic", {"loop": true});
         this.backgroundMusic.play();    
         
+        LevelLoader.asyncLoadTilemap(this, "assets/menu.json").then((tileMap) => {
+            let i = 0;
+            this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Use the arrow keys to move.");
+            this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Type to use letters from your inventory.");
+            this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "`'Backspace' puts a letter back.`");
+            this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Click or press a key to start.");
+        });
+
         this.input.on('pointerup', () => {
             if (this.isLoaded) {
                 this.scene.switch('game');

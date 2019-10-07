@@ -49,12 +49,12 @@ const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
     ]],
     [73, [
         "trial",
-        "Another word for challenge or test,\nor something given at justice's behest",
+        "Another word for challenge or test,\nor something given at justice's behest?\nThe word for this, my guarding style?\nThe word is: _____",
         "Guilty as charged!",
     ]],
     [74, [
         "trail",
-        "What are you on? A road, a path, a ...?",
+        "To get past my riddles and codes,\nknow that this tomb contains no paved roads\nTell me the word for a path in the woods\nand I'll let you in for good!",
         "with that said, lets begin our tale!",
     ]]
 ]);
