@@ -28,14 +28,14 @@ const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
         "Augh!"
     ]],
     [48, [
-        "none", //TODO
-        "todo",
-        "todo"
+        "vat", //TODO
+        "I want to put your brain in one of these!",
+        "I put the horse before Descartes"
     ]],
     [49, [
-        "none",
-        "todo",
-        "todo"
+        "ant",
+        "I will crush you like a little ____",
+        "I ant even...",
     ]],
     [50, [
         "one",

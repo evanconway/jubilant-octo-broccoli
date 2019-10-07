@@ -22,6 +22,8 @@ export enum ItemResolutionResponse {
     CREATE_LETTER_L,
     CREATE_LETTER_X,
     CREATE_LETTER_Y,
+    CREATE_LETTER_O,
+    CREATE_LETTER_S,
     PRINT_TEXT,
     SLIP
 }

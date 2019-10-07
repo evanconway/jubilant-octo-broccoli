@@ -41,10 +41,9 @@ export const LEVEL_DATA: LevelData[] = [
         ])
     },
     {
-        startingInventory: "none",
-        validWords: new Set<string>(['none','nonexy']), //TODO
+        startingInventory: "vacant",
+        validWords: new Set<string>(['vat','adjacent', 'savant', 'sonata']), //TODO
         textAreas: new Map<string, string>([ 
-          
         ])
     },
 ];

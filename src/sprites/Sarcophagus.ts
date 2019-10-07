@@ -34,19 +34,19 @@ export class Sarcophagus extends GameSprite {
                     return ItemResolutionResponse.PRINT_TEXT;
                 }
             } else if (this.startFrame == TOP_CHEST) {
-                if (item == "none") { // TODO
-                    this.currentText = "TODO";
-                    return ItemResolutionResponse.CREATE_LETTER_X;
+                if (item == "savant") {
+                    this.currentText = "The coffin speaks:\nYes! Become by rhyming prodigy after your climbing oddessy! Here is the letter O";
+                    return ItemResolutionResponse.CREATE_LETTER_O;
                 } else {
-                    this.currentText = "TODO";
+                    this.currentText = "Inscribed on the coffin:\nWelcome to my haunt\nWhat is it that I want?\nI need someone smart!\nNot just any debutante";
                     return ItemResolutionResponse.PRINT_TEXT;
                 }
             } else if (this.startFrame == BOTTOM_CHEST) {
                 if (item == "none") { // TODO
-                    this.currentText = "TODO";
+                    this.currentText = "The coffin sings:\nClassic music!";
                     return ItemResolutionResponse.CREATE_LETTER_Y;
                 } else {
-                    this.currentText = "TODO";
+                    this.currentText = "Inscribed on the coffin:\n Dead, but I love the cello\n I'm a classical kind of fellow.\nPlease do not cease.\nWith a piano play this piece";
                     return ItemResolutionResponse.PRINT_TEXT;
                 }
             } else {
