@@ -43,6 +43,9 @@ export default class LevelLoader {
             [61, TextArea],
             [62, TextArea],
             [63, TextArea],
+            [73, Guard],
+            [74, Guard],
+            [75, Sarcophagus],
         ]);
 
         const sprites: Map<number, GameSprite[]> = SpriteLoader.createSpritesFromTileset(
