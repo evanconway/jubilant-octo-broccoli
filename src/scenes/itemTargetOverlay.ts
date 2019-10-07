@@ -1,5 +1,5 @@
 import { GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants"
-import { Player } from "../sprites/player"
+import { Player } from "../sprites/Player"
 import GameScene from "./GameScene";
 
 export class ItemTargetOverlay {

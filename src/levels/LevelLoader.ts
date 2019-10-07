@@ -2,7 +2,7 @@ import Level from './Level';
 import { Gate } from '../sprites/Gate';
 import { IceWall } from '../sprites/IceWall';
 import { Guard } from "../sprites/Guard";
-import { Player } from '../sprites/player';
+import { Player } from '../sprites/Player';
 import { GameSprite } from '../sprites/GameSprite';
 import SpriteLoader from '../SpriteLoader';
 import GameScene from '../scenes/GameScene';

@@ -10,5 +10,11 @@ export const LEVEL_DATA: LevelData[] = [
             ["4,6", "This icy wall needs some heat to melt away!"],
             ["10,6", "If you could lose some weight, you might be able to slip between the bars..."]
         ])
+    },
+    {
+        validWords: new Set<string>(['vomit','tome','timed','tidy','pot','pie','move','mopey','imp','deity','die']),
+        textAreas: new Map<string, string>([
+            
+        ])
     }
 ];

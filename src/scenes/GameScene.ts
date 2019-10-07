@@ -1,4 +1,4 @@
-import { Player } from "../sprites/player";
+import { Player } from "../sprites/Player";
 import ReadoutScene from "./ReadoutScene";
 import { MOVE_DELAY, INVENTORY_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT, READOUT_WIDTH_PX } from "../constants";
 import { GameSprite } from "../sprites/GameSprite";
@@ -13,6 +13,7 @@ export default class GameScene extends Phaser.Scene {
 
     private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
 
+    private currentLevelIndex: number = 0; // this will go to 1
     private currentLevel: Level;
 
     private readoutScene: ReadoutScene;
@@ -40,21 +41,7 @@ export default class GameScene extends Phaser.Scene {
         this.inventoryScene = this.scene.get("inventory") as InventoryScene;
 
 
-        LevelLoader.loadLevel(this, 1).then((level) => {
-            this.currentLevel = level;
-            this.isFullyLoaded = true;
-
-            const gameViewportWidth = this.game.canvas.width - READOUT_WIDTH_PX;
-            const gameViewportHeight = this.game.canvas.height - INVENTORY_HEIGHT_PX;
-            const deadZoneSize = 160; // pixels
-
-            this.cameras.main.setBounds(0, 0, this.currentLevel.tileMap.widthInPixels, this.currentLevel.tileMap.heightInPixels);
-            this.cameras.main.setViewport(0, 0, gameViewportWidth, gameViewportHeight);
-            this.cameras.main.deadzone = new Phaser.Geom.Rectangle(
-                deadZoneSize, deadZoneSize, gameViewportWidth - (deadZoneSize * 2), gameViewportHeight - (deadZoneSize * 2)
-            );
-            this.cameras.main.startFollow(this.currentLevel.getPlayer());
-        });
+        this.nextLevel();
     }
 
     public isValidWord(text: string) {
@@ -163,7 +150,6 @@ export default class GameScene extends Phaser.Scene {
     private handleKeyboardInputs() {
         const player: Player = this.currentLevel.getPlayer();
         if (this.handleMoveInput()) {
-            console.log(this.currentLevel.getTextAreasIterable());
             let textArea: TextArea | null = this.currentLevel.getTextAreasIterable().find(s => s.gridX === player.gridX && s.gridY === player.gridY);
             if (textArea) {
                 this.readoutScene.write(textArea.getText());
@@ -172,6 +158,25 @@ export default class GameScene extends Phaser.Scene {
             }
             this.currentLevel.update();
         }
+    }
+
+    public nextLevel(): void {
+        this.currentLevelIndex ++;
+        LevelLoader.loadLevel(this, this.currentLevelIndex).then((level) => {
+            this.currentLevel = level;
+            this.isFullyLoaded = true;
+
+            const gameViewportWidth = this.game.canvas.width - READOUT_WIDTH_PX;
+            const gameViewportHeight = this.game.canvas.height - INVENTORY_HEIGHT_PX;
+            const deadZoneSize = 160; // pixels
+
+            this.cameras.main.setBounds(0, 0, this.currentLevel.tileMap.widthInPixels, this.currentLevel.tileMap.heightInPixels);
+            this.cameras.main.setViewport(0, 0, gameViewportWidth, gameViewportHeight);
+            this.cameras.main.deadzone = new Phaser.Geom.Rectangle(
+                deadZoneSize, deadZoneSize, gameViewportWidth - (deadZoneSize * 2), gameViewportHeight - (deadZoneSize * 2)
+            );
+            this.cameras.main.startFollow(this.currentLevel.getPlayer());
+        });
     }
 
     public update(time: number, delta: number) {

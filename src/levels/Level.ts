@@ -1,5 +1,5 @@
 import { GameSprite } from '../sprites/GameSprite';
-import { Player } from '../sprites/player';
+import { Player } from '../sprites/Player';
 import { TextArea } from '../sprites/TextArea';
 
 export default class Level {
