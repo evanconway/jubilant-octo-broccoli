@@ -9,34 +9,32 @@ import GameScene from '../scenes/GameScene';
 import {LevelData, LEVEL_DATA} from './LevelData';
 import { TextArea } from '../sprites/TextArea';
 import { Altar } from '../sprites/Altar';
+import { Sarcophagus } from '../sprites/Sarcophagus';
 
 export default class LevelLoader {
     public static async loadLevel(scene: GameScene, levelNum: number): Promise<Level> {
         let tileMap: Phaser.Tilemaps.Tilemap = await LevelLoader.asyncLoadTilemap(scene, levelNum);
-        const level1SpriteMap = new Map<number, any>([
-            [16, Gate],
-            [23, Player],
-            [26, Gate], // WRONG
-            [30, Gate], // WRONG
-            [48, Guard],
-            [47, Gate], // WRONG
-            [1, Gate], // WRONG
-            [46, Gate], // WRONG
+        const spriteMap = new Map<number, any>([
+            [15, Gate],
+            [22, Player],
+            [28, Sarcophagus],
+            [30, IceWall],
+            [45, Guard],
+            [46, Guard],
+            [47, Guard],
             [42, Altar],
             [43, Altar],
             [44, Altar],
-            [31, IceWall],
             [58, TextArea],
             [59, TextArea],
             [60, TextArea],
             [61, TextArea],
             [62, TextArea],
             [63, TextArea],
-            [64, TextArea],
         ]);
 
         const sprites: Map<number, GameSprite[]> = SpriteLoader.createSpritesFromTileset(
-            level1SpriteMap,
+            spriteMap,
             scene,
             tileMap.getLayer("Objects"),
             tileMap.getTileset("tiles")
