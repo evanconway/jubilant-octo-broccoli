@@ -37,6 +37,7 @@ export default class InventoryScene extends Phaser.Scene {
     // We're creating an array of key objects to detect keyboard input.
     private keyboard: Phaser.Input.Keyboard.Key[] = new Array<Phaser.Input.Keyboard.Key>();
     private delete: Phaser.Input.Keyboard.Key;
+    private clearAll: Phaser.Input.Keyboard.Key;
 
     private gameScene: GameScene;
 
@@ -72,6 +73,7 @@ export default class InventoryScene extends Phaser.Scene {
             this.keyboard.push(this.input.keyboard.addKey(i + 65));
         }
         this.delete = this.input.keyboard.addKey("backspace");
+        this.clearAll = this.input.keyboard.addKey("delete");
 
         this.cameras.main.setViewport(
             0,
@@ -138,6 +140,13 @@ export default class InventoryScene extends Phaser.Scene {
         }
         // delete removes letters from current "item" and puts them back in inventory
         if (Phaser.Input.Keyboard.JustDown(this.delete) && this.lists[LIST.ITEM].length > 0) {
+            let last = this.lists[LIST.ITEM].length - 1;
+            this.lists[LIST.INVENTORY].push(this.lists[LIST.ITEM][last]);
+            this.lists[LIST.ITEM].splice(last, 1);
+            this.updateLetterPositions();
+            this.setHighlights();
+        }
+        if (Phaser.Input.Keyboard.JustDown(this.clearAll) && this.lists[LIST.ITEM].length > 0) {
             for (let i = this.lists[LIST.ITEM].length - 1; i >= 0; i--) {
                 this.lists[LIST.INVENTORY].push(this.lists[LIST.ITEM][i]);
                 this.lists[LIST.ITEM].splice(i, 1);
