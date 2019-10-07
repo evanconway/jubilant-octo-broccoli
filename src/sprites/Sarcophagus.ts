@@ -5,6 +5,7 @@ import { ItemResolutionResponse } from "../constants";
 const TUT = 75;
 const TOP_CHEST = 25;
 const BOTTOM_CHEST = 27;
+const FIRST_CHEST = 29;
 
 export class Sarcophagus extends GameSprite {
     private currentText: string;
@@ -33,7 +34,15 @@ export class Sarcophagus extends GameSprite {
                     this.currentText = "Inscribed on the coffin is:\nI am the most phamous pharoah. What is my three-letter nickname?";
                     return ItemResolutionResponse.PRINT_TEXT;
                 }
-            } else if (this.startFrame == TOP_CHEST) {
+            } else if (this.startFrame == FIRST_CHEST) {
+                if (item == "ant") {
+                    this.currentText = "The coffin apologizes:\nHere have the letter S"
+                    return ItemResolutionResponse.CREATE_LETTER_S;
+                } else {
+                    this.currentText = "The coffin threatens:\nI will crush you like a little ____";
+                    return ItemResolutionResponse.PRINT_TEXT;
+                } 
+            }else if (this.startFrame == TOP_CHEST) {
                 if (item == "savant") {
                     this.currentText = "The coffin speaks:\nYes! Become by rhyming prodigy after your climbing oddessy! Here is the letter O";
                     return ItemResolutionResponse.CREATE_LETTER_O;
@@ -42,9 +51,9 @@ export class Sarcophagus extends GameSprite {
                     return ItemResolutionResponse.PRINT_TEXT;
                 }
             } else if (this.startFrame == BOTTOM_CHEST) {
-                if (item == "none") { // TODO
-                    this.currentText = "The coffin sings:\nClassic music!";
-                    return ItemResolutionResponse.CREATE_LETTER_Y;
+                if (item == "sonata") { // TODO
+                    this.currentText = "The coffin sings:\nClassical!";
+                    return ItemResolutionResponse.CREATE_LETTER_M;
                 } else {
                     this.currentText = "Inscribed on the coffin:\n Dead, but I love the cello\n I'm a classical kind of fellow.\nPlease do not cease.\nWith a piano play this piece";
                     return ItemResolutionResponse.PRINT_TEXT;

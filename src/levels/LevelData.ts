@@ -35,14 +35,14 @@ export const LEVEL_DATA: LevelData[] = [
     },
     {
         startingInventory: "emptyvoid",
-        validWords: new Set<string>(['vomit','moved','dime','pied','voted','typed','movie','deity','mode','depot','omit']),
+        validWords: new Set<string>(['vomit','tome','timed','tidy','pot','pie','move','mopey','imp','deity','die']),
         textAreas: new Map<string, string>([
-          ["8,24", "Nine limericks block your way forward\nto solve them you must find the right words\nif you get them all right\before morning's light\nyour liberty will be conferred."]
+          ["8,24", "Each of these paths go to the same room,\nthree books on one path you must exhume\nif you dont get them right\nby morning's first light\nyou'll never escape this terrible tomb!"]
         ])
     },
     {
         startingInventory: "vacant",
-        validWords: new Set<string>(['vat','adjacent', 'savant', 'sonata']), //TODO
+        validWords: new Set<string>(['vat','', 'savant', 'sonata']), //TODO
         textAreas: new Map<string, string>([ 
         ])
     },

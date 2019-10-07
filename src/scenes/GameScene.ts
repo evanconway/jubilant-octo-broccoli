@@ -129,6 +129,21 @@ export default class GameScene extends Phaser.Scene {
                     this.inventoryScene.addLetters("l");
                     this.inventoryScene.putBackAllLetters();
                     break;
+                case ItemResolutionResponse.CREATE_LETTER_S:
+                        sprite.destroy();
+                        this.inventoryScene.addLetters("s");
+                        this.inventoryScene.putBackAllLetters();
+                        break;
+                case ItemResolutionResponse.CREATE_LETTER_O:
+                        sprite.destroy();
+                        this.inventoryScene.addLetters("o");
+                        this.inventoryScene.putBackAllLetters();
+                        break;
+                case ItemResolutionResponse.CREATE_LETTER_M:
+                        sprite.destroy();
+                        this.inventoryScene.addLetters("m");
+                        this.inventoryScene.putBackAllLetters();
+                        break;
                 case ItemResolutionResponse.CREATE_LETTER_X:
                     sprite.destroy();
                     this.inventoryScene.addLetters("x");

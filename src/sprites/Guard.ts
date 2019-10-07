@@ -9,9 +9,9 @@ const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
         "BLARGGHHHHH"
     ]],
     [31, [
-        "nonexy", // TODO
-        "todo",
-        "todo"
+        "atoms", // TODO
+        "Ponder on this, you fleshy mortal\nTo pass into the final portal\nFrom the big bang\nthese matter bits sprang\nTo split one wouldn't be cordial",
+        "Accept your fate!"
     ]],
     [45, [
         "light",
@@ -33,9 +33,9 @@ const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
         "I put the horse before Descartes"
     ]],
     [49, [
-        "ant",
-        "I will crush you like a little ____",
-        "I ant even...",
+        "canvas",
+        "Paint on a blank one\ncamp under another",
+        "Canvas the area for more letters!",
     ]],
     [50, [
         "one",

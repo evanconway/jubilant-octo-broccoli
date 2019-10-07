@@ -23,6 +23,7 @@ export default class LevelLoader {
             [26, Guard],
             [27, Sarcophagus],
             [28, Sarcophagus],
+            [29, Sarcophagus],
             [30, IceWall],
             [31, Guard],
             [34, IceFloor],
