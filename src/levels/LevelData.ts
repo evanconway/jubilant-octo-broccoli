@@ -10,11 +10,11 @@ export const LEVEL_DATA: LevelData[] = [
         validWords: new Set<string>(["tut", "trial", "trail"]),
         textAreas: new Map<string, string>([
             ["7,2", "Step on text to read\nclues and hints to heed"],
-            ["4,3", "Welcome weary traveler to this\nmagical quest of spelling and spell.\nMany monsters you'll meet and\n puzzles to defeat. How many will fell?"],      
-            ["6,5", "Congrats, you went down\nup, left and right.\nNow walk into the monster\nwith all your of might"], 
-            ["4,5", "Type with the letters T U T O R I A L\n to solve the monster's riddles"],
-            ["9,5", "Go right once more\n don't slip on the icy floor"],
-            ["15,5", "Walk into the Pharaoh fast\n answer his clue to get past"],
+            ["4,3", "Welcome weary traveler to this magical quest of spelling and spell.\nMany monsters you'll meet\nand puzzles to defeat.\nHow many will you fell?"],      
+            ["6,5", "Congrats, you went down, up, left and right.\nNow walk into the monster with all your of might"], 
+            ["4,5", "You can only use the letters in your inventory\nTo figure out the puzzles contained in this story!"],
+            ["9,5", "Go right once more,\nyou can slip on the icy floor!"],
+            ["15,5", "Walk into the Pharaoh fast\nanswer his clue to get past."],
             ["17,6", "Why do mummies make bad gifts?\nBecause they are hard to unwrap."],
             ["17,11", "One more test\n do your best.\nWalk into the alter\nand begin your quest."]
         ]) 
