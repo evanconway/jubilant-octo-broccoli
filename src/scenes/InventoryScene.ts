@@ -1,10 +1,6 @@
 import LetterTile from "../LetterTile";
-import { INVENTORY_HEIGHT_PX } from '../constants';
+import { INVENTORY_HEIGHT_PX, LETTER_VERTICAL_MARGIN, LETTER_HOLDER_SIZE, LETTER_HOLDER_TOP_MARGIN, LETTER_HOLDER_LEFT_MARGIN, LETTER_LEFT_MARGIN } from '../constants';
 import GameScene from "./GameScene";
-
-const LETTER_SIZE: number = 42; // slightly bigger than sprite width
-const MARGIN_LEFT: number = 10; // todo
-const MARGIN_VERTICAL: number = 10;
 
 enum LIST {
     INVENTORY,
@@ -57,11 +53,11 @@ export default class InventoryScene extends Phaser.Scene {
         this.gameScene = this.scene.get("game") as GameScene;
 
         for (let i = 0, count = 0, dist = 3; i < LIST.SIZE; i++, count += dist) {
-            this.listY.push(MARGIN_VERTICAL + (LETTER_SIZE * count));
+            this.listY.push(LETTER_VERTICAL_MARGIN + (LETTER_HOLDER_SIZE * count));
         }
 
-        this.add.text(MARGIN_LEFT, this.listY[LIST.INVENTORY], "Inventory (press spacebar to scramble)", { font: '16px Courier', fill: '#00ff00' });
-        this.add.text(MARGIN_LEFT, this.listY[LIST.ITEM], "Item", { font: '16px Courier', fill: '#00ff00' });
+        this.add.text(LETTER_LEFT_MARGIN, this.listY[LIST.INVENTORY], "Inventory (press spacebar to scramble)", { font: '16px Courier', fill: '#00ff00' });
+        this.add.text(LETTER_LEFT_MARGIN, this.listY[LIST.ITEM], "Item", { font: '16px Courier', fill: '#00ff00' });
 
         // create our "keyboard". Add key objects for each key. Also make delete key.
         for (let i = 0; i < 26; i++) {
@@ -252,8 +248,8 @@ export default class InventoryScene extends Phaser.Scene {
     private updateLetterPositions() {
         for (let i = 0; i < this.lists.length; i++) {
             for (let k = 0; k < this.lists[i].length; k++) {
-                this.lists[i][k].x = MARGIN_LEFT + (LETTER_SIZE * k);
-                this.lists[i][k].y = this.listY[i] + LETTER_SIZE;
+                this.lists[i][k].x = LETTER_LEFT_MARGIN + (LETTER_HOLDER_SIZE * k); 
+                this.lists[i][k].y = this.listY[i] + LETTER_HOLDER_SIZE;
                 this.children.bringToTop(this.lists[i][k]);
             }
     // Ellery's first code:
@@ -270,27 +266,27 @@ export default class InventoryScene extends Phaser.Scene {
 
     createLetterHolders(listIndex: number, maxLength: number): void {
         this.letterHolders[listIndex] = [];
-        for (let k = 0; k < Math.max(maxLength, 3); k ++) {
+        for (let k = 0; k < maxLength; k ++) {
             if (k === 0) {
                 this.letterHolders[listIndex][k] = this.add.sprite(
-                    MARGIN_LEFT + (LETTER_SIZE * k) - 7,
-                    this.listY[listIndex] + LETTER_SIZE - 5,
+                    LETTER_LEFT_MARGIN + LETTER_HOLDER_LEFT_MARGIN + (LETTER_HOLDER_SIZE * k),
+                    this.listY[listIndex] + LETTER_HOLDER_SIZE + LETTER_HOLDER_TOP_MARGIN,
                     "letter_holder",
                     0
                 );
                 this.letterHolders[listIndex][k].setOrigin(0,0);
-            } else if (k === this.lists[listIndex].length - 1) {
+            } else if (k === maxLength - 1) {
                 this.letterHolders[listIndex][k] = this.add.sprite(
-                    MARGIN_LEFT + (LETTER_SIZE * k) - 7,
-                    this.listY[listIndex] + LETTER_SIZE - 5,
+                    LETTER_LEFT_MARGIN + LETTER_HOLDER_LEFT_MARGIN + (LETTER_HOLDER_SIZE * k),
+                    this.listY[listIndex] + LETTER_HOLDER_SIZE + LETTER_HOLDER_TOP_MARGIN,
                     "letter_holder",
                     2
                 );
                 this.letterHolders[listIndex][k].setOrigin(0,0);
             }  else {
                 this.letterHolders[listIndex][k] = this.add.sprite(
-                    MARGIN_LEFT + (LETTER_SIZE * k) - 7,
-                    this.listY[listIndex] + LETTER_SIZE - 5,
+                    LETTER_LEFT_MARGIN + LETTER_HOLDER_LEFT_MARGIN + (LETTER_HOLDER_SIZE * k),
+                    this.listY[listIndex] + LETTER_HOLDER_SIZE + LETTER_HOLDER_TOP_MARGIN,
                     "letter_holder",
                     1
                 );

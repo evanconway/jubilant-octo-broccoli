@@ -14,7 +14,9 @@ export class Sarcophagus extends GameSprite {
     // This is like, bonus points or something
 
     public recItem(item: string): ItemResolutionResponse {
-        console.log("Sarcophagus got item " + item);
+        if (item == "ingot") {
+            return ItemResolutionResponse.CREATE_LETTER;
+        }
         return ItemResolutionResponse.NONE;
     }
 }
