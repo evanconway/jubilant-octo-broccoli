@@ -138,8 +138,10 @@ export default class InventoryScene extends Phaser.Scene {
         }
         // delete removes letters from current "item" and puts them back in inventory
         if (Phaser.Input.Keyboard.JustDown(this.delete) && this.lists[LIST.ITEM].length > 0) {
-            this.lists[LIST.INVENTORY].push(this.lists[LIST.ITEM][this.lists[LIST.ITEM].length-1]);
-            this.lists[LIST.ITEM].splice(this.lists[LIST.ITEM].length-1, 1);
+            for (let i = this.lists[LIST.ITEM].length - 1; i >= 0; i--) {
+                this.lists[LIST.INVENTORY].push(this.lists[LIST.ITEM][i]);
+                this.lists[LIST.ITEM].splice(i, 1);
+            }
             this.updateLetterPositions();
             this.setHighlights();
         }
