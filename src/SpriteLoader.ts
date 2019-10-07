@@ -20,8 +20,8 @@ export default class SpriteLoader {
                     continue;
                 }
                 let currentTileGid = tile.index;
-                if (spriteMapping.has(currentTileGid)) {
-                    let SpriteClass = spriteMapping.get(currentTileGid);
+                if (spriteMapping.has(currentTileGid - 1)) {
+                    let SpriteClass = spriteMapping.get(currentTileGid - 1);
                     let sprite: GameSprite;
                     if (SpriteClass) {
                         sprite = new SpriteClass(scene, x * tileSet.tileWidth, y * tileSet.tileHeight, currentTileGid - 1);

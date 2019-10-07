@@ -1,7 +1,7 @@
 import GameScene from '../scenes/GameScene';
 import { GameSprite } from './GameSprite';
 
-export class Guard extends GameSprite {
+export class Altar extends GameSprite {
     constructor(scene: GameScene, x: number, y: number, startFrame: number) {
         super(scene, x, y, startFrame);
     }
@@ -10,14 +10,10 @@ export class Guard extends GameSprite {
         return this.active;
     }
 
+    // You should win if you run into this and go to the next level
+
     public recItem(item: string): boolean {
-        if (this.active) {
-            console.log("Guard got item " + item);
-            if (item == "hit") {
-                this.destroy();
-                return true;
-            }
-        }
+        console.log("Altar got item " + item);
         return false;
     }
 }
