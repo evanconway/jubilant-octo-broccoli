@@ -13,7 +13,7 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 };
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
-  title: 'Sample',
+  title: 'n o t h i n g',
 
   type: Phaser.AUTO,
 

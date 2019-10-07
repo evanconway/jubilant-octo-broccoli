@@ -122,7 +122,7 @@ export default class GameScene extends Phaser.Scene {
 
     private applyItem(targetSprite: GameSprite): boolean {
       const item = this.inventoryScene.getItemString();
-      if (item && targetSprite) {
+      if (targetSprite) {
         return targetSprite.recItem(item);
       }
     }
@@ -142,6 +142,10 @@ export default class GameScene extends Phaser.Scene {
 
     public nextLevel(): void {
         this.currentLevelIndex ++;
+        if(this.currentLevel) {
+            this.currentLevel.tileMap.destroy();
+            this.currentLevel.getSpritesIterable().forEach(s => s.destroy());
+        }
         LevelLoader.loadLevel(this, this.currentLevelIndex).then((level) => {
             this.currentLevel = level;
             this.isFullyLoaded = true;
