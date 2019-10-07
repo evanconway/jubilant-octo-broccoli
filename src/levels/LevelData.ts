@@ -9,7 +9,7 @@ export const LEVEL_DATA: LevelData[] = [
         startingInventory: "none",
         validWords: new Set<string>(["neon", "one"]),
         textAreas: new Map<string, string>([
-            
+            ["4,4", "Into the guard you must move\n a riddle you will recieve\n if they, your answer, approve\n you may just get them to leave."]
         ])
     },
     {

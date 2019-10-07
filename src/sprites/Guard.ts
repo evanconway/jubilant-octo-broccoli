@@ -10,8 +10,8 @@ const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
     ]],
     [46, [
         "hog",
-        "I'm not moving until I get some BBQ pork. Do you have some?",
-        "Mmm, yeah, that's some good hog."]],
+        "I'm not moving until I get some roast pork. I love to pig out. Do you have some?",
+        "Mmm, yeah, that's some good meat."]],
     [47, [
          "hit",
         "I'm going to punch you! You better not punch me back!",
