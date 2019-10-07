@@ -248,26 +248,11 @@ export default class InventoryScene extends Phaser.Scene {
             }
 
         }
-        this.updateLetterHolderGold(this.gameScene.isValidWord(this.getItemString()));
     }
     // Ellery's first code:
     //  >? om mki
     // v  '/ '
 
-    updateLetterHolderGold(isValidWord: boolean): void {
-        if (!this.letterHolders[LIST.ITEM]) {
-            return;
-        }
-        for (var k = 0; k < this.letterHolders[LIST.ITEM].length; k++) {
-            if (k === 0) {
-                this.letterHolders[LIST.ITEM][k].setFrame(isValidWord ? 3 : 0)
-            } else if (k === this.letterHolders[LIST.ITEM].length - 1) {
-                this.letterHolders[LIST.ITEM][k].setFrame(isValidWord ? 5 : 2)
-            } else {
-                this.letterHolders[LIST.ITEM][k].setFrame(isValidWord ? 4 : 1)
-            }
-        }
-    }
 
     clearLetterHolders(): void {
         for (let i = 0; i < this.letterHolders.length; i++) {
