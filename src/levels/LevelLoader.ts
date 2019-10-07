@@ -14,7 +14,7 @@ import { IceFloor } from '../sprites/IceFloor';
 
 export default class LevelLoader {
     public static async loadLevel(scene: GameScene, levelNum: number): Promise<Level> {
-        let tileMap: Phaser.Tilemaps.Tilemap = await LevelLoader.asyncLoadTilemap(scene, levelNum);
+        let tileMap: Phaser.Tilemaps.Tilemap = await LevelLoader.asyncLoadTilemap(scene, `assets/level_${levelNum}.json`);
         const spriteMap = new Map<number, any>([
             [15, Gate],
             [22, Player],
@@ -57,9 +57,9 @@ export default class LevelLoader {
         return new Level(sprites, tileMap, levelData.validWords, levelData.textAreas, levelData.startingInventory);
     }
 
-    public static async asyncLoadTilemap(scene: Phaser.Scene, levelNum: number): Promise<Phaser.Tilemaps.Tilemap> {
+    public static async asyncLoadTilemap(scene: Phaser.Scene, path: string): Promise<Phaser.Tilemaps.Tilemap> {
         let config = await fetch('assets/tiles.json').then(r => r.json());
-        let mapDataJson = await fetch(`assets/level_${levelNum}.json`).then(r => r.json());
+        let mapDataJson = await fetch(path).then(r => r.json());
         config.firstgid = 1;
         mapDataJson.tilesets = [config];
         let mapData: Phaser.Tilemaps.MapData = Phaser.Tilemaps.Parsers.Tiled.ParseJSONTiled(

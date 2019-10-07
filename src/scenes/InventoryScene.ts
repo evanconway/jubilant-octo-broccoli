@@ -1,6 +1,7 @@
 import LetterTile from "../LetterTile";
-import { INVENTORY_HEIGHT_PX, LETTER_VERTICAL_MARGIN, LETTER_HOLDER_SIZE, LETTER_HOLDER_TOP_MARGIN, LETTER_HOLDER_LEFT_MARGIN, LETTER_LEFT_MARGIN } from '../constants';
+import { INVENTORY_HEIGHT_PX, INVENTORY_TOP, ITEM_TOP, LETTER_HOLDER_SIZE, LETTER_HOLDER_TOP_MARGIN, LETTER_HOLDER_LEFT_MARGIN, LETTER_LEFT_MARGIN } from '../constants';
 import GameScene from "./GameScene";
+import LevelLoader from "../levels/LevelLoader";
 
 enum LIST {
     INVENTORY,
@@ -52,12 +53,12 @@ export default class InventoryScene extends Phaser.Scene {
     public create() {
         this.gameScene = this.scene.get("game") as GameScene;
 
-        for (let i = 0, count = 0, dist = 3; i < LIST.SIZE; i++, count += dist) {
-            this.listY.push(LETTER_VERTICAL_MARGIN + (LETTER_HOLDER_SIZE * count));
-        }
+        LevelLoader.asyncLoadTilemap(this, "assets/inventory.json").then((tileMap) => {
+            this.letterHolders.forEach(list => list.forEach(holder => this.children.bringToTop(holder)));
+            this.lists.forEach(list => list.forEach(letter => this.children.bringToTop(letter)));
+        });
 
-        this.add.text(LETTER_LEFT_MARGIN, this.listY[LIST.INVENTORY], "Inventory (press spacebar to scramble)", { font: '16px Courier', fill: '#00ff00' });
-        this.add.text(LETTER_LEFT_MARGIN, this.listY[LIST.ITEM], "Item", { font: '16px Courier', fill: '#00ff00' });
+        this.listY = [INVENTORY_TOP, ITEM_TOP];
 
         // create our "keyboard". Add key objects for each key. Also make delete key.
         for (let i = 0; i < 26; i++) {
