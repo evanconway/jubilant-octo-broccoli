@@ -66,7 +66,7 @@ export default class InventoryScene extends Phaser.Scene {
         this.add.text(MARGIN_LEFT, this.listY[LIST.INVENTORY], "Inventory", { font: '16px Courier', fill: '#00ff00' });
         this.add.text(MARGIN_LEFT, this.listY[LIST.ITEM], "Item", { font: '16px Courier', fill: '#00ff00' });
 
-        this.addLetters("nothing");
+        this.addLetters("welcome");
 
         // create our "keyboard". Add key objects for each key. Also make delete key.
         for (let i = 0; i < 26; i++) {
@@ -171,6 +171,19 @@ export default class InventoryScene extends Phaser.Scene {
             }
         }
         return result;
+    }
+
+    public setLetters(newLetters: string) {
+        while (this.lists[LIST.INVENTORY].length) {
+            let x = this.lists[LIST.INVENTORY].pop()
+            x.destroy();
+        }
+        while (this.lists[LIST.ITEM].length) {
+            let x = this.lists[LIST.ITEM].pop()
+            x.destroy();
+        }
+        this.setHighlights();
+        this.addLetters(newLetters);
     }
 
     public addLetters(newLetters: string) {

@@ -10,7 +10,8 @@ export default class Level {
         public levelSprites: Map<number, GameSprite[]>,
         public tileMap: Phaser.Tilemaps.Tilemap,
         private validWords: Set<string>,
-        private textAreas: Map<string, string>
+        private textAreas: Map<string, string>,
+        private startingInventory: string,
     ) {
         this.spritesIterableCache = [];
         this.textAreasIterableCache = [];
@@ -50,5 +51,9 @@ export default class Level {
 
     public getTextAreasIterable(): TextArea[] {
         return [... this.textAreasIterableCache];
+    }
+
+    public getStartingInventory(): string {
+        return this.startingInventory;
     }
 }

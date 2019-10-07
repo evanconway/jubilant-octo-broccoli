@@ -40,7 +40,6 @@ export default class GameScene extends Phaser.Scene {
         this.scene.launch("inventory");
         this.inventoryScene = this.scene.get("inventory") as InventoryScene;
 
-
         this.nextLevel();
     }
 
@@ -156,6 +155,8 @@ export default class GameScene extends Phaser.Scene {
                 deadZoneSize, deadZoneSize, gameViewportWidth - (deadZoneSize * 2), gameViewportHeight - (deadZoneSize * 2)
             );
             this.cameras.main.startFollow(this.currentLevel.getPlayer());
+
+            this.inventoryScene.setLetters(level.getStartingInventory());
         });
     }
 

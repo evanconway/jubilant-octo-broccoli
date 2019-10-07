@@ -42,7 +42,7 @@ export default class LevelLoader {
 
         let levelData: LevelData = LEVEL_DATA[levelNum - 1];
 
-        return new Level(sprites, tileMap, levelData.validWords, levelData.textAreas);
+        return new Level(sprites, tileMap, levelData.validWords, levelData.textAreas, levelData.startingInventory);
     }
 
     public static async asyncLoadTilemap(scene: Phaser.Scene, levelNum: number): Promise<Phaser.Tilemaps.Tilemap> {
