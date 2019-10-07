@@ -41,7 +41,7 @@ const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
     ]],
     [111, [
         "depot",
-        "You know that I’m kind of a cheap-o\nI didn’t want my engine to get repo’d\nSo I hid it away\n(I don’t want to pay)\nBut I’ll tell you: it’s behind the train _____",
+        "You know that I’m kind of a cheap-o\nI didn’t want my engine to get repo’d\nSo I hid it away\nalong the railway\nBut I’ll tell you: it’s behind the train _____",
     ]],
 ]);
 
