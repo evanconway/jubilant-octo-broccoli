@@ -86,6 +86,18 @@ export class Player extends GameSprite {
         this.updateOrientation();
     }
 
+    moveInDirection(direction: string) {
+      if (direction === "up") {
+        this.moveUp();
+      } else if (direction === "down") {
+        this.moveDown();
+      } else if (direction === "left") {
+        this.moveLeft();
+      } else if (direction === "right") {
+        this.moveRight();
+      }
+    }
+
     moveRight() {
         this.x += GAME_WORLD_TILE_WIDTH
         this.faceRight();
