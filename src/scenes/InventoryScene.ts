@@ -48,7 +48,7 @@ export default class InventoryScene extends Phaser.Scene {
     }
 
     public preload() {
-        this.load.spritesheet('letters', 'assets/placeholder_letters.png', { frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('letters', 'assets/letters.png', { frameWidth: 32, frameHeight: 32});
     }
 
     public create() {
