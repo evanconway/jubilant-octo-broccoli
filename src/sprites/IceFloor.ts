@@ -17,7 +17,7 @@ export class IceFloor extends GameSprite {
 
     public recItem(item: string): ItemResolutionResponse {
         if (this.active) {
-            return ItemResolutionResponse.PASS_THROUGH;
+            return ItemResolutionResponse.SLIP;
         }
         return ItemResolutionResponse.NONE;
     }

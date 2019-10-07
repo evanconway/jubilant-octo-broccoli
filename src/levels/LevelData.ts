@@ -9,7 +9,7 @@ export const LEVEL_DATA: LevelData[] = [
         startingInventory: "tutorial",
         validWords: new Set<string>(["tut", "trial", "trail"]),
         textAreas: new Map<string, string>([
-            ["4,2", "Step on text to read\nclues and hints to heed"],
+            ["7,2", "Step on text to read\nclues and hints to heed"],
             ["4,3", "Welcome weary traveler to this\nmagical quest of spelling and spell.\nMany monsters you'll meet and\n puzzles to defeat. How many will fell?"],      
             ["6,5", "Congrats, you went down\nup, left and right.\nNow walk into the monster\nwith all your of might"], 
             ["4,5", "Type with the letters T U T O R I A L\n to solve the monster's riddles"],

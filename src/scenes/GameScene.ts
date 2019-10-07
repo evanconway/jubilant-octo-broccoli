@@ -97,7 +97,7 @@ export default class GameScene extends Phaser.Scene {
             player.moveInDirection(direction);
             this.lastTimeKeyPressed = Date.now();
             const itemResponse = this.applyItem(sprite);
-            if (itemResponse === ItemResolutionResponse.PASS_THROUGH) {
+            if (itemResponse === ItemResolutionResponse.PASS_THROUGH || itemResponse === ItemResolutionResponse.SLIP) {
                 this.syntheticMoveDirectionQueue.push(direction);
             }
             return true;
@@ -109,6 +109,9 @@ export default class GameScene extends Phaser.Scene {
         if (itemResponse !== ItemResolutionResponse.NONE) {
             switch (itemResponse) {
                 case ItemResolutionResponse.PASS_THROUGH:
+                    this.inventoryScene.putBackAllLetters();
+                    /* fall through */
+                case ItemResolutionResponse.SLIP:
                     this.syntheticMoveDirectionQueue.push(direction);
                     break;
                 case ItemResolutionResponse.CREATE_LETTER_L:
