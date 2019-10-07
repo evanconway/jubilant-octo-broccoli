@@ -18,6 +18,6 @@ export class TextArea extends GameSprite {
     }
 
     public getText(): string {
-        return "TODO";
+        return "Written on the floor, you see:\n" + this.text;
     }
 }

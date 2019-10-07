@@ -6,10 +6,17 @@ export class LevelData {
 
 export const LEVEL_DATA: LevelData[] = [
     {
+        startingInventory: "none",
+        validWords: new Set<string>(["neon", "one"]),
+        textAreas: new Map<string, string>([
+            
+        ])
+    },
+    {
         startingInventory: "nothing",
         validWords: new Set<string>(["hog", "hot", "hit", "thin", "ingot", "light", "night"]),
         textAreas: new Map<string, string>([
-            
+            ["7,8", "This tomb was created\nBy a teacher who hated\nMisspellings and errors\nNow go face those terrors!"]
         ])
     },
     {
@@ -18,5 +25,5 @@ export const LEVEL_DATA: LevelData[] = [
         textAreas: new Map<string, string>([
           
         ])
-    }
+    },
 ];

@@ -17,6 +17,16 @@ const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
         "I'm going to punch you! You better not punch me back!",
         "Augh!"
     ]],
+    [50, [
+        "one",
+        "You have to solve my riddle before I let you pass:\nWhat comes after naught?",
+        "Hahah! You guessed correctly. You may pass."
+    ]],
+    [51, [
+        "neon",
+        "I really want one of those cool store signs, you know, the light up ones that say \"open\". Could you bring me one?",
+        "Yeah! That's the stuff. Thanks."
+    ]]
 ]);
 
 export class Guard extends GameSprite {
@@ -27,6 +37,9 @@ export class Guard extends GameSprite {
 
     constructor(scene: GameScene, x: number, y: number, startFrame: number) {
         super(scene, x, y, startFrame);
+        if (!WORD_MAP.has(startFrame)) {
+            throw new Error(`No dialogue in Guard.ts for guard id ${startFrame}`);
+        }
         this.defeatWord = WORD_MAP.get(startFrame)[0];
         this.talkString = WORD_MAP.get(startFrame)[1];
         this.defeatString = WORD_MAP.get(startFrame)[2];

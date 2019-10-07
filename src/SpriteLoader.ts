@@ -43,7 +43,7 @@ export default class SpriteLoader {
                     }
                     sprites.get(currentTileGid).push(sprite);
                 } else {
-                    console.warn(`Sprite with gid ${currentTileGid} present in map but not sprite mapping.`);
+                    console.warn(`Sprite with gid ${currentTileGid - 1} present in map but not sprite mapping.`);
                 }
             }
         }

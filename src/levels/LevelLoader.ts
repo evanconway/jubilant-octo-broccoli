@@ -29,6 +29,8 @@ export default class LevelLoader {
             [42, Altar],
             [43, Altar],
             [44, Altar],
+            [50, Guard],
+            [51, Guard],
             [52, TextArea],
             [53, TextArea],
             [54, TextArea],
