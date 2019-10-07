@@ -20,7 +20,6 @@ export class Gate extends GameSprite {
         if (this.active) {
             if (item == "thin") {
                 this.currentString = "You slip between the bars of the gate.";
-                console.log("AAA");
                 return ItemResolutionResponse.PASS_THROUGH;
             } else {
                 this.currentString = "If you could lose some weight, you might be able to slip between the bars...";

@@ -30,7 +30,6 @@ export default class InventoryScene extends Phaser.Scene {
     private deleteKey: Phaser.Input.Keyboard.Key;
     private clearAllKey: Phaser.Input.Keyboard.Key;
     private spaceKey : Phaser.Input.Keyboard.Key;
-    private nextLevelKeyCheat: Phaser.Input.Keyboard.Key;
 
     private gameScene: GameScene;
 
@@ -67,8 +66,6 @@ export default class InventoryScene extends Phaser.Scene {
         this.deleteKey = this.input.keyboard.addKey("backspace");
         this.clearAllKey = this.input.keyboard.addKey("delete");
         this.spaceKey = this.input.keyboard.addKey("space");
-
-        this.nextLevelKeyCheat = this.input.keyboard.addKey("ONE");
 
         this.cameras.main.setViewport(
             0,
@@ -150,11 +147,6 @@ export default class InventoryScene extends Phaser.Scene {
           this.putBackAllLetters();
         } else if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
           this.scrambleInventoryLetters();
-        }
-
-        if (Phaser.Input.Keyboard.JustDown(this.nextLevelKeyCheat)) {
-            console.log("AAA");
-            this.gameScene.nextLevel();
         }
     }
 

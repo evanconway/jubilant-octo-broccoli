@@ -29,12 +29,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     public preload() {
-        this.load.image("tiles", "../assets/tiles.png");
-        this.load.spritesheet("tiles_sprites", "../assets/tiles.png", {
-            frameWidth: 32, frameHeight: 32
-        });
-        this.load.spritesheet('letters', 'assets/letters.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('letter_holder', 'assets/letter_holder.png', { frameWidth: 45, frameHeight: 45 });
+        // do preloads in menu scene
     }
 
     public create() {
