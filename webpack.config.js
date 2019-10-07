@@ -29,7 +29,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist')
   },
 
-  mode: 'development',
+  mode: 'production',
 
   devServer: {
     contentBase: path.resolve(__dirname, 'dist'),
