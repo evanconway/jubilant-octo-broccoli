@@ -4,44 +4,44 @@ import { ItemResolutionResponse } from "../constants";
 
 const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
     [102, [
-        "vido",
-        "vido",
+        "moved",
+        "You’ve followed a road that’s now grooved\nYou’ve made your location improved\nYou’ve unpacked your crate\nIn a different state\nAll of these things mean you’ve _____",
     ]],
     [103, [
-        "vido",
-        "vido",
+        "dime",
+        "The smallest coin made at the time\nOr a beauty you find to be prime\nIt’s worth just ten cents\nYou must have some sense\nTo know that we call it a ____"
     ]],
     [104, [
-        "vido",
-        "vido",
+        "pied",
+        "Bozo the clown has just died\nChoked on some cream, it’s implied\nHe was covered in crust\nWhen he bit the dust,\nWhat happened? Well, Bozo got ____",
     ]],
     [105, [
-        "vido",
-        "vido",
+        "voted",
+        "I can say that I have promoted\nThe candidate I think should be noted\nI went to the poll\nI marked on the scroll\nAnd now I can say that I _____",
     ]],
     [106, [
-        "vido",
-        "vido",
+        "typed",
+        "This paper I have here is unstriped\nAnd once inked, it cannot be wiped\nI put it in the feed\nI hit letters on keys\nIt’s not written, you’ll find that it’s _____",
     ]],
     [107, [
-        "vido",
-        "vido",
+        "movie",
+        "An actor I know went to prove he\nCan be sad, or happy, or groovy,\nHe appeared on the screen\nIn a violent scene\nBut it’s O.K., it’s just a _____",
     ]],
     [108, [
-        "vido",
-        "vido",
+        "deity",
+        "If the big bang was not spontaneity,\nAnd gods have no homogeneity,\nMany voices would say\n\"I want you to pray\"\nSo now I must choose my _____",
     ]],
     [109, [
-        "vido",
-        "vido",
+        "mode",
+        "When I sit down to a meal to reload\nIn the coldest place in my abode\nI grab the ice cream\nIt scoops like a dream\nI want my meal to be a la ____",
     ]],
     [110, [
-        "vido",
-        "vido",
+        "omit",
+        "This limerick wasn’t a good fit\nYou’ll have to rely on your fine wit\nTo make something gone\n(that was there all along)\nThe word that we say is ____",
     ]],
     [111, [
-        "vido",
-        "vido",
+        "depot",
+        "You know that I’m kind of a cheap-o\nI didn’t want my engine to get repo’d\nSo I hid it away\n(I don’t want to pay)\nBut I’ll tell you: it’s behind the train _____",
     ]],
 ]);
 

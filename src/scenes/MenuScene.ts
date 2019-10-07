@@ -65,6 +65,13 @@ export default class MenuScene extends Phaser.Scene {
             this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Type to use letters from your inventory.");
             this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "`'Backspace' puts a letter back.`");
             this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Click or press a key to start.");
+
+            this.add.text(10, this.game.canvas.height - 20, "Sprites: Dungeon Crawl Stone Soup 32x32 on OpenGameArt.org", {fontSize: 10});
+            this.add.text(10, this.game.canvas.height - 40, "Music: Stopping by the Inn by twinmusicom.org", {fontSize: 10});
+            this.add.text(10, this.game.canvas.height - 60, "Sound Effects: synthesized bright pluck 7: zapsplat.com", {fontSize: 10});
+            this.add.text(10, this.game.canvas.height - 80, "Sound Effects: magical negative 2: zapsplat.com", {fontSize: 10});
+            this.add.text(10, this.game.canvas.height - 100, "zapsplat retro digital fifths tone 1: zapsplat.com", {fontSize: 10});
+            
         });
 
         this.input.on('pointerup', () => {

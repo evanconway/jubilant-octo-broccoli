@@ -4,9 +4,9 @@ import { ItemResolutionResponse } from "../constants";
 
 const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
     [26, [
-        "todo",
-        "todo",
-        "todo"
+        "vomit",
+        "Hey, I'm pretty nausious. I think I ate some poision. I really need to get it out of my system. What can I do?",
+        "BLARGGHHHHH"
     ]],
     [31, [
         "nonexy", // TODO
