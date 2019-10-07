@@ -52,8 +52,6 @@ export default class GameScene extends Phaser.Scene {
         this.badSound = this.sound.add("badSound");
         this.okSound = this.sound.add("okSound");
         this.stepSound = this.sound.add("stepSound");
-
-        this.nextLevel();
     }
 
     public isValidWord(text: string) {
@@ -222,12 +220,22 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    public nextLevel(): void {
-        this.currentLevelIndex++;
+    public nextLevel(levelNum?: number): void {
+        if (levelNum) {
+            this.currentLevelIndex = levelNum;
+        } else {
+            this.currentLevelIndex++;
+        }
         if (this.currentLevel) {
             this.currentLevel.tileMap.destroy();
             this.currentLevel.getSpritesIterable().forEach(s => s.destroy());
         }
+        if (this.currentLevelIndex === 6) {
+            console.log("win")
+            this.scene.switch("win");
+            return;
+        }
+        
         LevelLoader.loadLevel(this, this.currentLevelIndex).then((level) => {
             this.currentLevel = level;
             this.isFullyLoaded = true;

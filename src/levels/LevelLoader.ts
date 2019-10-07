@@ -74,6 +74,11 @@ export default class LevelLoader {
 
         let levelData: LevelData = LEVEL_DATA[levelNum - 1];
 
+        // We have 6 levels
+        if (levelNum === 6) { // hax
+            return;
+        }
+
         return new Level(sprites, tileMap, levelData.validWords, levelData.textAreas, levelData.startingInventory);
     }
 

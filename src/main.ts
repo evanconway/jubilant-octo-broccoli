@@ -5,6 +5,7 @@ import InventoryScene from './scenes/InventoryScene';
 import LoadingScene from './scenes/LoadingScene';
 import MenuScene from './scenes/MenuScene';
 import ReadoutScene from './scenes/ReadoutScene';
+import WinScene from './scenes/WinScene';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -20,7 +21,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   width: window.innerWidth,
   height: window.innerHeight,
  
-  scene:  [MenuScene, GameScene, InventoryScene, LoadingScene, ReadoutScene],
+  scene:  [MenuScene, GameScene, InventoryScene, LoadingScene, ReadoutScene, WinScene],
 
   parent: 'game',
   backgroundColor: '#000000',
