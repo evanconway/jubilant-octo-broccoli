@@ -6,11 +6,12 @@ import { Enemy } from "../sprites/enemy";
 import { Gate } from "../sprites/Gate";
 import { ItemTargetOverlay } from "./itemTargetOverlay";
 import { Attack } from "../sprites/Attack";
+import { GameSprite } from "../sprites/GameSprite";
 
 export default class GameScene extends Phaser.Scene {
     private player: Player;
     private enemies: Enemy[];
-    
+
     private isFullyLoaded: boolean = false;
 
     private exampleText: Phaser.GameObjects.Text;
@@ -21,7 +22,7 @@ export default class GameScene extends Phaser.Scene {
     private readoutScene: ReadoutScene;
     private tileMap: Phaser.Tilemaps.Tilemap;
     private itemTargetChoicesOverlay: ItemTargetOverlay;
-    private levelSprites: Phaser.GameObjects.Sprite[];
+    private levelSprites: GameSprite[];
 
     constructor() {
         super({ key: "game" });
@@ -49,7 +50,7 @@ export default class GameScene extends Phaser.Scene {
                 [26, Enemy],
             ]);
 
-            const sprites: Map<number, Phaser.GameObjects.Sprite[]> = SpriteLoader.createSpritesFromTileset(
+            const sprites: Map<number, GameSprite[]> = SpriteLoader.createSpritesFromTileset(
                 level1SpriteMap,
                 this,
                 this.tileMap.getLayer("Objects"),
@@ -106,22 +107,23 @@ export default class GameScene extends Phaser.Scene {
         return (this.tileMap.getTileAt(tileX, tileY).properties as any)[property];
     }
 
-    private getSpritePropertyAtLocation(tileX: number, tileY: number, property: string): any {
+    private getSpriteAtLocation(tileX: number, tileY: number): GameSprite | null {
         // This is terrible
         for (let sprite of this.levelSprites) {
             if (Math.round(sprite.x / GAME_WORLD_TILE_WIDTH) == tileX
                 && Math.round(sprite.y / GAME_WORLD_TILE_HEIGHT) == tileY) {
-                return sprite.getData(property);
+                return sprite;
             }
         }
-        return undefined;
+        return null;
     }
 
     public isTilePassable(tileX: number, tileY: number) {
         if (tileX < 0 || tileX >= this.tileMap.width || tileY < 0 || tileY >= this.tileMap.height) {
             return false;
         }
-        if (this.getSpritePropertyAtLocation(tileX, tileY, "collision")) {
+        const sprite = this.getSpriteAtLocation(tileX, tileY);
+        if (sprite && sprite.isCollidable()) {
             return false;
         }
         return !(this.getTileProperty(tileX, tileY, "collision"));
@@ -160,6 +162,14 @@ export default class GameScene extends Phaser.Scene {
         return false;
     }
 
+    private applyItem(tileX: number, tileY: number) {
+      const item = this.player.getCurrentItem();
+      const targetSprite = this.getSpriteAtLocation(tileX, tileY);
+      if (item && targetSprite) {
+        targetSprite.recItem(item);
+      }
+    }
+
     private handleItemInput(): void {
         const playerTileX = this.player.gridX;
         const playerTileY = this.player.gridY;
@@ -167,15 +177,19 @@ export default class GameScene extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
             this.player.exitItemMode();
             this.player.faceUp();
+            this.applyItem(playerTileX, playerTileY - 1);
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
             this.player.exitItemMode();
             this.player.faceDown();
+            this.applyItem(playerTileX, playerTileY + 1);
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
             this.player.exitItemMode();
             this.player.faceLeft();
+            this.applyItem(playerTileX - 1 , playerTileY);
         } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
             this.player.exitItemMode();
             this.player.faceRight();
+            this.applyItem(playerTileX + 1 , playerTileY);
         }
 
         if (!this.player.isUsingItem()) {

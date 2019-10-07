@@ -1,3 +1,5 @@
+import { GameSprite } from "./sprites/GameSprite";
+
 export default class SpriteLoader {
     /**
  * The built-in createFromObjects doesn't correctly load tileSet default attributes.
@@ -8,8 +10,8 @@ export default class SpriteLoader {
         scene: Phaser.Scene,
         tileLayer: Phaser.Tilemaps.LayerData,
         tileSet: Phaser.Tilemaps.Tileset
-    ): Map<number, Phaser.GameObjects.Sprite[]> {
-        var sprites = new Map<number, Phaser.GameObjects.Sprite[]>();
+    ): Map<number, GameSprite[]> {
+        var sprites = new Map<number, GameSprite[]>();
 
         for (let y = 0; y < tileLayer.height; y++) {
             for (let x = 0; x < tileLayer.width; x++) {
@@ -20,7 +22,7 @@ export default class SpriteLoader {
                 let currentTileGid = tile.index;
                 if (spriteMapping.has(currentTileGid)) {
                     let SpriteClass = spriteMapping.get(currentTileGid);
-                    let sprite: Phaser.GameObjects.Sprite;
+                    let sprite: GameSprite;
                     if (SpriteClass) {
                         sprite = new SpriteClass(scene, x * tileSet.tileWidth, y * tileSet.tileHeight, currentTileGid - 1);
                         sprite.setOrigin(0, 0);

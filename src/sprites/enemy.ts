@@ -1,9 +1,9 @@
 import { GAME_WORLD_TILE_HEIGHT, GAME_WORLD_TILE_WIDTH } from "../constants"
 import { Properties, BaseActor } from "../resources/actors";
+import { Item } from "../resources/items";
 import GameScene from "../scenes/GameScene";
 import { Attack } from "./Attack";
 import { GameSprite } from './GameSprite';
-
 
 class EnemyActor extends BaseActor {
     constructor() {
@@ -37,6 +37,14 @@ export class Enemy extends GameSprite {
         this.updateOrientation();
         this.setOrigin(0, 0);
         this.gameScene = scene;
+    }
+
+    public isCollidable(): boolean {
+      return true;
+    }
+
+    public recItem(item: Item): void {
+      console.log(`Enemy got item ${item}`);
     }
 
     private updateOrientation() {

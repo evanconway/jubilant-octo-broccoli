@@ -32,6 +32,14 @@ export class Player extends GameSprite {
         this.setOrigin(0, 0);
     }
 
+    public recItem(item: Item): void {
+      console.log(`Player got item ${item}`);
+    }
+
+    public isCollidable(): boolean {
+      return true;
+    }
+
     private updateOrientation() {
       this.setFlip(false, false);
       switch (this.spriteState) {
@@ -66,7 +74,7 @@ export class Player extends GameSprite {
 
     getCurrentItem(): Item {
       // use the inventory scene here
-      return AllItems.get("sword");
+      return this.inventoryScene.getItem();
     }
 
     faceRight() {
