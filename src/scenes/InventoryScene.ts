@@ -13,7 +13,7 @@ const MARGIN_VERTICAL: number = 10;
 enum LIST {
     INVENTORY,
     ITEM,
-    //SKILL, 
+    //SKILL,
     //SPELL,
     SIZE // just used for size of enumerator
 }
@@ -36,8 +36,9 @@ export default class InventoryScene extends Phaser.Scene {
 
     // We're creating an array of key objects to detect keyboard input.
     private keyboard: Phaser.Input.Keyboard.Key[] = new Array<Phaser.Input.Keyboard.Key>();
-    private delete: Phaser.Input.Keyboard.Key;
-    private clearAll: Phaser.Input.Keyboard.Key;
+    private deleteKey: Phaser.Input.Keyboard.Key;
+    private clearAllKey: Phaser.Input.Keyboard.Key;
+    private spaceKey : Phaser.Input.Keyboard.Key;
 
     private gameScene: GameScene;
 
@@ -48,7 +49,7 @@ export default class InventoryScene extends Phaser.Scene {
     }
 
     public preload() {
-        this.load.spritesheet('letters', 'assets/placeholder_letters.png', { frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('letters', 'assets/letters.png', { frameWidth: 32, frameHeight: 32});
     }
 
     public create() {
@@ -63,7 +64,7 @@ export default class InventoryScene extends Phaser.Scene {
             this.add.existing(this.highlights[i]);
         }
 
-        this.add.text(MARGIN_LEFT, this.listY[LIST.INVENTORY], "Inventory", { font: '16px Courier', fill: '#00ff00' });
+        this.add.text(MARGIN_LEFT, this.listY[LIST.INVENTORY], "Inventory (press spacebar to scramble)", { font: '16px Courier', fill: '#00ff00' });
         this.add.text(MARGIN_LEFT, this.listY[LIST.ITEM], "Item", { font: '16px Courier', fill: '#00ff00' });
 
         this.addLetters("welcome");
@@ -72,8 +73,9 @@ export default class InventoryScene extends Phaser.Scene {
         for (let i = 0; i < 26; i++) {
             this.keyboard.push(this.input.keyboard.addKey(i + 65));
         }
-        this.delete = this.input.keyboard.addKey("backspace");
-        this.clearAll = this.input.keyboard.addKey("delete");
+        this.deleteKey = this.input.keyboard.addKey("backspace");
+        this.clearAllKey = this.input.keyboard.addKey("delete");
+        this.spaceKey = this.input.keyboard.addKey("space");
 
         this.cameras.main.setViewport(
             0,
@@ -97,8 +99,8 @@ export default class InventoryScene extends Phaser.Scene {
             /*
             Now we have to find the index where we will add the dragged letter.
             The splice function of arrays adds new elements at the specified index and pushes everything else back. It is like the
-            addBefore of a list. This means if we want to add to the start of the array, we splice at index 0. But to add to the end 
-            of the array, we'll need to use push(). We'll set the insertIndex to -1, and if it is unchanged by our check loop, we 
+            addBefore of a list. This means if we want to add to the start of the array, we splice at index 0. But to add to the end
+            of the array, we'll need to use push(). We'll set the insertIndex to -1, and if it is unchanged by our check loop, we
             know that means we need to use push().
             */
             let insertIndex = -1;
@@ -116,7 +118,7 @@ export default class InventoryScene extends Phaser.Scene {
                 insertIndex = this.lists[listIndex].length - 1;
             }
             /*
-            Now that we have added the dragged letter to the correct list and position, we need to remove it 
+            Now that we have added the dragged letter to the correct list and position, we need to remove it
             from it's previous place.
             */
             this.removeOther(gameObject as LetterTile, listIndex, insertIndex);
@@ -138,22 +140,50 @@ export default class InventoryScene extends Phaser.Scene {
                 this.setHighlights();
             }
         }
-        // delete removes letters from current "item" and puts them back in inventory
-        if (Phaser.Input.Keyboard.JustDown(this.delete) && this.lists[LIST.ITEM].length > 0) {
-            let last = this.lists[LIST.ITEM].length - 1;
-            this.lists[LIST.INVENTORY].push(this.lists[LIST.ITEM][last]);
-            this.lists[LIST.ITEM].splice(last, 1);
-            this.updateLetterPositions();
-            this.setHighlights();
+        if (Phaser.Input.Keyboard.JustDown(this.deleteKey)) {
+          if (this.gameScene.isValidWord(this.getItemString())) {
+            this.putBackAllLetters();
+          } else {
+            this.putBackLastLetter();
+          }
+        } else if (Phaser.Input.Keyboard.JustDown(this.clearAllKey) && this.lists[LIST.ITEM].length > 0) {
+          this.putBackAllLetters();
+        } else if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
+          this.scrambleInventoryLetters();
         }
-        if (Phaser.Input.Keyboard.JustDown(this.clearAll) && this.lists[LIST.ITEM].length > 0) {
-            for (let i = this.lists[LIST.ITEM].length - 1; i >= 0; i--) {
-                this.lists[LIST.INVENTORY].push(this.lists[LIST.ITEM][i]);
-                this.lists[LIST.ITEM].splice(i, 1);
-            }
-            this.updateLetterPositions();
-            this.setHighlights();
+    }
+
+    /* Put back last letter from current "item" and puts it back in inventory */
+    private putBackLastLetter() {
+      if (this.lists[LIST.ITEM].length > 0) {
+        let last = this.lists[LIST.ITEM].length - 1;
+        this.lists[LIST.INVENTORY].push(this.lists[LIST.ITEM][last]);
+        this.lists[LIST.ITEM].splice(last, 1);
+        this.updateLetterPositions();
+        this.setHighlights();
+      }
+    }
+
+    /* Put back all letters from current "item" and puts them back in inventory */
+    private putBackAllLetters() {
+        for (let i = this.lists[LIST.ITEM].length - 1; i >= 0; i--) {
+            this.lists[LIST.INVENTORY].push(this.lists[LIST.ITEM][i]);
+            this.lists[LIST.ITEM].splice(i, 1);
         }
+        this.updateLetterPositions();
+        this.setHighlights();
+    }
+
+    private scrambleInventoryLetters() {
+        const inventoryList = this.lists[LIST.INVENTORY];
+        for (let i = inventoryList.length - 1; i >= 0; i--) {
+            const randIndex = Math.floor(Math.random() * Math.floor(i));
+            const currentLetter = inventoryList[i];
+            inventoryList[i] = inventoryList[randIndex];
+            inventoryList[randIndex] = currentLetter;
+        }
+        this.updateLetterPositions();
+        this.setHighlights();
     }
 
     /*
@@ -222,11 +252,11 @@ export default class InventoryScene extends Phaser.Scene {
                 this.lists[i][k].y = this.listY[i] + LETTER_SIZE;
             }
     // Ellery's first code:
-        }//  >? om mki 
-    } // v  '/ ' 
+        }//  >? om mki
+    } // v  '/ '
 
     /*
-    This function removes the given letter from lists, but only if it is NOT the element 
+    This function removes the given letter from lists, but only if it is NOT the element
     at the given listIndex and letterIndex. We pass in the indexes of the new letter
     instead of the old because when we add the letter to its new position, the position
     of the old letter could change. This is simpler.
