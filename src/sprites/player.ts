@@ -21,8 +21,9 @@ export class Player extends GameSprite {
         this.setOrigin(0, 0);
     }
 
-    public recItem(item: string): void {
+    public recItem(item: string): boolean {
         console.log(`Player got item ${item}`);
+        return false;
     }
 
     public isCollidable(): boolean {

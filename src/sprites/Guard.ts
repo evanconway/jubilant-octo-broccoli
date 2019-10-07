@@ -10,10 +10,14 @@ export class Guard extends GameSprite {
         return this.active;
     }
 
-    public recItem(item: string): void {
-        console.log("Guard got item " + item);
-        if (item == "hit") {
-            this.destroy();
+    public recItem(item: string): boolean {
+        if (this.active) {
+            console.log("Guard got item " + item);
+            if (item == "hit") {
+                this.destroy();
+                return true;
+            }
         }
-    } 
+        return false;
+    }
 }
