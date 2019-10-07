@@ -8,6 +8,8 @@ export default class MenuScene extends Phaser.Scene {
     private isLoaded: boolean = false;
     private loadText: Phaser.GameObjects.Text;
 
+    private backgroundMusic: Phaser.Sound.BaseSound;
+
     constructor() {
         super({
             key: "menu"
@@ -22,6 +24,11 @@ export default class MenuScene extends Phaser.Scene {
         this.load.spritesheet('letters', 'assets/letters.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('letter_holder', 'assets/letter_holder.png', { frameWidth: 45, frameHeight: 45 });
 
+        this.load.audio("backgroundMusic", "../assets/stopping_by_the_inn.mp3");
+        this.load.audio("goodSound", "../assets/zapsplat_synth_bright_pluck_digital_award_achievement_007.mp3");
+        this.load.audio("badSound", "../assets/zapsplat_magical_negative_002.mp3");
+        this.load.audio("okSound", "../assets/zapsplat_retro_digital_fifths_tone_001.mp3")
+
         let i = 0;
         this.add.text(LEFTX, STARTY, "N O T H I N G");
         i++;
@@ -29,7 +36,6 @@ export default class MenuScene extends Phaser.Scene {
         this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Type to use letters from your inventory.");
         this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "`'Backspace' puts a letter back.`");
         this.loadText = this.add.text(LEFTX, STARTY + i++ * LINE_HEIGHT, "Loading 0");
-
 
         this.load.on('progress', (value: any) => {
             if (this.loadText) {
@@ -43,9 +49,14 @@ export default class MenuScene extends Phaser.Scene {
                 this.loadText.setText(`Loaded! Click to begin.`);
             }
         });
+
     }
 
     public create() {
+
+        this.backgroundMusic = this.sound.add("backgroundMusic", {"loop": true});
+        this.backgroundMusic.play();    
+        
         this.input.on('pointerup', () => {
             if (this.isLoaded) {
                 this.scene.switch('game');

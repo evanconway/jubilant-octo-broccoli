@@ -24,6 +24,10 @@ export default class GameScene extends Phaser.Scene {
     private readoutScene: ReadoutScene;
     private inventoryScene: InventoryScene;
 
+    public goodSound: Phaser.Sound.BaseSound;
+    public badSound: Phaser.Sound.BaseSound;
+    public okSound: Phaser.Sound.BaseSound;
+
     constructor() {
         super({ key: "game" });
     }
@@ -42,6 +46,10 @@ export default class GameScene extends Phaser.Scene {
 
         this.scene.launch("inventory");
         this.inventoryScene = this.scene.get("inventory") as InventoryScene;
+
+        this.goodSound = this.sound.add("goodSound");
+        this.badSound = this.sound.add("badSound");
+        this.okSound = this.sound.add("okSound");
 
         this.nextLevel();
     }
@@ -130,10 +138,17 @@ export default class GameScene extends Phaser.Scene {
                     this.inventoryScene.putBackAllLetters();
                     break;
                 case ItemResolutionResponse.DESTROY:
+                    this.goodSound.play();
                     sprite.destroy();
                     this.inventoryScene.putBackAllLetters();
                     break;
                 case ItemResolutionResponse.PRINT_TEXT:
+                    const item = this.inventoryScene.getItemString()
+                    if (item == "") {
+                        this.okSound.play();
+                    } else {
+                        this.badSound.play();
+                    }
                     break;
                 default:
                     console.warn(`Warning: No handler for itemResolutionResponse ${itemResponse}`);
