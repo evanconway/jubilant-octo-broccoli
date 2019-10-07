@@ -49,8 +49,7 @@ export default class InventoryScene extends Phaser.Scene {
     }
 
     public preload() {
-        this.load.spritesheet('letters', 'assets/letters.png', { frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('letter_holder', 'assets/letter_holder.png', { frameWidth: 45, frameHeight: 45});
+        // preload these in gamescene so we know they are loaded by the time this starts.
     }
 
     public create() {
@@ -242,6 +241,7 @@ export default class InventoryScene extends Phaser.Scene {
     }
 
     private updateLetterPositions() {
+        console.log(this.lists);
         for (let i = 0; i < this.lists.length; i++) {
             for (let k = 0; k < this.lists[i].length; k++) {
                 this.lists[i][k].x = MARGIN_LEFT + (LETTER_SIZE * k);
@@ -273,24 +273,24 @@ export default class InventoryScene extends Phaser.Scene {
     }
 
     private updateLetterHolders() {
-        for (let i = 0; i < this.lists.length; i++){
-            if (!this.letterHolders[i]) {
-                this.letterHolders[i] = [];
-            }
-            for (let k = 0; k < Math.max(this.lists[i].length, 3); k ++) {
-                if (k === 0) {
-                    if (!this.letterHolders[i][k]) {
-                        this.letterHolders[i][k] = new Phaser.GameObjects.Sprite(
-                            this,
-                            MARGIN_LEFT + (LETTER_SIZE * k) - 5,
-                            this.listY[i] + LETTER_SIZE - 5,
-                            "letter_holder",
-                            0
-                        );
-                    }
-                }
-            }
-        }
+        // for (let i = 0; i < this.lists.length; i++){
+        //     if (!this.letterHolders[i]) {
+        //         this.letterHolders[i] = [];
+        //     }
+        //     for (let k = 0; k < Math.max(this.lists[i].length, 3); k ++) {
+        //         if (k === 0) {
+        //             if (!this.letterHolders[i][k]) {
+        //                 this.letterHolders[i][k] = new Phaser.GameObjects.Sprite(
+        //                     this,
+        //                     MARGIN_LEFT + (LETTER_SIZE * k) - 5,
+        //                     this.listY[i] + LETTER_SIZE - 5,
+        //                     "letter_holder",
+        //                     0
+        //                 );
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     public getListString(listIndex: number): string {
