@@ -200,7 +200,7 @@ export default class GameScene extends Phaser.Scene {
             this.currentLevel = level;
             this.isFullyLoaded = true;
 
-            const gameViewportWidth = this.game.canvas.width - READOUT_WIDTH_PX;
+            const gameViewportWidth = this.game.canvas.width;
             const gameViewportHeight = this.game.canvas.height - INVENTORY_HEIGHT_PX;
             const deadZoneSize = 160; // pixels
 

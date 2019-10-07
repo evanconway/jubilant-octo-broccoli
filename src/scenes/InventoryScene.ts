@@ -82,10 +82,7 @@ export default class InventoryScene extends Phaser.Scene {
         });
         this.input.on('dragend', (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Sprite) => {
             // determine index of list the letter was dragged to.
-            //let listIndex = LIST.SPELL; // for spell list.
             let listIndex = LIST.ITEM; // for spell list.
-            //if (gameObject.y <= this.listY[LIST.SPELL]) listIndex = LIST.SKILL;
-            //if (gameObject.y <= this.listY[LIST.SKILL]) listIndex = LIST.ITEM;
             if (gameObject.y <= this.listY[LIST.ITEM]) listIndex = LIST.INVENTORY;
 
             /*
