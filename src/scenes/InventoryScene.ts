@@ -36,8 +36,9 @@ export default class InventoryScene extends Phaser.Scene {
 
     // We're creating an array of key objects to detect keyboard input.
     private keyboard: Phaser.Input.Keyboard.Key[] = new Array<Phaser.Input.Keyboard.Key>();
-    private delete: Phaser.Input.Keyboard.Key;
-    private clearAll: Phaser.Input.Keyboard.Key;
+    private deleteKey: Phaser.Input.Keyboard.Key;
+    private clearAllKey: Phaser.Input.Keyboard.Key;
+    private spaceKey : Phaser.Input.Keyboard.Key;
 
     private gameScene: GameScene;
 
@@ -67,17 +68,18 @@ export default class InventoryScene extends Phaser.Scene {
             this.add.existing(this.highlights[i]);
         }
 
-        this.add.text(MARGIN_LEFT, this.listY[LIST.INVENTORY], "Inventory", { font: '16px Courier', fill: '#00ff00' });
+        this.add.text(MARGIN_LEFT, this.listY[LIST.INVENTORY], "Inventory (press spacebar to scramble)", { font: '16px Courier', fill: '#00ff00' });
         this.add.text(MARGIN_LEFT, this.listY[LIST.ITEM], "Item", { font: '16px Courier', fill: '#00ff00' });
 
-        this.addLetters("nothing");
+        this.addLetters("welcome");
 
         // create our "keyboard". Add key objects for each key. Also make delete key.
         for (let i = 0; i < 26; i++) {
             this.keyboard.push(this.input.keyboard.addKey(i + 65));
         }
-        this.delete = this.input.keyboard.addKey("backspace");
-        this.clearAll = this.input.keyboard.addKey("delete");
+        this.deleteKey = this.input.keyboard.addKey("backspace");
+        this.clearAllKey = this.input.keyboard.addKey("delete");
+        this.spaceKey = this.input.keyboard.addKey("space");
 
         this.cameras.main.setViewport(
             0,
@@ -142,15 +144,16 @@ export default class InventoryScene extends Phaser.Scene {
                 this.setHighlights();
             }
         }
-        if (Phaser.Input.Keyboard.JustDown(this.delete)) {
+        if (Phaser.Input.Keyboard.JustDown(this.deleteKey)) {
           if (this.gameScene.isValidWord(this.getItemString())) {
             this.putBackAllLetters();
           } else {
             this.putBackLastLetter();
           }
-        }
-        if (Phaser.Input.Keyboard.JustDown(this.clearAll) && this.lists[LIST.ITEM].length > 0) {
+        } else if (Phaser.Input.Keyboard.JustDown(this.clearAllKey) && this.lists[LIST.ITEM].length > 0) {
           this.putBackAllLetters();
+        } else if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
+          this.scrambleInventoryLetters();
         }
     }
 
@@ -175,6 +178,18 @@ export default class InventoryScene extends Phaser.Scene {
         this.setHighlights();
     }
 
+    private scrambleInventoryLetters() {
+        const inventoryList = this.lists[LIST.INVENTORY];
+        for (let i = inventoryList.length - 1; i >= 0; i--) {
+            const randIndex = Math.floor(Math.random() * Math.floor(i));
+            const currentLetter = inventoryList[i];
+            inventoryList[i] = inventoryList[randIndex];
+            inventoryList[randIndex] = currentLetter;
+        }
+        this.updateLetterPositions();
+        this.setHighlights();
+    }
+
     /*
     If the list has the given letter, it returns that tile and removes it from that list.
     */
@@ -190,6 +205,19 @@ export default class InventoryScene extends Phaser.Scene {
             }
         }
         return result;
+    }
+
+    public setLetters(newLetters: string) {
+        while (this.lists[LIST.INVENTORY].length) {
+            let x = this.lists[LIST.INVENTORY].pop()
+            x.destroy();
+        }
+        while (this.lists[LIST.ITEM].length) {
+            let x = this.lists[LIST.ITEM].pop()
+            x.destroy();
+        }
+        this.setHighlights();
+        this.addLetters(newLetters);
     }
 
     public addLetters(newLetters: string) {

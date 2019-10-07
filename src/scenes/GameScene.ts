@@ -40,7 +40,6 @@ export default class GameScene extends Phaser.Scene {
         this.scene.launch("inventory");
         this.inventoryScene = this.scene.get("inventory") as InventoryScene;
 
-
         this.nextLevel();
     }
 
@@ -107,13 +106,13 @@ export default class GameScene extends Phaser.Scene {
           return false;
         }
 
-        if (this.cursorKeys.up.isDown) {
+        if (this.cursorKeys.up.isDown && !this.cursorKeys.down.isDown) {
            return this.executeMoveAction(player, playerTileX, playerTileY - 1, "up");
-        } else if (this.cursorKeys.down.isDown) {
+        } else if (this.cursorKeys.down.isDown && !this.cursorKeys.up.isDown) {
            return this.executeMoveAction(player, playerTileX, playerTileY + 1, "down");
-        } else if (this.cursorKeys.left.isDown) {
+        } else if (this.cursorKeys.left.isDown && !this.cursorKeys.right.isDown) {
            return this.executeMoveAction(player, playerTileX - 1, playerTileY, "left");
-        } else if (this.cursorKeys.right.isDown) {
+        } else if (this.cursorKeys.right.isDown && !this.cursorKeys.left.isDown) {
            return this.executeMoveAction(player, playerTileX + 1, playerTileY, "right");
         }
 
@@ -160,6 +159,8 @@ export default class GameScene extends Phaser.Scene {
                 deadZoneSize, deadZoneSize, gameViewportWidth - (deadZoneSize * 2), gameViewportHeight - (deadZoneSize * 2)
             );
             this.cameras.main.startFollow(this.currentLevel.getPlayer());
+
+            this.inventoryScene.setLetters(level.getStartingInventory());
         });
     }
 
