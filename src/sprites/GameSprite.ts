@@ -13,7 +13,7 @@ export abstract class GameSprite extends Phaser.GameObjects.Sprite {
         this.setFrame(frame + this.startFrame);
     }
 
-    public abstract recItem(item: string): void;
+    public abstract recItem(item: string): boolean;
     public abstract isCollidable(): boolean;
 
     get gridX(): number {

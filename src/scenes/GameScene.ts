@@ -1,7 +1,6 @@
 import { Player } from "../sprites/player";
 import ReadoutScene from "./ReadoutScene";
 import { MOVE_DELAY, INVENTORY_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT, READOUT_WIDTH_PX } from "../constants";
-import { ItemTargetOverlay } from "./itemTargetOverlay";
 import { GameSprite } from "../sprites/GameSprite";
 import InventoryScene from "./InventoryScene";
 import LevelLoader from '../levels/LevelLoader';
@@ -12,9 +11,7 @@ export default class GameScene extends Phaser.Scene {
     private isFullyLoaded: boolean = false;
     private lastTimeKeyPressed: number = Date.now();
 
-    private itemModeKey: Phaser.Input.Keyboard.Key;
     private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
-    private itemTargetChoicesOverlay: ItemTargetOverlay;
 
     private currentLevel: Level;
 
@@ -35,7 +32,6 @@ export default class GameScene extends Phaser.Scene {
     public create() {
         this.game.input.mouse.capture = true;
         this.cursorKeys = this.input.keyboard.createCursorKeys();
-        this.itemModeKey = this.input.keyboard.addKey("space");
 
         this.scene.launch("readout");
         this.readoutScene = this.scene.get("readout") as ReadoutScene;
@@ -58,7 +54,6 @@ export default class GameScene extends Phaser.Scene {
                 deadZoneSize, deadZoneSize, gameViewportWidth - (deadZoneSize * 2), gameViewportHeight - (deadZoneSize * 2)
             );
             this.cameras.main.startFollow(this.currentLevel.getPlayer());
-            this.itemTargetChoicesOverlay = new ItemTargetOverlay(this);
         });
     }
 
@@ -114,25 +109,41 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (this.cursorKeys.up.isDown) {
-            if (this.isTilePassableForPlayer(playerTileX, playerTileY - 1)) {
+            const sprite = this.getSpriteAtLocation(playerTileX, playerTileY - 1);
+            if (this.applyItem(sprite)) {
+              this.lastTimeKeyPressed = Date.now();
+              return true;
+            } else if(this.isTilePassableForPlayer(playerTileX, playerTileY - 1)) {
                 player.moveUp();
                 this.lastTimeKeyPressed = Date.now();
                 return true;
             }
         } else if (this.cursorKeys.down.isDown) {
-            if (this.isTilePassableForPlayer(playerTileX, playerTileY + 1)) {
+            const sprite = this.getSpriteAtLocation(playerTileX, playerTileY + 1);
+            if (this.applyItem(sprite)) {
+              this.lastTimeKeyPressed = Date.now();
+              return true;
+            } else if (this.isTilePassableForPlayer(playerTileX, playerTileY + 1)) {
                 player.moveDown();
                 this.lastTimeKeyPressed = Date.now();
                 return true;
             }
         } else if (this.cursorKeys.left.isDown) {
-            if (this.isTilePassableForPlayer(playerTileX - 1, playerTileY)) {
+            const sprite = this.getSpriteAtLocation(playerTileX - 1, playerTileY);
+            if (this.applyItem(sprite)) {
+              this.lastTimeKeyPressed = Date.now();
+              return true;
+            } else if (this.isTilePassableForPlayer(playerTileX - 1, playerTileY)) {
                 player.moveLeft();
                 this.lastTimeKeyPressed = Date.now();
                 return true;
             }
         } else if (this.cursorKeys.right.isDown) {
-            if (this.isTilePassableForPlayer(playerTileX + 1, playerTileY)) {
+            const sprite = this.getSpriteAtLocation(playerTileX + 1, playerTileY);
+            if (this.applyItem(sprite)) {
+              this.lastTimeKeyPressed = Date.now();
+              return true;
+            } else if (this.isTilePassableForPlayer(playerTileX + 1, playerTileY)) {
                 player.moveRight();
                 this.lastTimeKeyPressed = Date.now();
                 return true;
@@ -142,65 +153,24 @@ export default class GameScene extends Phaser.Scene {
         return false;
     }
 
-    private applyItem(tileX: number, tileY: number) {
+    private applyItem(targetSprite: GameSprite): boolean {
       const item = this.inventoryScene.getItemString();
-      const targetSprite = this.getSpriteAtLocation(tileX, tileY);
       if (item && targetSprite) {
-        targetSprite.recItem(item);
+        return targetSprite.recItem(item);
       }
-    }
-
-    private handleItemInput(): void {
-        const player: Player = this.currentLevel.getPlayer();
-        const playerTileX = player.gridX;
-        const playerTileY = player.gridY;
-
-        // need to update lastTimeKeyPressed here because the movement will pick
-        // up on the key press and move the player, which we don't want
-        if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.up)) {
-            player.exitItemMode();
-            player.faceUp();
-            this.lastTimeKeyPressed = Date.now();
-            this.applyItem(playerTileX, playerTileY - 1);
-        } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.down)) {
-            player.exitItemMode();
-            player.faceDown();
-            this.lastTimeKeyPressed = Date.now();
-            this.applyItem(playerTileX, playerTileY + 1);
-        } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.left)) {
-            player.exitItemMode();
-            player.faceLeft();
-            this.lastTimeKeyPressed = Date.now();
-            this.applyItem(playerTileX - 1 , playerTileY);
-        } else if (Phaser.Input.Keyboard.JustDown(this.cursorKeys.right)) {
-            player.exitItemMode();
-            player.faceRight();
-            this.lastTimeKeyPressed = Date.now();
-            this.applyItem(playerTileX + 1 , playerTileY);
-        }
-
-        if (!player.isUsingItem()) {
-            this.itemTargetChoicesOverlay.clear();
-        }
     }
 
     private handleKeyboardInputs() {
         const player: Player = this.currentLevel.getPlayer();
-        if (Phaser.Input.Keyboard.JustDown(this.itemModeKey) && !player.isUsingItem()) {
-            player.enterItemMode();
-            this.itemTargetChoicesOverlay.render(player);
-        } else if (player.isUsingItem()) {
-            this.handleItemInput();
-        } else {
-            if (this.handleMoveInput()) {
-                let textArea: TextArea | null = this.currentLevel.getTextAreasIterable().find(s => s.gridX === player.gridX && s.gridY === player.gridY);
-                if (textArea) {
-                    this.readoutScene.write(textArea.getText());
-                } else {
-                    this.readoutScene.clear();
-                }
-                this.currentLevel.update();
+        if (this.handleMoveInput()) {
+            console.log(this.currentLevel.getTextAreasIterable());
+            let textArea: TextArea | null = this.currentLevel.getTextAreasIterable().find(s => s.gridX === player.gridX && s.gridY === player.gridY);
+            if (textArea) {
+                this.readoutScene.write(textArea.getText());
+            } else {
+                this.readoutScene.clear();
             }
+            this.currentLevel.update();
         }
     }
 

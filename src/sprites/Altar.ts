@@ -12,10 +12,8 @@ export class Altar extends GameSprite {
 
     // You should win if you run into this and go to the next level
 
-    public recItem(item: string): void {
+    public recItem(item: string): boolean {
         console.log("Altar got item " + item);
-        if (item == "g") {
-            this.destroy();
-        }
+        return false;
     }
 }

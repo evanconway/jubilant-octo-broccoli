@@ -10,10 +10,14 @@ export class IceWall extends GameSprite {
         return this.active;
     }
 
-    public recItem(item: string): void {
-        console.log("Ice got item " + item);
-        if (item == "hot") {
-            this.destroy();
-        }
+    public recItem(item: string): boolean {
+      if (this.active) {
+          console.log("Ice got item " + item);
+          if (item == "hot") {
+              this.destroy();
+              return true;
+          }
+      }
+      return false;
     }
 }

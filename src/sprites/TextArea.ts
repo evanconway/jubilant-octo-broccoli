@@ -8,8 +8,8 @@ export class TextArea extends GameSprite {
         return false;
     }
 
-    public recItem(item: string): void {
-        // pass
+    public recItem(item: string): boolean {
+      return false;
     }
 
     public setText(text: string): void {
