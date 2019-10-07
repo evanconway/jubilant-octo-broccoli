@@ -1,7 +1,6 @@
 import Level from './Level';
 import { Gate } from '../sprites/Gate';
 import { Player } from '../sprites/player';
-import { Enemy } from '../sprites/enemy';
 import { GameSprite } from '../sprites/GameSprite';
 import SpriteLoader from '../SpriteLoader';
 import GameScene from '../scenes/GameScene';
