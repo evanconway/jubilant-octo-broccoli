@@ -34,7 +34,7 @@ export default class GameScene extends Phaser.Scene {
     public create() {
         this.game.input.mouse.capture = true;
         this.cursorKeys = this.input.keyboard.createCursorKeys();
-        this.itemModeKey = this.input.keyboard.addKey("Z");
+        this.itemModeKey = this.input.keyboard.addKey("space");
 
         this.scene.launch("readout");
         this.readoutScene = this.scene.get("readout") as ReadoutScene;

@@ -36,6 +36,7 @@ export default class InventoryScene extends Phaser.Scene {
 
     // We're creating an array of key objects to detect keyboard input.
     private keyboard: Phaser.Input.Keyboard.Key[] = new Array<Phaser.Input.Keyboard.Key>();
+    private delete: Phaser.Input.Keyboard.Key;
 
     private gameScene: GameScene;
 
@@ -66,10 +67,11 @@ export default class InventoryScene extends Phaser.Scene {
 
         this.addLetters("nothing");
 
-        // create our "keyboard". Add key objects for each key.
+        // create our "keyboard". Add key objects for each key. Also make delete key.
         for (let i = 0; i < 26; i++) {
             this.keyboard.push(this.input.keyboard.addKey(i + 65));
         }
+        this.delete = this.input.keyboard.addKey("backspace");
 
         this.cameras.main.setViewport(
             0,
@@ -122,11 +124,24 @@ export default class InventoryScene extends Phaser.Scene {
     }
 
     public update() {
-        // update keyboard values
+        // Grab typing input for A to Z
         for (let i = 0; i < this.keyboard.length; i++) {
-            if (Phaser.Input.Keyboard.JustDown(this.keyboard[i]) && this.listTakeLetter(LIST.INVENTORY, "A")) {
-                console.log("test");
+            let charCode = this.keyboard[i].keyCode;
+            let charString = String.fromCharCode(charCode);
+            let letter = null;
+            // if key is pressed and the letter of that key is in the inventory (is not null)
+            if (Phaser.Input.Keyboard.JustDown(this.keyboard[i]) && (letter = this.listTakeLetter(LIST.INVENTORY, charString)) != null) {
+                this.lists[LIST.ITEM].push(letter);
+                this.updateLetterPositions();
+                this.setHighlights();
             }
+        }
+        // delete removes letters from current "item" and puts them back in inventory
+        if (Phaser.Input.Keyboard.JustDown(this.delete) && this.lists[LIST.ITEM].length > 0) {
+            this.lists[LIST.INVENTORY].push(this.lists[LIST.ITEM][this.lists[LIST.ITEM].length-1]);
+            this.lists[LIST.ITEM].splice(this.lists[LIST.ITEM].length-1, 1);
+            this.updateLetterPositions();
+            this.setHighlights();
         }
     }
 
@@ -136,9 +151,12 @@ export default class InventoryScene extends Phaser.Scene {
     private listTakeLetter(listIndex: number, char: string): LetterTile | null {
         let result = null;
         for (let i = 0; i < this.lists[listIndex].length; i++) {
-            if (this.lists[listIndex][i].getLetter() === char) {
+            let listLetter = this.lists[listIndex][i].getLetter();
+            char = char.toLowerCase();
+            if (listLetter === char) {
                 result = this.lists[listIndex][i];
                 this.lists[listIndex].splice(i, 1);
+                i = this.lists[listIndex].length;
             }
         }
         return result;
