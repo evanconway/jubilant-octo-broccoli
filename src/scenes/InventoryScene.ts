@@ -4,9 +4,6 @@ import { INVENTORY_HEIGHT_PX, READOUT_WIDTH_PX } from '../constants';
 import GameScene from "./GameScene";
 
 const LETTER_SIZE: number = 42; // slightly bigger than sprite width
-const HIGHLIGHT_ALPHA: number = 1;
-const HIGHLIGHT_RED: number = 0x880000;
-const HIGHLIGHT_GREEN: number = 0x008800;
 const MARGIN_LEFT: number = 0; // todo
 const MARGIN_VERTICAL: number = 10;
 
@@ -32,7 +29,6 @@ export default class InventoryScene extends Phaser.Scene {
     */
     private lists: Array<Array<LetterTile>> = new Array<Array<LetterTile>>();
     private listY: Array<number> = new Array<number>();
-    private highlights: Array<Phaser.GameObjects.Rectangle> = new Array<Phaser.GameObjects.Rectangle>();
 
     // We're creating an array of key objects to detect keyboard input.
     private keyboard: Phaser.Input.Keyboard.Key[] = new Array<Phaser.Input.Keyboard.Key>();
@@ -42,36 +38,30 @@ export default class InventoryScene extends Phaser.Scene {
 
     private gameScene: GameScene;
 
-    private inventoryLetterHolder: Phaser.GameObjects.Sprite[];
-    private itemLetterHolder: Phaser.GameObjects.Sprite[];
+    private letterHolders: Phaser.GameObjects.Sprite[][] = [];
 
     constructor() {
         super({
             key: "inventory"
-        })
+        });
+
+        for (let i = 0; i < LIST.SIZE; i++) this.lists.push(new Array<LetterTile>());
     }
 
     public preload() {
         this.load.spritesheet('letters', 'assets/letters.png', { frameWidth: 32, frameHeight: 32});
-        this.load.spritesheet('letterholder', 'assets/letterholder.png', { frameWidth: 45, frameHeight: 45});
+        this.load.spritesheet('letter_holder', 'assets/letter_holder.png', { frameWidth: 45, frameHeight: 45});
     }
 
     public create() {
         this.gameScene = this.scene.get("game") as GameScene;
 
-        for (let i = 0; i < LIST.SIZE; i++) this.lists.push(new Array<LetterTile>());
-
         for (let i = 0, count = 0, dist = 3; i < LIST.SIZE; i++, count += dist) {
             this.listY.push(MARGIN_VERTICAL + (LETTER_SIZE * count));
-            this.highlights.push(new Phaser.GameObjects.Rectangle(this, MARGIN_LEFT, this.listY[i] + LETTER_SIZE, 0, LETTER_SIZE));
-            this.highlights[i].depth -= 1;
-            this.add.existing(this.highlights[i]);
         }
 
         this.add.text(MARGIN_LEFT, this.listY[LIST.INVENTORY], "Inventory (press spacebar to scramble)", { font: '16px Courier', fill: '#00ff00' });
         this.add.text(MARGIN_LEFT, this.listY[LIST.ITEM], "Item", { font: '16px Courier', fill: '#00ff00' });
-
-        this.addLetters("welcome");
 
         // create our "keyboard". Add key objects for each key. Also make delete key.
         for (let i = 0; i < 26; i++) {
@@ -127,7 +117,7 @@ export default class InventoryScene extends Phaser.Scene {
             */
             this.removeOther(gameObject as LetterTile, listIndex, insertIndex);
             this.updateLetterPositions();
-            this.setHighlights();
+            this.updateLetterHolders();
         });
     }
 
@@ -141,7 +131,7 @@ export default class InventoryScene extends Phaser.Scene {
             if (Phaser.Input.Keyboard.JustDown(this.keyboard[i]) && (letter = this.listTakeLetter(LIST.INVENTORY, charString)) != null) {
                 this.lists[LIST.ITEM].push(letter);
                 this.updateLetterPositions();
-                this.setHighlights();
+                this.updateLetterHolders();
             }
         }
         if (Phaser.Input.Keyboard.JustDown(this.deleteKey)) {
@@ -164,7 +154,7 @@ export default class InventoryScene extends Phaser.Scene {
         this.lists[LIST.INVENTORY].push(this.lists[LIST.ITEM][last]);
         this.lists[LIST.ITEM].splice(last, 1);
         this.updateLetterPositions();
-        this.setHighlights();
+        this.updateLetterHolders();
       }
     }
 
@@ -175,7 +165,7 @@ export default class InventoryScene extends Phaser.Scene {
             this.lists[LIST.ITEM].splice(i, 1);
         }
         this.updateLetterPositions();
-        this.setHighlights();
+        this.updateLetterHolders();
     }
 
     private scrambleInventoryLetters() {
@@ -187,7 +177,7 @@ export default class InventoryScene extends Phaser.Scene {
             inventoryList[randIndex] = currentLetter;
         }
         this.updateLetterPositions();
-        this.setHighlights();
+        this.updateLetterHolders();
     }
 
     /*
@@ -216,7 +206,8 @@ export default class InventoryScene extends Phaser.Scene {
             let x = this.lists[LIST.ITEM].pop()
             x.destroy();
         }
-        this.setHighlights();
+        this.updateLetterPositions();
+        this.updateLetterHolders();
         this.addLetters(newLetters);
     }
 
@@ -228,6 +219,7 @@ export default class InventoryScene extends Phaser.Scene {
 
     private pushUnused(char: string) {
         let temp = new LetterTile(this, 0, 0, char);
+        temp.setOrigin(0, 0);
         this.add.existing(temp);
         this.input.setDraggable(temp);
         this.lists[LIST.INVENTORY].push(temp);
@@ -252,7 +244,7 @@ export default class InventoryScene extends Phaser.Scene {
     private updateLetterPositions() {
         for (let i = 0; i < this.lists.length; i++) {
             for (let k = 0; k < this.lists[i].length; k++) {
-                this.lists[i][k].x = MARGIN_LEFT + (LETTER_SIZE * k) + LETTER_SIZE/2; // add half of letter size because sprite origin is center, center
+                this.lists[i][k].x = MARGIN_LEFT + (LETTER_SIZE * k);
                 this.lists[i][k].y = this.listY[i] + LETTER_SIZE;
             }
     // Ellery's first code:
@@ -280,16 +272,23 @@ export default class InventoryScene extends Phaser.Scene {
         }
     }
 
-    private setHighlights() {
-        let checkString: string = this.getItemString();
-        for (let i = 1; i < this.lists.length; i++) { // start at 1 to ignore inventory
-            checkString = this.getListString(i);
-            let valid: boolean = this.gameScene.isValidWord(checkString);
-            this.highlights[i].width = checkString.length * LETTER_SIZE;
-            if (valid) {
-                this.highlights[i].setFillStyle(HIGHLIGHT_GREEN, HIGHLIGHT_ALPHA);
-            } else {
-                this.highlights[i].setFillStyle(HIGHLIGHT_RED, HIGHLIGHT_ALPHA);
+    private updateLetterHolders() {
+        for (let i = 0; i < this.lists.length; i++){
+            if (!this.letterHolders[i]) {
+                this.letterHolders[i] = [];
+            }
+            for (let k = 0; k < Math.max(this.lists[i].length, 3); k ++) {
+                if (k === 0) {
+                    if (!this.letterHolders[i][k]) {
+                        this.letterHolders[i][k] = new Phaser.GameObjects.Sprite(
+                            this,
+                            MARGIN_LEFT + (LETTER_SIZE * k) - 5,
+                            this.listY[i] + LETTER_SIZE - 5,
+                            "letter_holder",
+                            0
+                        );
+                    }
+                }
             }
         }
     }
