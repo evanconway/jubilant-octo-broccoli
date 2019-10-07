@@ -86,6 +86,18 @@ export default class GameScene extends Phaser.Scene {
         return this.isTilePassable(tileX, tileY);
     }
 
+    private executeMoveAction(player: Player, nextPlayerX: number, nextPlayerY: number, direction: string): boolean {
+        const sprite = this.getSpriteAtLocation(nextPlayerX, nextPlayerY);
+        if (this.applyItem(sprite)) {
+          this.lastTimeKeyPressed = Date.now();
+          return true;
+        } else if(this.isTilePassableForPlayer(nextPlayerX, nextPlayerY)) {
+            player.moveInDirection(direction);
+            this.lastTimeKeyPressed = Date.now();
+            return true;
+        }
+    }
+
     private handleMoveInput(): boolean {
         const player: Player = this.currentLevel.getPlayer();
         const playerTileX = player.gridX;
@@ -96,45 +108,13 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (this.cursorKeys.up.isDown) {
-            const sprite = this.getSpriteAtLocation(playerTileX, playerTileY - 1);
-            if (this.applyItem(sprite)) {
-              this.lastTimeKeyPressed = Date.now();
-              return true;
-            } else if(this.isTilePassableForPlayer(playerTileX, playerTileY - 1)) {
-                player.moveUp();
-                this.lastTimeKeyPressed = Date.now();
-                return true;
-            }
+           return this.executeMoveAction(player, playerTileX, playerTileY - 1, "up");
         } else if (this.cursorKeys.down.isDown) {
-            const sprite = this.getSpriteAtLocation(playerTileX, playerTileY + 1);
-            if (this.applyItem(sprite)) {
-              this.lastTimeKeyPressed = Date.now();
-              return true;
-            } else if (this.isTilePassableForPlayer(playerTileX, playerTileY + 1)) {
-                player.moveDown();
-                this.lastTimeKeyPressed = Date.now();
-                return true;
-            }
+           return this.executeMoveAction(player, playerTileX, playerTileY + 1, "down");
         } else if (this.cursorKeys.left.isDown) {
-            const sprite = this.getSpriteAtLocation(playerTileX - 1, playerTileY);
-            if (this.applyItem(sprite)) {
-              this.lastTimeKeyPressed = Date.now();
-              return true;
-            } else if (this.isTilePassableForPlayer(playerTileX - 1, playerTileY)) {
-                player.moveLeft();
-                this.lastTimeKeyPressed = Date.now();
-                return true;
-            }
+           return this.executeMoveAction(player, playerTileX - 1, playerTileY, "left");
         } else if (this.cursorKeys.right.isDown) {
-            const sprite = this.getSpriteAtLocation(playerTileX + 1, playerTileY);
-            if (this.applyItem(sprite)) {
-              this.lastTimeKeyPressed = Date.now();
-              return true;
-            } else if (this.isTilePassableForPlayer(playerTileX + 1, playerTileY)) {
-                player.moveRight();
-                this.lastTimeKeyPressed = Date.now();
-                return true;
-            }
+           return this.executeMoveAction(player, playerTileX + 1, playerTileY, "right");
         }
 
         return false;
