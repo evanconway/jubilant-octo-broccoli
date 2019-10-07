@@ -10,26 +10,26 @@ const WORD_MAP: Map<number, string[]> = new Map<number, string[]>([
     ]],
     [46, [
         "hog",
-        "I'm not moving until I get some roast\n pork. I love to pig out. Do you have some?",
+        "I'm not moving until I get some roast pork. I love to pig out. Do you have some?",
         "Mmm, yeah, that's some good meat."]],
     [47, [
          "hit",
-        "I'm going to punch you! You better not\n punch me back!",
+        "I'm going to punch you! You better not punch me back!",
         "Augh!"
     ]],
     [50, [
         "one",
-        "You have to solve my riddle before I let\n you pass:\nWhat comes after naught?",
+        "You have to solve my riddle before I let you pass!\nWhat comes after naught?",
         "Hahah! You guessed correctly.\nYou may pass."
     ]],
     [51, [
         "neon",
-        "I really want one of those cool store\nsigns, you know, the light up ones that say\n \"open\". Could you bring me one?",
+        "I really want one of those cool store signs, you know, the light up ones that say \"open\".\nCould you bring me one?",
         "Yeah! That's the stuff. Thanks."
     ]],
     [73, [
         "trial",
-        "Another word for challenge or test, or something given at justice's behest",
+        "Another word for challenge or test,\nor something given at justice's behest",
         "Guilty as charged!",
     ]],
     [74, [

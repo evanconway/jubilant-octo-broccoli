@@ -11,8 +11,24 @@ export default class ReadoutScene extends Phaser.Scene {
     }
 
     public write(text: string): void {
-        this.textArea.setText(text);
-        this.updateHeight(text.split("\n").length);
+        let textSplit = [];
+        for (let line of text.split("\n")){
+            if (line.length > 42) {
+                let lineSplit: string[] = line.split(" ").reverse();
+                while (lineSplit.length) {
+                    let builder: string = "";
+                    while (lineSplit.length && builder.length + lineSplit[lineSplit.length - 1].length + 1 < 42) {
+                        builder += lineSplit.pop() + " ";
+                    }
+                    textSplit.push(builder);
+                }
+            } else {
+                textSplit.push(line);
+            }
+        }
+        console.log(text, textSplit);
+        this.textArea.setText(textSplit.join("\n"));
+        this.updateHeight(textSplit.length);
     }
 
     public clear(): void {
