@@ -4,7 +4,7 @@ import { INVENTORY_HEIGHT_PX, READOUT_WIDTH_PX } from '../constants';
 import GameScene from "./GameScene";
 
 const LETTER_SIZE: number = 42; // slightly bigger than sprite width
-const MARGIN_LEFT: number = 0; // todo
+const MARGIN_LEFT: number = 10; // todo
 const MARGIN_VERTICAL: number = 10;
 
 enum LIST {
@@ -49,7 +49,8 @@ export default class InventoryScene extends Phaser.Scene {
     }
 
     public preload() {
-        // preload these in gamescene so we know they are loaded by the time this starts.
+        // Don't use this. There is no guarantee that this will have finished before we set letters from gamescene.
+        // Do all your preloading in the gamescene preload. Don't worry, it's global ;)
     }
 
     public create() {
@@ -223,6 +224,7 @@ export default class InventoryScene extends Phaser.Scene {
         this.input.setDraggable(temp);
         this.lists[LIST.INVENTORY].push(temp);
         this.updateLetterPositions();
+        this.updateLetterHolders();
     }
 
     // This may not be needed
@@ -241,7 +243,6 @@ export default class InventoryScene extends Phaser.Scene {
     }
 
     private updateLetterPositions() {
-        console.log(this.lists);
         for (let i = 0; i < this.lists.length; i++) {
             for (let k = 0; k < this.lists[i].length; k++) {
                 this.lists[i][k].x = MARGIN_LEFT + (LETTER_SIZE * k);
@@ -273,24 +274,52 @@ export default class InventoryScene extends Phaser.Scene {
     }
 
     private updateLetterHolders() {
-        // for (let i = 0; i < this.lists.length; i++){
-        //     if (!this.letterHolders[i]) {
-        //         this.letterHolders[i] = [];
-        //     }
-        //     for (let k = 0; k < Math.max(this.lists[i].length, 3); k ++) {
-        //         if (k === 0) {
-        //             if (!this.letterHolders[i][k]) {
-        //                 this.letterHolders[i][k] = new Phaser.GameObjects.Sprite(
-        //                     this,
-        //                     MARGIN_LEFT + (LETTER_SIZE * k) - 5,
-        //                     this.listY[i] + LETTER_SIZE - 5,
-        //                     "letter_holder",
-        //                     0
-        //                 );
-        //             }
-        //         }
-        //     }
-        // }
+        for (let i = 0; i < this.lists.length; i++){
+            if (!this.letterHolders[i]) {
+                this.letterHolders[i] = [];
+            }
+            for (let k = 0; k < Math.max(this.lists[i].length, 3); k ++) {
+                if (k === 0) {
+                    if (!this.letterHolders[i][k]) {
+                        this.letterHolders[i][k] = this.add.sprite(
+                            MARGIN_LEFT + (LETTER_SIZE * k) - 7,
+                            this.listY[i] + LETTER_SIZE - 5,
+                            "letter_holder",
+                            0
+                        );
+                        this.letterHolders[i][k].setOrigin(0,0);
+                    }
+                } else if (k === this.lists[i].length - 1) {
+                    if (this.letterHolders[i][k]) {
+                        this.letterHolders[i][k].setFrame(2);
+                    } else {
+                        this.letterHolders[i][k] = this.add.sprite(
+                            MARGIN_LEFT + (LETTER_SIZE * k) - 7,
+                            this.listY[i] + LETTER_SIZE - 5,
+                            "letter_holder",
+                            2
+                        );
+                        this.letterHolders[i][k].setOrigin(0,0);
+                    }
+                } else if (k >= Math.max(this.lists[i].length, 3)) {
+                    if (this.letterHolders[i][k]) {
+                        this.letterHolders[i][k].destroy();
+                    }
+                } else {
+                    if (this.letterHolders[i][k]) {
+                        this.letterHolders[i][k].setFrame(1);
+                    } else {
+                        this.letterHolders[i][k] = this.add.sprite(
+                            MARGIN_LEFT + (LETTER_SIZE * k) - 7,
+                            this.listY[i] + LETTER_SIZE - 5,
+                            "letter_holder",
+                            1
+                        );
+                        this.letterHolders[i][k].setOrigin(0,0);
+                    }
+                }
+            }
+        }
     }
 
     public getListString(listIndex: number): string {
