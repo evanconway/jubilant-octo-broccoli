@@ -10,24 +10,33 @@ const HIGHLIGHT_GREEN: number = 0x008800;
 enum LIST {
     INVENTORY,
     ITEM,
-    SKILL,
-    SPELL,
+    //SKILL, 
+    //SPELL,
     SIZE // just used for size of enumerator
 }
 
 export default class InventoryScene extends Phaser.Scene {
 
+    // will probably get deleted later once inventory works on game screen
     private inventoryKey: Phaser.Input.Keyboard.Key;
     /*
     Instead of having a different array variable for each list,
     we're just going to have one 2D array, where the first index
     is the list (unused, item, skill...) and the second index
     is the letter. Use the above enumerator to refer to the list.
+
+    Update: We've decided to only have one "word" slot. For now
+    we're just changing our 2D array so it only contains 2 arrays.
+    This isn't very elegant but it's a quick fix that works.
     */
     private lists: Array<Array<LetterTile>> = new Array<Array<LetterTile>>();
     private listY: Array<number> = new Array<number>();
     private arraysX: number;
     private highlights: Array<Phaser.GameObjects.Rectangle> = new Array<Phaser.GameObjects.Rectangle>();
+    private useMouse: boolean = false;
+
+    // We're creating an array of key objects to detect keyboard input.
+    private keyboard: Phaser.Input.Keyboard.Key[] = new Array<Phaser.Input.Keyboard.Key>();
 
     constructor() {
         super({
@@ -53,61 +62,93 @@ export default class InventoryScene extends Phaser.Scene {
 
         this.add.text(this.arraysX, this.listY[LIST.INVENTORY], "Inventory", { font: '16px Courier', fill: '#00ff00' });
         this.add.text(this.arraysX, this.listY[LIST.ITEM], "Item", { font: '16px Courier', fill: '#00ff00' });
-        this.add.text(this.arraysX, this.listY[LIST.SKILL], "Skill", { font: '16px Courier', fill: '#00ff00' });
-        this.add.text(this.arraysX, this.listY[LIST.SPELL], "Spell", { font: '16px Courier', fill: '#00ff00' });
+        //this.add.text(this.arraysX, this.listY[LIST.SKILL], "Skill", { font: '16px Courier', fill: '#00ff00' });
+        //this.add.text(this.arraysX, this.listY[LIST.SPELL], "Spell", { font: '16px Courier', fill: '#00ff00' });
         
+        // the inventory key will be deleted once the inventory is merged with the gamescene
         this.inventoryKey = this.input.keyboard.addKey("I");
+
+        // create our "keyboard". Add key objects for each key.
+        for (let i = 0; i < 26; i++) {
+            this.keyboard.push(this.input.keyboard.addKey(i + 65));
+        }
 
         this.addLetters("you have nothing");
 
+        // These will be deleted once the keyboard is fully implemented.
         this.input.on('drag', (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Sprite, dragX: number, dragY: number) => {
-            gameObject.x = dragX;
-            gameObject.y = dragY;
-
+            if (this.useMouse) {
+                gameObject.x = dragX;
+                gameObject.y = dragY;
+            }
         });
-
         this.input.on('dragend', (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Sprite) => {
-            // determine index of list the letter was dragged to.
-            let listIndex = LIST.SPELL; // for spell list.
-            if (gameObject.y <= this.listY[LIST.SPELL]) listIndex = LIST.SKILL;
-            if (gameObject.y <= this.listY[LIST.SKILL]) listIndex = LIST.ITEM;
-            if (gameObject.y <= this.listY[LIST.ITEM]) listIndex = LIST.INVENTORY;
-            /*
-            Now we have to find the index where we will add the dragged letter.
-            The splice function of arrays adds new elements at the specified index and pushes everything else back. It is like the
-            addBefore of a list. This means if we want to add to the start of the array, we splice at index 0. But to add to the end 
-            of the array, we'll need to use push(). We'll set the insertIndex to -1, and if it is unchanged by our check loop, we 
-            know that means we need to use push().
-            */
-            let insertIndex = -1;
+            if (this.useMouse) {
+                // determine index of list the letter was dragged to.
+                //let listIndex = LIST.SPELL; // for spell list.
+                let listIndex = LIST.ITEM; // for spell list.
+                //if (gameObject.y <= this.listY[LIST.SPELL]) listIndex = LIST.SKILL;
+                //if (gameObject.y <= this.listY[LIST.SKILL]) listIndex = LIST.ITEM;
+                if (gameObject.y <= this.listY[LIST.ITEM]) listIndex = LIST.INVENTORY;
+                /*
+                Now we have to find the index where we will add the dragged letter.
+                The splice function of arrays adds new elements at the specified index and pushes everything else back. It is like the
+                addBefore of a list. This means if we want to add to the start of the array, we splice at index 0. But to add to the end 
+                of the array, we'll need to use push(). We'll set the insertIndex to -1, and if it is unchanged by our check loop, we 
+                know that means we need to use push().
+                */
+                let insertIndex = -1;
 
-            for (let i = 0; i < this.lists[listIndex].length; i++) {
-                let checkX = this.lists[listIndex][i].x;
-                if (checkX > gameObject.x) {
-                    insertIndex = i;
-                    i = this.lists[listIndex].length;
+                for (let i = 0; i < this.lists[listIndex].length; i++) {
+                    let checkX = this.lists[listIndex][i].x;
+                    if (checkX > gameObject.x) {
+                        insertIndex = i;
+                        i = this.lists[listIndex].length;
+                    }
                 }
+                if (insertIndex >= 0) this.lists[listIndex].splice(insertIndex, 0, gameObject as LetterTile);
+                else {
+                    this.lists[listIndex].push(gameObject as LetterTile);
+                    insertIndex = this.lists[listIndex].length - 1;
+                }
+                /*
+                Now that we have added the dragged letter to the correct list and position, we need to remove it 
+                from it's previous place.
+                */
+                this.removeOther(gameObject as LetterTile, listIndex, insertIndex);
+                this.updateLetterPositions();
+                this.setHighlights();
             }
-            if (insertIndex >= 0) this.lists[listIndex].splice(insertIndex, 0, gameObject as LetterTile);
-            else {
-                this.lists[listIndex].push(gameObject as LetterTile);
-                insertIndex = this.lists[listIndex].length - 1;
-            }
-            /*
-            Now that we have added the dragged letter to the correct list and position, we need to remove it 
-            from it's previous place.
-            */
-            this.removeOther(gameObject as LetterTile, listIndex, insertIndex);
-            this.updateLetterPositions();
-            this.setHighlights();
         });
     }
 
     public update() {
-        if (Phaser.Input.Keyboard.JustDown(this.inventoryKey)) {
+        // Using "I" to switch to inventory is being phased out.
+        if (Phaser.Input.Keyboard.JustDown(this.inventoryKey) && this.useMouse) {
             this.scene.switch("game");
             console.log("Switch to game.");
         }
+
+        // update keyboard values
+        for (let i = 0; i < this.keyboard.length; i++) {
+            if (Phaser.Input.Keyboard.JustDown(this.keyboard[i]) && this.listTakeLetter(LIST.INVENTORY, "A")) {
+                console.log("test");
+            }
+        }
+    }
+
+    /*
+    If the list has the given letter, it returns that tile and removes it from that list.
+    */
+    private listTakeLetter(listIndex: number, char: string): LetterTile | null {
+        let result = null;
+        for (let i = 0; i < this.lists[listIndex].length; i++) {
+            if (this.lists[listIndex][i].getLetter() === char) {
+                result = this.lists[listIndex][i];
+                this.lists[listIndex].splice(i, 1);
+            }
+        }
+        return result;
     }
 
     public addLetters(newLetters: string) {
@@ -213,6 +254,7 @@ export default class InventoryScene extends Phaser.Scene {
         return result;
     }
 
+    /*
     public getSkillString(): string {
         let result: string = "";
         for (let i = 0; i < this.lists[LIST.SKILL].length; i++) {
@@ -228,6 +270,7 @@ export default class InventoryScene extends Phaser.Scene {
         }
         return result;
     }
+    */
 
     // This returns a brand new item if it is valid.
     // Make more efficient later...
