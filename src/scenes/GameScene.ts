@@ -1,12 +1,12 @@
 import { Player } from "../sprites/player";
 import ReadoutScene from "./ReadoutScene";
-import { TEXT_AREA_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants";
-import SpriteLoader from '../SpriteLoader';
+import { INVENTORY_HEIGHT_PX, GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT, READOUT_WIDTH_PX } from "../constants";
 import { Enemy } from "../sprites/enemy";
-import { Gate } from "../sprites/Gate";
 import { ItemTargetOverlay } from "./itemTargetOverlay";
-import { Attack } from "../sprites/Attack";
 import { GameSprite } from "../sprites/GameSprite";
+import InventoryScene from "./InventoryScene";
+import LevelLoader from '../levels/LevelLoader';
+import Level from '../levels/Level';
 
 export default class GameScene extends Phaser.Scene {
     private player: Player;
@@ -16,13 +16,16 @@ export default class GameScene extends Phaser.Scene {
 
     private exampleText: Phaser.GameObjects.Text;
     private exampleActive: boolean = true;
-    private inventoryKey: Phaser.Input.Keyboard.Key;
     private itemModeKey: Phaser.Input.Keyboard.Key;
     private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
     private readoutScene: ReadoutScene;
     private tileMap: Phaser.Tilemaps.Tilemap;
     private itemTargetChoicesOverlay: ItemTargetOverlay;
     private levelSprites: GameSprite[];
+
+    private currentLevel: Level;
+
+    private inventoryScene: InventoryScene;
 
     constructor() {
         super({ key: "game" });
@@ -39,64 +42,33 @@ export default class GameScene extends Phaser.Scene {
     public create() {
         this.exampleText = this.add.text(10, 10, "Hi Everybody", { font: '16px Courier', fill: '#00ff00' });
         this.game.input.mouse.capture = true;
-        this.inventoryKey = this.input.keyboard.addKey("I");
         this.cursorKeys = this.input.keyboard.createCursorKeys();
         this.itemModeKey = this.input.keyboard.addKey("Z");
 
-        this.asyncLoadTilemap().then(() => {
-            const level1SpriteMap = new Map<number, any>([
-                [16, Gate],
-                [23, Player],
-                [26, Enemy],
-            ]);
+        this.scene.launch("readout");
+        this.readoutScene = this.scene.get("readout") as ReadoutScene;
 
-            const sprites: Map<number, GameSprite[]> = SpriteLoader.createSpritesFromTileset(
-                level1SpriteMap,
-                this,
-                this.tileMap.getLayer("Objects"),
-                this.tileMap.getTileset("tiles")
-            );
-            for (let spritesOfType of sprites.values()) {
-                for (let sprite of spritesOfType) {
-                    this.levelSprites.push(sprite);
-                }
-            }
+        this.scene.launch("inventory");
+        this.inventoryScene = this.scene.get("inventory") as InventoryScene;
 
-            this.cameras.main.setBounds(0, 0, this.tileMap.widthInPixels, this.tileMap.heightInPixels);
-            this.cameras.main.setViewport(0, 0, this.game.canvas.width, this.game.canvas.height - TEXT_AREA_HEIGHT_PX);
+        this.itemTargetChoicesOverlay = new ItemTargetOverlay(this);
 
-            const playerSprites = sprites.get(23);
-            if (playerSprites.length != 1) {
-                throw new Error(`Found ${playerSprites.length} player sprites!`);
-            }
-            this.player = playerSprites[0] as Player;
-
-            this.enemies = sprites.get(26) as Enemy[];
-
-            // Apparently you can't just instanciate it 🤦‍
-            // Also you can't write to the readout scene here, wait until next event loop
-            this.scene.launch("readout");
-            this.readoutScene = this.scene.get("readout") as ReadoutScene;
-
-            this.itemTargetChoicesOverlay = new ItemTargetOverlay(this);
-
+        LevelLoader.loadLevel(this, 1).then((level) => {
+            this.currentLevel = level;
             this.isFullyLoaded = true;
-        });
+        })
+
+        this.cameras.main.setBounds(0, 0, this.currentLevel.tileMap.widthInPixels, this.currentLevel.tileMap.heightInPixels);
+        this.cameras.main.setViewport(0, 0, this.game.canvas.width - READOUT_WIDTH_PX, this.game.canvas.height - INVENTORY_HEIGHT_PX);
+        
     }
 
-    private async asyncLoadTilemap() {
-        let config = await fetch('assets/tiles.json').then(r => r.json());
-        let mapDataJson = await fetch('assets/level_1.json').then(r => r.json());
-        config.firstgid = 1;
-        mapDataJson.tilesets = [config];
-        let mapData: Phaser.Tilemaps.MapData = Phaser.Tilemaps.Parsers.Tiled.ParseJSONTiled(
-            "tiles",
-            mapDataJson,
-            true
-        );
-        this.tileMap = new Phaser.Tilemaps.Tilemap(this, mapData);
-        this.tileMap.addTilesetImage('tiles', 'tiles');
-        this.tileMap.createStaticLayer("Map", this.tileMap.getTileset("tiles"), 0, 0);
+    public isValidWord(text: string) {
+        return this.currentLevel.isValidWord(text);
+    }
+
+    public getCurrentItem(): string {
+        return this.inventoryScene.getItemString();
     }
 
     public write(text: string) {
@@ -163,7 +135,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private applyItem(tileX: number, tileY: number) {
-      const item = this.player.getCurrentItem();
+      const item = this.inventoryScene.getItemString();
       const targetSprite = this.getSpriteAtLocation(tileX, tileY);
       if (item && targetSprite) {
         targetSprite.recItem(item);
@@ -217,14 +189,6 @@ export default class GameScene extends Phaser.Scene {
             return;
         }
         super.update(time, delta);
-
-        if (Phaser.Input.Keyboard.JustDown(this.inventoryKey)) {
-            this.scene.switch("inventory");
-            let superlative = ["good job", "lol", "nice", "great", "super", "stellar"][(Math.random() * 6) | 0]
-            this.write(`Opened Inventory (${superlative})`);
-        }
-
-        //if (this.input.mouse.onMouseDown()) this.exampleActive = !this.exampleActive;
 
         if (this.exampleActive) this.exampleText.setAlpha(1);
         else this.exampleText.setAlpha(0);

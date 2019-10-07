@@ -1,15 +1,18 @@
 import { GAME_WORLD_TILE_WIDTH, GAME_WORLD_TILE_HEIGHT } from "../constants"
 import { Player } from "../sprites/player"
+import GameScene from "./GameScene";
 
 export class ItemTargetOverlay {
     private overlayGraphics: Phaser.GameObjects.Graphics;
+    private gameScene: GameScene;
 
-    constructor(scene: Phaser.Scene) {
+    constructor(scene: GameScene) {
       this.overlayGraphics = scene.add.graphics()
+      this.gameScene = scene;
     }
 
     render(player: Player) {
-      const item = player.getCurrentItem();
+      const item = this.gameScene.getCurrentItem();
       // Get the items "reach"
       const reach = 1;
 

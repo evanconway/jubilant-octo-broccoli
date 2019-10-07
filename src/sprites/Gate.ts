@@ -1,6 +1,5 @@
 import GameScene from '../scenes/GameScene';
 import { GameSprite } from './GameSprite';
-import { Item, Key } from "../resources/items";
 
 export class Gate extends GameSprite {
     constructor(scene: GameScene, x: number, y: number, startFrame: number) {
@@ -11,8 +10,8 @@ export class Gate extends GameSprite {
       return this.active;
     }
 
-    public recItem(item: Item): void {
-      if (item instanceof Key) {
+    public recItem(item: string): void {
+      if (item == "gey") {
         this.destroy();
       }
     }

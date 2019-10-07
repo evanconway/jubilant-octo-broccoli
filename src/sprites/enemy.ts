@@ -1,15 +1,7 @@
 import { GAME_WORLD_TILE_HEIGHT, GAME_WORLD_TILE_WIDTH } from "../constants"
-import { Properties, BaseActor } from "../resources/actors";
-import { Item } from "../resources/items";
 import GameScene from "../scenes/GameScene";
 import { Attack } from "./Attack";
 import { GameSprite } from './GameSprite';
-
-class EnemyActor extends BaseActor {
-    constructor() {
-        super(new Properties(10, 10, 10, 10));
-    }
-}
 
 enum EnemySpriteState { FACE_DOWN, FACE_UP, FACE_LEFT, FACE_RIGHT };
 
@@ -24,14 +16,12 @@ interface WeightedDirections extends Directions {
 }
 
 export class Enemy extends GameSprite {
-    private actor: EnemyActor;
     private spriteState: EnemySpriteState;
 
     private gameScene: GameScene;
 
     constructor(scene: GameScene, x: number, y: number, startFrame: number) {
         super(scene, x, y, startFrame);
-        this.actor = new EnemyActor();
         this.spriteState = EnemySpriteState.FACE_DOWN;
         this.startFrame = startFrame;
         this.updateOrientation();
@@ -43,7 +33,7 @@ export class Enemy extends GameSprite {
       return true;
     }
 
-    public recItem(item: Item): void {
+    public recItem(item: string): void {
       console.log(`Enemy got item ${item}`);
     }
 
