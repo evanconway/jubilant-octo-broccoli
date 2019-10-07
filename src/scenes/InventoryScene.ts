@@ -41,6 +41,9 @@ export default class InventoryScene extends Phaser.Scene {
 
     private gameScene: GameScene;
 
+    private inventoryLetterHolder: Phaser.GameObjects.Sprite[];
+    private itemLetterHolder: Phaser.GameObjects.Sprite[];
+
     constructor() {
         super({
             key: "inventory"
@@ -49,6 +52,7 @@ export default class InventoryScene extends Phaser.Scene {
 
     public preload() {
         this.load.spritesheet('letters', 'assets/letters.png', { frameWidth: 32, frameHeight: 32});
+        this.load.spritesheet('letterholder', 'assets/letterholder.png', { frameWidth: 45, frameHeight: 45});
     }
 
     public create() {
